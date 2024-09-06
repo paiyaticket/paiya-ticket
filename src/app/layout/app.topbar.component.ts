@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { StyleClassModule } from 'primeng/styleclass';
 import { AvatarModule } from 'primeng/avatar';
+import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
     selector: 'app-topbar',
@@ -17,7 +18,8 @@ import { AvatarModule } from 'primeng/avatar';
         RouterLink,
         RouterLinkActive,
         StyleClassModule,
-        AvatarModule
+        AvatarModule,
+        InputTextModule
     ]
 })
 export class AppTopBarComponent {
@@ -61,8 +63,9 @@ export class AppTopBarComponent {
     }
 
     get logo(): string {
-        const path = 'assets/layout/images/logo-';
-        const logo = (this.layoutTheme === 'primaryColor'  && !(this.layoutService.config().theme  == "yellow")) ? 'light.png' : (this.colorScheme === 'light' ? 'dark.png' : 'light.png');
+        const path = 'assets/layout/images/logo/';
+        // const logo = (this.layoutTheme === 'primaryColor'  && !(this.layoutService.config().theme  == "yellow")) ? 'light.png' : (this.colorScheme === 'light' ? 'dark.png' : 'light.png');
+        const logo = 'Pt.png';
         return path + logo;
     }
 

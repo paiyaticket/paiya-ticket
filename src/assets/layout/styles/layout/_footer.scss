@@ -20,6 +20,12 @@ app-footer {
             margin-left: .75rem;
             font-size: 1.25rem;
             font-weight: 700;
+            background: #F06C00;
+            background: linear-gradient(to right, #f06c00 20%, #f852f8 40%, #2e89ff);
+            background: -webkit-linear-gradient(to right, #f06c00 20%, #f852f8 40%, #2e89ff);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
     }
 }

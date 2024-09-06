@@ -22,13 +22,13 @@ export class AppMenuComponent implements OnInit {
     ngOnInit() {
         this.model = [
             {
-                label: `Évènements`,
+                label: `Évènements`, icon: 'pi pi-calendar',
 				items: [
                     { label: 'Évènements', icon: 'pi pi-calendar', routerLink: ['./events'] },
                 ]
             },
 			{
-                label: `Tickets`,
+                label: `Tickets`, icon: 'pi pi-ticket',
 				items: [
                     { label: 'Vos Tickets', icon: 'pi pi-ticket', routerLink: ['./tickets'] },
 					{ label: 'Revendre', icon: 'pi pi-sync', routerLink: ['./resell'] },

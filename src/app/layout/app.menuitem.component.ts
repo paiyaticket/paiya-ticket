@@ -7,8 +7,9 @@ import { MenuService } from './app.menu.service';
 import { LayoutService } from './service/app.layout.service';
 import { AppSidebarComponent } from './app.sidebar.component';
 import {DomHandler} from 'primeng/dom';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgClass } from '@angular/common';
 import { TooltipModule } from 'primeng/tooltip';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @Component({
     // eslint-disable-next-line @angular-eslint/component-selector
@@ -16,9 +17,10 @@ import { TooltipModule } from 'primeng/tooltip';
     standalone: true,
     imports: [
         CommonModule,
+        NgClass, 
         TooltipModule,
-        RouterLink,
-        RouterLinkActive
+        RouterLink, 
+        RouterLinkActive,
     ],
     template: `
 		<ng-container>
