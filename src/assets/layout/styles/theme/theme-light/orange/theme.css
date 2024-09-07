@@ -1,7 +1,8 @@
 :root {
   --text-color:#495057;
   --text-color-secondary:#6c757d;
-  --primary-color:#DE911D;
+  --primary-color:#f06c00;
+  /* --primary-color:#DE911D; */
   --primary-color-text:#ffffff;
   --font-family:Lato, Helvetica, sans-serif;
   --surface-0: #ffffff;

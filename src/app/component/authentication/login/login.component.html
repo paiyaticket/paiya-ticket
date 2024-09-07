@@ -1,0 +1,54 @@
+
+<div class="flex flex-row flex-wrap surface-50">
+    <div class="flex w-5 align-items-center justify-content-center" [ngClass]="{'p-input-filled': false}">
+        
+        <div class="surface-card align-content-center justify-content-center h-fit py-7 px-5 sm:px-7 sm:w-30rem shadow-3 flex flex-column w-11" style="border-radius:14px">
+            <h1 class="font-bold text-3xl mt-0 mb-2 app-name">PaiyaTicket</h1>
+            <p class="text-color-secondary mb-4">
+                Bienvenu(e) dans <strong>la communauté paiya</strong>. Connecte-toi!
+            </p>
+    
+            <span class="p-input-icon-left mb-4">
+                <i class="pi pi-user"></i>
+                <input type="text" pInputText placeholder="Email" class="w-full">         
+            </span>
+    
+            <span class="p-input-icon-left mb-4">
+                <i class="pi pi-key"></i>
+                <input type="password" pInputText placeholder="Password" class="w-full">         
+            </span>
+    
+            <button pButton pRipple label="Sign In" class="mb-4"></button>
+    
+            <span class="text-color-secondary text-center mb-4">connecte-toi aussi avec</span>
+
+            <div class="flex gap-4 align-items-center justify-content-center">
+                <p-button styleClass="p-button-outlined" (onClick)="signinWithGoogle()" size="small">
+                    <i class="pi pi-google text-2xl text-color"></i>
+                    <span class="ml-2 font-bold text-red-500">Google</span>
+                </p-button>
+
+                <p-button styleClass="p-button-outlined" (onClick)="signinWithGoogle()" size="small">
+                    <i class="pi pi-facebook text-2xl text-color"></i>
+                    <span class="ml-2 font-bold text-blue-500">Facebook</span>
+                </p-button>
+
+                <p-button styleClass="p-button-outlined" (onClick)="signinWithGoogle()" size="small">
+                    <i class="pi pi-apple text-2xl text-color"></i>
+                    <span class="ml-2 font-bold text-black-alpha-90">Apple</span>
+                </p-button>
+            </div>
+
+            <p-divider [align]="'center'" type="solid">
+                <b>ou</b>
+            </p-divider>
+
+            <div class="flex gap-4 align-items-center justify-content-center">
+                <a routerLink="/auth/register" routerLinkActive="active">Créer un compte</a>
+            </div>
+        </div>
+
+    </div>
+    <div class="flex w-7 h-screen bg-shadegradient">
+    </div>
+</div>

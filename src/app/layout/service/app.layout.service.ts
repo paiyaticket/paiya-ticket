@@ -36,7 +36,7 @@ export class LayoutService {
         inputStyle: 'outlined',
         menuMode: 'static',
         colorScheme: 'light',
-        theme: 'indigo',
+        theme: 'orange',
         layoutTheme: 'colorScheme',
         scale: 14,
     };
