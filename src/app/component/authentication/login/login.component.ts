@@ -5,6 +5,8 @@ import { InputTextModule } from 'primeng/inputtext';
 import { RippleModule } from 'primeng/ripple';
 import { AutenticationService } from '../../../service/autentication.service';
 import { DividerModule } from 'primeng/divider';
+import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-login',
@@ -14,7 +16,8 @@ import { DividerModule } from 'primeng/divider';
     ButtonModule,
     InputTextModule,
     RippleModule,
-    DividerModule
+    DividerModule,
+    FormsModule
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
@@ -22,10 +25,27 @@ import { DividerModule } from 'primeng/divider';
 })
 export class LoginComponent {
 
+    email: string = "";
+	password: string = "";
+
+    private router : Router = inject(Router);
+
     authService : AutenticationService = inject(AutenticationService);
 
     signinWithGoogle(){
-        console.log("signinWithGoogle");
-        this.authService.toggleGoogleSignIn();
+        this.authService.loginWithGoogle();
+    }
+
+    signinWithEmailAndPassword() : void{
+        console.info(`Email : ${this.email} and Password : ${this.password}`);
+		this.authService.loginWithEmailAndPassword(this.email, this.password);
+	}
+
+    signinWithAnonymusAccount(){
+        this.authService.loginAnonymously();
+    }
+
+    register(){
+        this.router.navigateByUrl('/auth/register');
     }
 }
