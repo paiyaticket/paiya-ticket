@@ -37,7 +37,7 @@ export class AutenticationService {
     loginWithEmailAndPassword(email: string, password: string) {
         signInWithEmailAndPassword(this.auth, email, password)
         .then((result) => {
-            let userProfile = this.getAuthenticatedUserInfo(result.user);
+            let userProfile = this.getAuthenticatedUserData(result.user);
             this.userService.saveUserProfileIfNotExist(userProfile);
             // this.sessionService.add("currentUser", userProfile);
             if(result)
@@ -49,16 +49,15 @@ export class AutenticationService {
 		});
     }
 
-    loginAnonymously() {
-        return signInAnonymously(this.auth)
-        .then((result) => {
-            if(result)
+    async loginAnonymously() {
+        try {
+            const result = await signInAnonymously(this.auth);
+            if (result)
                 this.redirectToHomePage();
-        })
-        .catch((error) => {
+        } catch (error) {
             this.handleError(error);
             this.router.navigate(['/auth/login']);
-		});;
+        };
     }
 
     logout() {
@@ -87,7 +86,7 @@ export class AutenticationService {
         this.router.navigate(['']);
     }
 
-    getAuthenticatedUserInfo(user: User) : UserData {
+    getAuthenticatedUserData(user: User) : UserData {
         var userProfile: UserData = new UserData();
         userProfile.id = user.uid;
         userProfile.displayname = user.displayName;

@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { LayoutService } from "./service/app.layout.service";
 import { RouterLink, RouterLinkActive } from '@angular/router';
@@ -7,6 +7,9 @@ import { ButtonModule } from 'primeng/button';
 import { StyleClassModule } from 'primeng/styleclass';
 import { AvatarModule } from 'primeng/avatar';
 import { InputTextModule } from 'primeng/inputtext';
+import { getAuth, onAuthStateChanged } from '@angular/fire/auth';
+import { AutenticationService } from '../service/autentication.service';
+import { UserData } from '../models/UserProfile';
 
 @Component({
     selector: 'app-topbar',
@@ -22,9 +25,11 @@ import { InputTextModule } from 'primeng/inputtext';
         InputTextModule
     ]
 })
-export class AppTopBarComponent {
+export class AppTopBarComponent implements OnInit {
 
     menu: MenuItem[] = [];
+
+    user : UserData | undefined;
 
     @ViewChild('searchinput') searchInput!: ElementRef;
 
@@ -32,8 +37,28 @@ export class AppTopBarComponent {
 
     searchActive: boolean = false;
 
-    constructor(public layoutService: LayoutService) {}
+    authService : AutenticationService = inject(AutenticationService);
 
+    constructor(public layoutService: LayoutService) {
+    }
+    
+    ngOnInit(): void {
+        const auth = getAuth();
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                this.user = this.authService.getAuthenticatedUserData(user);
+            } else {
+                this.logout();
+            }
+        });
+        
+    }
+
+    logout(){
+        this.authService.logout();
+    }
+
+    
     onMenuButtonClick() {
         this.layoutService.onMenuToggle();
     }
@@ -64,7 +89,6 @@ export class AppTopBarComponent {
 
     get logo(): string {
         const path = 'assets/layout/images/logo/';
-        // const logo = (this.layoutTheme === 'primaryColor'  && !(this.layoutService.config().theme  == "yellow")) ? 'light.png' : (this.colorScheme === 'light' ? 'dark.png' : 'light.png');
         const logo = 'Pt.png';
         return path + logo;
     }
