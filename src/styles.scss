@@ -1,6 +1,15 @@
 /* You can add global styles to this file, and also import other style files */
 $gutter: 1rem; //for primeflex grid system
 
+.app-name {
+    background: #F06C00;
+    background: linear-gradient(to right, #f06c00 20%, #f852f8 40%, #2e89ff);
+    background: -webkit-linear-gradient(to right, #f06c00 20%, #f852f8 40%, #2e89ff);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
 /* Layout */
 @import "assets/layout/styles/layout/layout.scss";
 

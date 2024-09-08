@@ -21,6 +21,9 @@
             "outputPath": "dist/paiya-ticket",
             "index": "src/index.html",
             "browser": "src/main.ts",
+            "allowedCommonJsDependencies": [
+                "undici"
+            ],
             "polyfills": [
               "zone.js"
             ],

@@ -1,0 +1,53 @@
+<form #registerForm="ngForm" (submit)="signUp()" id="register">
+	<div class="surface-ground h-screen w-screen flex align-items-center justify-content-center" [ngClass]="{'p-input-filled': true}">
+		<div class="surface-card py-7 px-5 sm:px-7 shadow-2 flex flex-column w-11 sm:w-30rem" style="border-radius:14px">
+				<h1 class="font-bold text-5xl mt-0 mb-2 app-name">PaiyaTicket</h1>
+				<p class="text-color-secondary mb-4">Intègre <strong>la communauté Paiya</strong>, crées un compte.</p>
+
+
+				<span class="p-input-icon-left mb-4">
+					<i class="pi pi-user"></i>
+					<input type="email" pInputText placeholder="Email" class="w-full" [(ngModel)]="email" name="email" #i_email="ngModel" email="email" required>
+					<div *ngIf="i_email.invalid && (i_email.dirty || i_email.touched)">
+						<small *ngIf="i_email.errors?.['required']" id="email-required-help" [hidden]="i_email.pristine || i_email.valid" class="p-error" i18n="email requis">
+							Une adresse mail est requise.
+						</small>
+						<small *ngIf="i_email.errors?.['email']" id="email-format-help" [hidden]="i_email.pristine || i_email.valid" class="p-error" i18n="email invalide">
+							Email invalide.
+						</small>
+					</div>
+				</span>
+
+				<span class="mb-4">
+					<p-password [(ngModel)]="password" name="password" #i_password="ngModel"
+                        styleClass="p-password p-component p-inputwrapper" [inputStyle]="{'width': '100%'}" [style]="{'width':'100%'}"
+                        placeholder="Password" [showClear]="false" >
+
+                        <ng-template pTemplate="header">
+                            <h6 i18n>Choisir un mot de passe</h6>
+                        </ng-template>
+                        <ng-template pTemplate="footer">
+                            <hr>
+                            <p class="mt-2" i18n>Suggestions</p>
+                            <ul class="pl-2 ml-2 mt-0" style="line-height: 1.5">
+                                <li i18n>Au moins un caratère minuscule</li>
+                                <li i18n>Au moins un caratère majuscule</li>
+                                <li i18n>Au moins un caratère numéric</li>
+                                <li i18n>Minimum 8 caratères</li>
+                            </ul>
+                        </ng-template>
+
+                    </p-password>
+				</span>
+
+				<button type="submit" pButton pRipple label="S'inscrire" i18n-label="S'inscrire" class="mb-4 bg-primary"></button>
+
+				<div class="flex gap-4 align-items-center justify-content-center">
+					<a routerLink="/auth/login" routerLinkActive="active" i18n>
+						<i class="pi pi-arrow-left"></i>
+						Retourner à la page de connexion
+					</a>
+				</div>
+		</div>
+	</div>
+</form>

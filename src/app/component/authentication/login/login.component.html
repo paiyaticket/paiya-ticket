@@ -1,0 +1,76 @@
+
+<div class="flex flex-row flex-wrap surface-50">
+    <div class="flex w-5 align-items-center justify-content-center" [ngClass]="{'p-input-filled': false}">
+        
+        <form #signInForm="ngForm" (submit)="signinWithEmailAndPassword()" id="register">
+            <div class="surface-card align-content-center justify-content-center h-fit py-7 px-5 sm:px-7 sm:w-30rem shadow-3 flex flex-column w-11" style="border-radius:14px">
+                <h1 class="font-bold text-5xl mt-0 mb-2 app-name">PaiyaTicket</h1>
+                <p class="text-color-secondary mb-4">
+                    Bienvenu(e) dans <strong>la communauté paiya</strong>. Connecte-toi!
+                </p>
+        
+                <span class="p-input-icon-left mb-4">
+					<i class="pi pi-user"></i>
+					<input type="email" pInputText i18n-placeholder placeholder="Email" class="w-full" [(ngModel)]="email" name="email" #i_email="ngModel" required email="email">
+					<div *ngIf="i_email.invalid && (i_email.dirty || i_email.touched)">
+						<small *ngIf="i_email.errors?.['required']" id="email-required-help" [hidden]="i_email.pristine || i_email.valid" class="p-error" i18n="email requis">
+							Une adresse mail est requise.
+						</small>
+						<small *ngIf="i_email.errors?.['email']" id="email-format-help" [hidden]="i_email.pristine || i_email.valid" class="p-error" i18n="email invalide">
+							Email invalide.
+						</small>
+					</div>
+				</span>
+
+				<span class="p-input-icon-left mb-4">
+					<i class="pi pi-key"></i>
+					<input id="password" type="password" pInputText i18n-placeholder placeholder="Mot de passe" class="w-full"
+							[(ngModel)]="password" name="password" #pwd="ngModel" required minlength="6">
+					<div *ngIf="pwd.invalid && (pwd.dirty || pwd.touched)">
+						<small *ngIf="pwd.errors?.['required']" id="password-help" [hidden]="pwd.pristine || pwd.valid" class="p-error" i18n="mot de passe requis">
+							Password is required.
+						</small>
+					</div>
+				</span>
+
+				<button type="submit" pButton pRipple label="Se connecter" class="mb-4 bg-primary" [disabled]="!signInForm.form.valid"></button>
+        
+                <span class="text-color-secondary text-center mb-4">connecte-toi aussi avec</span>
+
+                <div class="flex flex-column gap-1 align-items-center justify-content-center">
+                    <p-button styleClass="p-button-outlined border-primary w-full justify-content-center" class="text-center w-full" size="small" (onClick)="signinWithGoogle()">
+                        <i class="pi pi-google text-1xl text-color"></i>
+                        <span class="ml-2 font-bold text-red-500">Google</span>
+                    </p-button>
+                    <!--
+                        
+                    <p-button styleClass="p-button-outlined w-full justify-content-center" class="text-center w-full" size="small" (onClick)="signinWithGoogle()">
+                        <i class="pi pi-facebook text-1xl text-color"></i>
+                        <span class="ml-2 font-bold text-blue-500">Facebook</span>
+                    </p-button>
+
+                    <p-button styleClass="p-button-outlined w-full justify-content-center" class="text-center w-full" size="small" (onClick)="signinWithGoogle()">
+                        <i class="pi pi-apple text-1xl text-color"></i>
+                        <span class="ml-2 font-bold text-black-alpha-90">Apple</span>
+                    </p-button>
+                    -->
+
+                    <p-button styleClass="p-button-outlined w-full justify-content-center" class="text-center w-full" size="small" (onClick)="signinWithGoogle()">
+                        <i class="pi pi-user-minus text-1xl text-color"></i>
+                        <span class="ml-2 font-bold text-black-alpha-90">Connexion anonyme</span>
+                    </p-button>
+                </div>
+
+                <p-divider [align]="'center'" type="solid">
+                    <b>ou</b>
+                </p-divider>
+
+                <div class="flex gap-4 align-items-center justify-content-center">
+                    <p-button label="Crées un compte" (onClick)="register()" [text]="true" styleClass="text-primary"/>
+                </div>
+            </div>
+        </form>    
+    </div>
+    <div class="flex w-7 h-screen bg-shadegradient">
+    </div>
+</div>
