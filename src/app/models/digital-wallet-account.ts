@@ -1,5 +1,5 @@
-import { DigitalWalletProvider } from "../enumerations/DigitalWalletProvider";
-import { CashAccount } from "./CashAccount";
+import { DigitalWalletProvider } from "../enumerations/digital-wallet-provider";
+import { CashAccount } from "./cash-account";
 
 export class DigitalWalletAccount extends CashAccount{
 

@@ -1,4 +1,4 @@
-import { OnlinePlatform } from "../enumerations/OnlinePlatform";
+import { OnlinePlatform } from "../enumerations/online-platform";
 
 export class OnlineAddress {
     onlinePlatform : OnlinePlatform | undefined;

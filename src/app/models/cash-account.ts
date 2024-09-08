@@ -1,4 +1,4 @@
-import { FinancialAccountType } from "../enumerations/FinancialAccountType";
+import { FinancialAccountType } from "../enumerations/financial-account-type";
 
 export abstract class CashAccount {
 

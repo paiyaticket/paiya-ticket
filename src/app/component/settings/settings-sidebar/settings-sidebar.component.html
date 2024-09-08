@@ -1,0 +1,12 @@
+<h2 class="uppercase font-heavy" i18n>Paramètres</h2>
+
+<ul class="flex flex-column md:flex-column gap-1 md:gap-2 m-0 p-0 overflow-auto">
+	<li pRipple *ngFor="let item of items; let i = index"
+        [routerLinkActive]="'surface-300'"
+        [routerLink]="item.routerLink"
+		class="cursor-pointer select-none p-3 transition-duration-150 border-round justify-content-center">
+		<span class="text-900 font-medium">{{item.label}}</span>
+		<br>
+		<small class="text-600" i18n>{{item.tooltip}}</small>
+	</li>
+</ul>

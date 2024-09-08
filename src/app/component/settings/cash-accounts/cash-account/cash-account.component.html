@@ -1,0 +1,97 @@
+@switch (cashAccount.financialAccountType) {
+    @case ("CARD") {
+        <p-card header="{{ financialAccountTypeLabel }}" subheader="{{ cardAccount?.provider  | uppercase }}">
+            <div class="m-1">
+                @if (cashAccount.isDefault) {
+                    <div class="mb-1">
+                        <p-chip i18n-label="Par défaut" label="Par défaut" icon="pi pi-check"/>
+                    </div>
+                }
+                <div><b i18n>Numéro de carte : </b> {{cardAccount?.cardNumber}}  </div> 
+                <div><b i18n>Date d'expiration : </b> {{cardAccount?.expirationDate}} </div>  
+            </div>
+
+            <ng-template pTemplate="footer">
+                <div class="flex gap-3 mt-1 justify-content-end">
+                    <p-button i18n-label="Modifier" label="Modifier" (onClick)="goToUpdatePage(cardAccount?.id)" 
+                    [outlined]="true" size="small" class="font-bold" icon="pi pi-pencil"/>
+
+                    <p-button i18n-label="Supprimer" label="Supprimer" (onClick)="confirm(cashAccount)" [outlined]="true" 
+                    size="small" styleClass="text-black-alpha-90 border-black-alpha-90" icon="pi pi-trash" />
+                </div>
+            </ng-template>
+        </p-card>
+    }
+    @case ("MOBILE_MONEY") {
+        <p-card header="{{ financialAccountTypeLabel }}" subheader="{{ providerLabel | uppercase }}">
+            <div class="m-1">
+                @if (cashAccount.isDefault) {
+                    <div class="mb-1">
+                        <p-chip i18n-label="Par défaut" label="Par défaut"  icon="pi pi-check"/>
+                    </div>
+                }
+                <div><b i18n>Numéro : </b> {{ mobileMoneyAccount?.phoneNumber}} </div> 
+            </div>
+
+            <ng-template pTemplate="footer">
+                <div class="flex gap-3 mt-1 justify-content-end">
+                    <p-button i18n-label="Modifier" label="Modifier" (onClick)="goToUpdatePage(mobileMoneyAccount?.id)" 
+                    [outlined]="true" size="small" class="font-bold" icon="pi pi-pencil"/>
+                    <p-button i18n-label="Supprimer" label="Supprimer" (onClick)="confirm(cashAccount)" [outlined]="true" 
+                    size="small" styleClass="text-black-alpha-90 border-black-alpha-90" icon="pi pi-trash" />
+                </div>
+            </ng-template>
+        </p-card>
+    }
+    @case ("BANK_ACCOUNT") {
+        <p-card header="{{ financialAccountTypeLabel }}" subheader="{{ providerLabel | uppercase }}">
+            <div class="m-1">
+                @if (cashAccount.isDefault) {
+                    <div class="mb-1">
+                        <p-chip i18n-label="Par défaut" label="Par défaut"  icon="pi pi-check"/>
+                    </div>
+                }
+
+                @if (bankAccount?.iban) {
+                    <div><b i18n>IBAN : </b> {{bankAccount?.iban}}  </div> 
+                } @else {
+                    <div><b i18n>Numéro d'institution : </b> {{bankAccount?.bankCode}} </div>
+                    <div><b i18n>Numéro de succussale : </b> {{bankAccount?.succusale}} </div>
+                    <div><b i18n>Numéro de compte : </b> {{bankAccount?.accountNumber}}  </div> 
+                }  
+            </div>
+
+            <ng-template pTemplate="footer">
+                <div class="flex gap-3 mt-1 justify-content-end">
+                    <p-button i18n-label="Modifier" label="Modifier" (onClick)="goToUpdatePage(bankAccount?.id)" 
+                    [outlined]="true" size="small" class="font-bold" icon="pi pi-pencil"/>
+                    <p-button i18n-label="Supprimer" label="Supprimer" (onClick)="confirm(cashAccount)" [outlined]="true" severity="danger" 
+                    size="small" styleClass="text-black-alpha-90 border-black-alpha-90" icon="pi pi-trash" />
+                </div>
+            </ng-template>
+        </p-card>
+    }
+    @case ("DIGITAL_WALLET") {
+        <p-card header="{{ financialAccountTypeLabel }}" subheader="{{ providerLabel | uppercase }}">
+            <div class="m-1">
+                @if (cashAccount.isDefault) {
+                    <div class="mb-1">
+                        <p-chip i18n-label="Par défaut" label="Par défaut"  icon="pi pi-check"/>
+                    </div>
+                }
+                <div><b i18n>Compte : </b> {{digitalWalletAccount?.email}}  </div> 
+                <div><b i18n>Numero de téléphone : </b> {{digitalWalletAccount?.phoneNumber}} </div>  
+            </div>
+
+            <ng-template pTemplate="footer">
+                <div class="flex gap-3 mt-1 justify-content-end">
+                    <p-button i18n-label="Modifier" label="Modifier" (onClick)="goToUpdatePage(digitalWalletAccount?.id)" 
+                    [outlined]="true" size="small" class="font-bold" icon="pi pi-pencil"/>
+                    <p-button i18n-label="Supprimer" label="Supprimer" (onClick)="confirm(cashAccount)" [outlined]="true" severity="danger" 
+                    size="small" styleClass="text-black-alpha-90 border-black-alpha-90" icon="pi pi-trash" />
+                </div>
+            </ng-template>
+        </p-card>
+    }
+}
+

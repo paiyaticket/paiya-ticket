@@ -1,7 +1,7 @@
-import { CashAccount } from "./CashAccount";
-import { EventOrganizer } from "./EventOrganizer";
-import { OnlineAddress } from "./OnlineAddress";
-import { PhysicalAddress } from "./PhysicalAddress";
+import { CashAccount } from "./cash-account";
+import { EventOrganizer } from "./event-organizer";
+import { OnlineAddress } from "./online-address";
+import { PhysicalAddress } from "./physical-address";
 
 export class Event {
     id : string | undefined;

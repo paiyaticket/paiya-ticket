@@ -2,7 +2,7 @@ import { inject, Injectable, Optional } from '@angular/core';
 import { Auth, createUserWithEmailAndPassword, GoogleAuthProvider, signInAnonymously, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile, User } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { UserService } from './user.service';
-import { UserData } from '../models/UserProfile';
+import { UserData } from '../models/user-data';
 
 @Injectable({
   providedIn: 'root'
