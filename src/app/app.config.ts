@@ -9,8 +9,8 @@ import { getAuth, provideAuth } from '@angular/fire/auth';
 import { environment } from '../environments/environment.development';
 import { HttpClient, provideHttpClient, withFetch, withInterceptors, withNoXsrfProtection } from '@angular/common/http';
 import { MessageService } from 'primeng/api';
-import { HttpErrorInterceptor } from './interceptors/HttpErrorInterceptor';
-import { loggingInterceptor } from './interceptors/LogginInterceptor';
+import { HttpErrorInterceptor } from './interceptors/http-error-interceptor';
+import { loggingInterceptor } from './interceptors/log-interceptor';
 
 export const appConfig: ApplicationConfig = {
     providers: [
