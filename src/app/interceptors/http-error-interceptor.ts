@@ -3,7 +3,7 @@ import { error } from "console";
 import { catchError } from "rxjs";
 import { Observable } from "rxjs/internal/Observable";
 import { inject } from "@angular/core";
-import { HttpErrorHandlingService } from "../service/HttpErrorHandlingService";
+import { HttpErrorHandlingService } from "../service/http-error-handling.service";
 
 export function HttpErrorInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> {
     let httpErrorHandlingService = inject(HttpErrorHandlingService);
