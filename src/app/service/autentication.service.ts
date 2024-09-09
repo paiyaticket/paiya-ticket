@@ -17,8 +17,12 @@ export class AutenticationService {
 
     createUserWithEmailAndPassword(email:string, password:string){
         createUserWithEmailAndPassword(this.auth, email, password)
-        .then(() => {
-            this.redirectToHomePage()
+        .then((result) => {
+            if(result){
+                let userData = this.getAuthenticatedUserData(result.user);
+                this.userService.saveUserProfileIfNotExist(userData);
+                this.redirectToHomePage();
+            }
         })
         .catch((error) => {
             console.error(`User creation with Email and Password failed. ErrorCode : ${error.code} | ErrorMessage : ${error.message}`);
@@ -28,10 +32,15 @@ export class AutenticationService {
 
     loginWithGoogle(){
         const provider = new GoogleAuthProvider();
-        signInWithPopup(this.auth, provider).then((user) => {
-            if(user)
-                this.router.navigateByUrl('/');
-        }).catch(this.handleError);
+        signInWithPopup(this.auth, provider)
+        .then((result) => {
+            if(result){
+                let userData = this.getAuthenticatedUserData(result.user);
+                this.userService.saveUserProfileIfNotExist(userData);
+                this.redirectToHomePage();
+            }
+        })
+        .catch(this.handleError);
     }
 
     loginWithEmailAndPassword(email: string, password: string) {
