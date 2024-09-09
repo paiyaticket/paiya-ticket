@@ -1,0 +1,92 @@
+<h2>Compte utilisateur</h2>
+<form [formGroup]="userProfileForm" (ngSubmit)="onSubmit()">
+    <p-fieldset legend="Informations Publiques" i18n-legend="Informations Publiques">
+
+        <div class="formgrid grid">
+            <div class="field xl:col-6 lg:col-6 col-12">
+                <label for="firstname" class="font-bold" i18n>Prénom(s)</label><br>
+                <input id="firstname" type="text" pInputText class="w-full" formControlName="firstname">
+
+                <div *ngIf="firstname?.invalid && (firstname?.touched || firstname?.dirty)">
+                    @if (firstname?.hasError('required')) {
+                        <small id="firstname-required-help" [hidden]="firstname?.pristine || firstname?.valid" class="p-error" i18n="Prénom requis">
+                            Votre prénom est requis.
+                        </small>
+                    }
+                </div>
+            </div>
+            <div class="field xl:col-6 lg:col-6 col-12">
+                <label for="lastname" class="font-bold" i18n>Nom</label><br>
+                <input id="lastname" type="text" pInputText class="w-full" formControlName="lastname">
+                @if (lastname?.invalid && (lastname?.touched || lastname?.dirty) && lastname?.hasError('required')) {
+                    <small id="lastname-required-help" [hidden]="lastname?.pristine || lastname?.valid" class="p-error" i18n="Nom requis">
+                        Votre nom est requis.
+                    </small>
+                }
+            </div>
+            
+            <div class="field xl:col-6 lg:col-6 col-12">
+                <label for="gender" class="font-bold" i18n>Genre</label><br>
+                <p-selectButton id="gender" [options]="genderOptions" formControlName="gender" optionLabel="label" optionValue="value"></p-selectButton>
+                @if (gender?.invalid && (gender?.touched || gender?.dirty) && gender?.hasError('required')) {
+                    <small id="gender-required-help" [hidden]="gender?.pristine || gender?.valid" class="p-error" i18n="Genre requis">
+                        Votre genre est requis.
+                    </small>
+                }
+            </div>
+        </div>
+    </p-fieldset>
+
+    <p-fieldset legend="Informations Privées" i18n-legend="Informations Privées" styleClass="mt-4">
+        <div class="formgrid grid" formGroupName = "address">
+            <div class="field xl:col-4 lg:col-4 col-12">
+                <label for="country" class="font-bold" i18n>Pays</label><br>
+                <p-dropdown id="country" [options]="countries" formControlName="country" optionLabel="name" [filter]="true"
+                    filterBy="name" styleClass="w-full" placeholder="Choisir un pays" i18n-placeholder="Choisir un pays" i18n-placeholder="Select a country"
+                    (onChange)="onCountrySelect($event)"/>
+            </div>
+            
+            <div class="field xl:col-4 lg:col-4 col-12">
+                <label for="state" class="font-bold" i18n>Etat</label><br>
+                <input id="state" type="text" pInputText class="w-full" formControlName="state">
+            </div>
+            <div class="field xl:col-4 lg:col-4 col-12">
+                <label for="city" class="font-bold" i18n>Ville</label><br>
+                <input id="city" type="text" pInputText class="w-full" formControlName="city">
+            </div>
+            <div class="field xl:col-4 lg:col-4 col-12">
+                <label for="postal" class="font-bold" i18n>Code postal</label><br>
+                <input id="postal" type="text" pInputText class="w-full" formControlName="postal">
+            </div>
+            <div class="field xl:col-8 lg:col-8 col-12">
+                <label for="addressDetail" class="font-bold" i18n>Détails supplémentaires sur l'adresse</label><br>
+                <input id="addressDetail" type="text" pInputText class="w-full" formControlName="addressDetail">
+            </div>
+        </div>
+        <div class="formgrid grid">
+            <div class="field xl:col-4 lg:col-4 col-12">
+                <label for="phoneNumber" class="font-bold" i18n>Numéro de téléphone</label><br>
+                <p-inputMask id="phoneNumber" [mask]="mask" styleClass="w-full" formControlName="phoneNumber" ></p-inputMask>
+                @if (phoneNumber?.invalid && (phoneNumber?.touched || phoneNumber?.dirty) && phoneNumber?.hasError('required')) {
+                    <small id="phoneNumber-required-help" [hidden]="phoneNumber?.pristine || phoneNumber?.valid" class="p-error" i18n="Genre requis">
+                        Un numéro de téléphone valide est requis.
+                    </small>
+                }
+            </div>
+
+            <div class="field xl:col-4 lg:col-4 col-12">
+                <label for="language" class="font-bold" i18n>Langue de préférence</label><br>
+                <p-selectButton id="language" [options]="languageOptions" formControlName="language" optionLabel="label" optionValue="value"></p-selectButton>
+            </div>
+        </div>
+        
+    </p-fieldset>
+
+    <div class="mt-4 flex justify-content-end flex-wrap">
+        <p-button type="button" label="Annuler" i18n-label="Annuler" styleClass="bg-primary-reverse mr-2" (onClick)="reset()"></p-button>
+        <p-button type="submit" label="Sauvegarder" i18n-label="Sauvegarder" styleClass="m-auto"></p-button>
+    </div>
+
+    
+</form>
+    

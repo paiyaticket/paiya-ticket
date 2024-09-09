@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { UserService } from './user.service';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { of } from 'rxjs/internal/observable/of';
-import { UserData } from '../models/UserProfile';
+import { UserData } from '../models/user-data';
 import { asyncData, asyncError } from '../utils/async-observable-helpers';
 
 describe('UserService', () => {

@@ -9,7 +9,7 @@ import { AvatarModule } from 'primeng/avatar';
 import { InputTextModule } from 'primeng/inputtext';
 import { getAuth, onAuthStateChanged } from '@angular/fire/auth';
 import { AutenticationService } from '../service/autentication.service';
-import { UserData } from '../models/UserProfile';
+import { UserData } from '../models/user-data';
 
 @Component({
     selector: 'app-topbar',

@@ -1,5 +1,5 @@
-import { CardProvider } from "../enumerations/CardProvider";
-import { CashAccount } from "./CashAccount";
+import { CardProvider } from "../enumerations/card-provider";
+import { CashAccount } from "./cash-account";
 
 export class CardAccount extends CashAccount{
     cardNumber : string | undefined;

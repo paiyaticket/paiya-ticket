@@ -1,4 +1,4 @@
-import { CashAccount } from "./CashAccount";
+import { CashAccount } from "./cash-account";
 
 export class BankAccount extends CashAccount{
 

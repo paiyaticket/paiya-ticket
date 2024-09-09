@@ -1,5 +1,5 @@
-import { MobileMoneyProvider } from "../enumerations/MobileMoneyProvider";
-import { CashAccount } from "./CashAccount";
+import { MobileMoneyProvider } from "../enumerations/mobile-money-provider";
+import { CashAccount } from "./cash-account";
 
 export class MobileMoneyAccount extends CashAccount{
 

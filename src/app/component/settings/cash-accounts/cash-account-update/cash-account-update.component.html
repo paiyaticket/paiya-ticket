@@ -1,0 +1,130 @@
+<h2 i18n>Comptes et mode d'encaissement - mise à jour </h2>
+
+<form [formGroup]="cashAccountForm" (ngSubmit)="onSubmit()">
+    <p-fieldset legend="Compte d'encaissement" i18n-legend="Informations Publiques">
+        <div class="formgrid grid">
+            <div class="field xl:col-12 lg:col-12 col">
+                <label for="financialAccountType" class="font-bold" i18n>
+                    Type de compte
+                </label> <br>
+
+                <p-dropdown id="financialAccountType" formControlName="financialAccountType" [options]="financialAccountTypeList" optionLabel="label" 
+                     optionValue="value" placeholder="Choisir un type"/>
+            </div>
+            <div class="field xl:col-12 lg:col-12 col">
+                <label for="isDefault" class="font-bold" i18n>Ce compte sera mon mode d'encaissement par defaut.</label><br>
+                
+                @if (defaultAccount$ | async; as defaultAccount) {
+                    <p-inputSwitch id="isDefault" formControlName="isDefault" (onChange)="onIsDefaultChange($event, defaultAccount)"/><br>
+                    @if (defaultAccount) {
+                        <p-messages severity="info">
+                            <ng-template pTemplate>
+                                <div class="ml-2">{{ defaultAccountAlreadyExistMessage }}</div>
+                            </ng-template>
+                        </p-messages>
+                    }
+                } @else {
+                    <p-inputSwitch id="isDefault" formControlName="isDefault"/><br>
+                }
+                
+            </div>
+        </div>
+    </p-fieldset>
+
+    @switch (selectedFinancialAccountType) {
+        @case ('CARD') {
+            <p-fieldset styleClass="mt-4" legend="Informations - Carte de crédit ou prépayée" i18n-legend="Carte de crédit ou prépayée">
+                <div class="grid">
+                    <div class="field xl:col-4 lg:col-4 col">
+                        <label for="cardNumber" class="font-bold" i18n>Numéro de carte</label><br>
+                        <p-inputMask id="cardNumber" formControlName="cardNumber" mask="9999 9999 9999 9999" placeholder="999 999 999 999" class="w-full"/>
+                    </div>
+    
+                    <div class="field xl:col-4 lg:col-4 col-4">
+                        <label for="expirationDate" class="font-bold" i18n>Date d'expiration</label><br>
+                        <p-inputMask id="expirationDate" formControlName="expirationDate" mask="99/9999" placeholder="01/1970"  class="w-full"/>
+                    </div>
+    
+                    <div class="field xl:col-4 lg:col-4 col-4">
+                        <label for="cardProvider" class="font-bold" i18n>Fournisseur de carte</label><br>
+                        <p-dropdown id="cardProvider" formControlName="cardProvider" [options]="cardProviderList" optionLabel="label" optionValue="value" 
+                        placeholder="Choisir un fournisseur" i18n-placeholder="Choisir un fournisseur"/>
+                    </div>
+                </div>
+            </p-fieldset>
+        }
+
+        @case ('MOBILE_MONEY') {
+            <p-fieldset styleClass="mt-4" legend="Informations - Compte Mobile Money" i18n-legend="Compte Mobile Money">
+                <div class="grid">
+                    <div class="field xl:col-4 lg:col-4 col-4">
+                        <label for="phoneNumber" class="font-bold" i18n>Numéro de téléphone</label><br>
+                        <p-inputMask id="phoneNumber" formControlName="phoneNumber" mask="{{ appInstanceParams.mobileCode }} 99 99 99 99 99" 
+                            placeholder="{{ appInstanceParams.mobileCode }} 99 99 99 99 99"  class="w-full"/>
+                    </div>
+                    <div class="field xl:col-4 lg:col-4 col-4">
+                        <label for="mobileMoneyProvider" class="font-bold" i18n>Fournisseur du service</label><br>
+                        <p-dropdown id="mobileMoneyProvider" formControlName="mobileMoneyProvider" [options]="mobileMoneyProviderList" optionLabel="label" optionValue="value" 
+                        placeholder="Choisir un fournisseur" i18n-placeholder="Choisir un fournisseur"/>
+                    </div>
+                </div>
+            </p-fieldset>
+        }
+
+        @case ('BANK_ACCOUNT') {
+            <p-fieldset styleClass="mt-4" legend="Informations - Compte Bancaire" i18n-legend="Compte Bancaire">
+                <div class="grid">
+                    <div class="field xl:col-3 lg:col-3 col-12 col">
+                        <label for="succusale" class="font-bold" i18n>Numéro de succussale</label><br>
+                        <p-inputMask id="succusale" formControlName="succusale" mask="99999" placeholder="12345" class="w-full"></p-inputMask>
+                    </div>
+
+                    <div class="field xl:col-2 lg:col-3 col-12 col">
+                        <label for="bankCode" class="font-bold" i18n>Numéro d'institution</label><br>
+                        <p-inputMask id="bankCode" formControlName="bankCode" mask="999" placeholder="123"  class="w-full"></p-inputMask>
+                    </div>
+
+                    <div class="field xl:col-3 lg:col-3 col-12 col">
+                        <label for="accountNumber" class="font-bold" i18n>Numéro de compte</label><br>
+                        <p-inputMask id="accountNumber" formControlName="accountNumber" mask="9999999?999" placeholder="0123456" class="w-full"></p-inputMask>
+                    </div>
+
+                    <div class="xl:col-1 lg:col-1 col">OU</div>
+
+                    <div class="field xl:col-3 lg:col-3 col-12 col">
+                        <label for="iban" class="font-bold" i18n>Iban</label><br>
+                        <input id="iban" type="text" pInputText class="w-full" formControlName="iban">
+                    </div>
+                </div>
+                
+            </p-fieldset>
+        }   
+
+        @case ('DIGITAL_WALLET') {
+            <p-fieldset styleClass="mt-4" legend="Informations - Portefeuil numérique" i18n-legend="Portefeuil numérique">
+                <div class="grid">
+                    <div class="field xl:col-4 lg:col-4 col-12 col">
+                        <label for="digitalWalletEmail" class="font-bold" i18n>Email</label><br>
+                        <input id="digitalWalletEmail" type="text" pInputText class="w-full" formControlName="digitalWalletEmail">
+                    </div>
+                    <div class="field xl:col-3 lg:col-3 col-12 col">
+                        <label for="digitalWalletPhoneNumber" class="font-bold" i18n>Numéro de téléphone</label><br>
+                        <p-inputMask id="digitalWalletPhoneNumber" formControlName="digitalWalletPhoneNumber" mask="{{ appInstanceParams.mobileCode }} 99 99 99 99 99" 
+                            placeholder="{{ appInstanceParams.mobileCode }} 99 99 99 99 99"  class="w-full"/>
+                    </div>
+                    <div class="field xl:col-3 lg:col-3 col-12 col">
+                        <label for="digitalWalletProvider" class="font-bold" i18n>Fournisseur de service</label><br>
+                        <p-dropdown id="digitalWalletProvider" formControlName="digitalWalletProvider" [options]="digitalWalletProviderList" optionLabel="label" optionValue="value" 
+                        placeholder="Choisir un fournisseur" i18n-placeholder="Choisir un fournisseur"/>
+                    </div>
+                </div>
+            </p-fieldset>
+        }
+    }
+    
+
+    <div class="mt-4 flex justify-content-end flex-wrap">
+        <p-button type="button" label="Annuler" i18n-label="Annuler" icon="pi pi-times" styleClass="bg-primary-reverse mr-2" (onClick)="returnToListPage()"></p-button>
+        <p-button type="submit" label="Sauvegarder" i18n-label="Sauvegarder" icon="pi pi-save" styleClass="m-auto"></p-button>
+    </div>
+</form>
