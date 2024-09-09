@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { Auth, getAuth } from '@angular/fire/auth';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -47,7 +47,7 @@ import { CashAccountService } from '../../../../service/cash-account.service';
     styleUrl: './cash-account-update.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CashAccountUpdateComponent {
+export class CashAccountUpdateComponent implements OnInit {
     @Input()
     accountId !: string;
 
@@ -100,13 +100,57 @@ export class CashAccountUpdateComponent {
 
     ngOnInit(): void {
         this.cashAccountService.findById(this.accountId).subscribe((ca) => {
+            console.log(ca);
             this.selectedFinancialAccountType = ca.financialAccountType;
-            this.cashAccountForm.patchValue(ca);            
+            this.fillForm(ca);  
         });
     } 
 
-    initForm(){
-        
+    fillForm(cashAccount : CashAccount) {
+        let ca;
+        switch(this.selectedFinancialAccountType){
+            case 'CARD' : 
+                ca = cashAccount as CardAccount;
+                let card = {
+                    financialAccountType : this.selectedFinancialAccountType,
+                    cardNumber : ca.cardNumber,
+                    expirationDate : ca.expirationDate,
+                    cardProvider : ca.provider
+                };
+                this.cashAccountForm.patchValue(card);
+                break;
+            case 'MOBILE_MONEY' : 
+                ca = cashAccount as MobileMoneyAccount;
+                let mobile = {
+                    financialAccountType : this.selectedFinancialAccountType,
+                    phoneNumber : ca.phoneNumber,
+                    mobileMoneyProvider : ca.mobileMoneyProvider
+                }
+                this.cashAccountForm.patchValue(mobile);
+                break;
+
+            case 'BANK_ACCOUNT' : 
+                ca = cashAccount as BankAccount;
+                let bank = {
+                    financialAccountType : this.selectedFinancialAccountType,
+                    bankCode : ca.bankCode,
+                    accountNumber : ca.accountNumber,
+                    succusale : ca.succusale,
+                    iban : ca.iban
+                }
+                this.cashAccountForm.patchValue(bank);
+                break;
+            case 'DIGITAL_WALLET' :
+                ca = cashAccount as DigitalWalletAccount;
+                let wallet = {
+                    financialAccountType : this.selectedFinancialAccountType,
+                    digitalWalletEmail : ca.email,
+                    digitalWalletPhoneNumber : ca.phoneNumber,
+                    digitalWalletProvider : ca.digitalWalletProvider
+                }
+                this.cashAccountForm.patchValue(wallet);
+                break;
+        }
     }
 
     onIsDefaultChange(event : InputSwitchChangeEvent, defaultAccount : CashAccount){

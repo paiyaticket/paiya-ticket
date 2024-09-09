@@ -146,7 +146,7 @@ export class CashAccountCreateComponent {
                 bankAccount.financialAccountType = this.selectedFinancialAccountType;
                 bankAccount.accountNumber = this.cashAccountForm.value.accountNumber;
                 bankAccount.bankCode = this.cashAccountForm.value.bankCode;
-                bankAccount.succusale = this.cashAccountForm.value.checkNumber;
+                bankAccount.succusale = this.cashAccountForm.value.succusale;
                 bankAccount.iban = this.cashAccountForm.value.iban;
                 bankAccount.bicSwift = this.cashAccountForm.value.bicSwift;
                 bankAccount.isDefault = this.cashAccountForm.value.isDefault;
@@ -174,7 +174,9 @@ export class CashAccountCreateComponent {
     }
 
     returnToListPage(){
-        this.router.navigate(['/settings/cash-accounts']);
+        this.router.navigate(['/settings']).then(() => {
+            this.router.navigateByUrl('/settings/cash-accounts');
+        });
     }
 
     get financialAccountType(){

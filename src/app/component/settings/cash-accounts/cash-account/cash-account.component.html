@@ -1,6 +1,6 @@
 @switch (cashAccount.financialAccountType) {
     @case ("CARD") {
-        <p-card header="{{ financialAccountTypeLabel }}" subheader="{{ cardAccount?.provider  | uppercase }}">
+        <p-card header="{{ financialAccountTypeLabel }}" subheader="{{ cardAccount?.provider  | uppercase }}" styleClass="bg-primary-50" >
             <div class="m-1">
                 @if (cashAccount.isDefault) {
                     <div class="mb-1">
@@ -23,7 +23,7 @@
         </p-card>
     }
     @case ("MOBILE_MONEY") {
-        <p-card header="{{ financialAccountTypeLabel }}" subheader="{{ providerLabel | uppercase }}">
+        <p-card header="{{ financialAccountTypeLabel }}" subheader="{{ providerLabel | uppercase }}" styleClass="bg-primary-50">
             <div class="m-1">
                 @if (cashAccount.isDefault) {
                     <div class="mb-1">
@@ -44,7 +44,7 @@
         </p-card>
     }
     @case ("BANK_ACCOUNT") {
-        <p-card header="{{ financialAccountTypeLabel }}" subheader="{{ providerLabel | uppercase }}">
+        <p-card header="{{ financialAccountTypeLabel }}" subheader="{{ providerLabel | uppercase }}" styleClass="bg-primary-50">
             <div class="m-1">
                 @if (cashAccount.isDefault) {
                     <div class="mb-1">
@@ -72,7 +72,7 @@
         </p-card>
     }
     @case ("DIGITAL_WALLET") {
-        <p-card header="{{ financialAccountTypeLabel }}" subheader="{{ providerLabel | uppercase }}">
+        <p-card header="{{ financialAccountTypeLabel }}" subheader="{{ providerLabel | uppercase }}" styleClass="bg-primary-50">
             <div class="m-1">
                 @if (cashAccount.isDefault) {
                     <div class="mb-1">
