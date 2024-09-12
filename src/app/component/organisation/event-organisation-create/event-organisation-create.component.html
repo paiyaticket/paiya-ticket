@@ -1,0 +1,127 @@
+<section class="grid">
+    <div class="col-12 sm:col-12 md:col-12 lg:col-12 xl:col-12">
+        
+        <form [formGroup]="eventOrganizerForm" (ngSubmit)="onSubmit()">
+            <span class="text-5xl">Création d'un organisateur</span>
+            <p class="text-lg" i18n>
+                Un "organisateur" désigne une entreprise, association ou groupe de personne en charge de l'organisation d'un évènement.
+                C'est l'entité à laquelle peut se reférer un client pour toute information liée a l'évènement. 
+            </p>
+        
+            <p-fieldset legend="Informations de base" i18n-legend="Informations de base" styleClass="mt-4">
+                <div class="formgrid grid">
+                    <div class="field xl:col-6 lg:col-6 col-12">
+                        <label for="name" class="font-bold" i18n>Name</label><br>
+                        <input id="name" type="text" pInputText class="w-full" formControlName="name">
+        
+                        <div *ngIf="name?.invalid && (name?.touched || name?.dirty)">
+                            @if (name?.hasError('required')) {
+                                <small id="name-required-help" [hidden]="name?.pristine || name?.valid" class="p-error" i18n="Le nom est requis.">
+                                    Le nom est requis.
+                                </small>
+                            }
+                        </div>
+                    </div>
+                    
+                    <div class="field xl:col-6 lg:col-6 col-12">
+                        <label for="email" class="font-bold" i18n>Email</label><br>
+                        <input id="email" type="email" pInputText class="w-full" formControlName="email">
+        
+                        <div *ngIf="email?.invalid && (email?.touched || email?.dirty)">
+                            @if (email?.hasError('email')) {
+                                <small id="email-required-help" [hidden]="email?.pristine || email?.valid" class="p-error" i18n="Le nom est requis.">
+                                    Le nom est requis.
+                                </small>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="field xl:col-12 lg:col-12 col-12">
+                        <label for="details" class="font-bold" i18n>Detail</label><br>
+                        <textarea id="details" pInputTextarea class="w-full" formControlName="details" ></textarea>
+
+                        @if (details?.invalid  && (details?.touched || details?.dirty)) {
+                            @if (details?.hasError('maxlength')) {
+                                <small id="details-required-help" class="p-error" i18n="Nombre de caratère maximum atteint">
+                                    Le nombre maximum de caratère ({{ eventOrganizerForm.get('details')?.getError('maxlength').requiredLength}}) est atteint. 
+                                    Nombre actuel de caratère saisi: {{ eventOrganizerForm.get('details')?.getError('maxlength').actualLength}}.
+                                </small>
+                            }
+                        }
+                    </div>
+
+                    <div class="field xl:col-12 lg:col-12 col-12">
+                        <label for="phoneNumbers" class="font-bold" i18n>Numéros de téléphone</label><br>
+                        <p-chips id="phoneNumbers" formControlName="phoneNumbers" max="5" placeholder="+2250707501664"></p-chips>
+                        <div>
+                            <small i18n class="text-600">
+                                Saisir un numero de telephone, puis appuyer sur entrer pour rajouter un autre. Maximum 5 numéro de téléphone
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="field xl:col-12 lg:col-12 col-12">
+                        <label for="staffMembers" class="font-bold" i18n>Membres du staff</label><br>
+                        <p-chips id="staffMembers" formControlName="staffMembers" max="5" placeholder="Saisir des adresses mail."></p-chips>
+                        <div>
+                            <small i18n class="text-600">
+                                Saisir une adresse email puis appuyer sur 'Entrer' pour rajouter une autre à la suite.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </p-fieldset>
+
+            <p-fieldset legend="Réseaux sociaux" i18n-legend="Réseaux sociaux" styleClass="mt-4">
+                <div class="formgrid grid">
+                    <div class="field xl:col-3 lg:col-3 col-12">
+                        <label for="socialMedia" class="font-bold" i18n>Reseau social</label><br>
+                        <p-dropdown id="socialMedia" 
+                            [options]="socialMediaOptions" formControlName="selectedSocialMedia" optionLabel="name" 
+                            placeholder="Choisir un réseau" styleClass="w-full">
+                        </p-dropdown>
+                    </div>
+
+                    <div class="field xl:col-7 lg:col-7 col-12">
+                        <label for="link" class="font-bold" i18n>Lien</label><br>
+                        <input id="link" type="text" pInputText class="w-full" formControlName="selectedSocialMediaLink">
+                    </div>
+
+                    <div class="field xl:col-2 lg:col-2 col-12 align-content-end">
+                        <p-button type="button" label="Ajouter" icon="pi pi-plus" styleClass="w-full bg-blue-400 border-transparent" 
+                        (click)="addSocialMedia()" i18n>
+                        </p-button>
+                    </div>
+                </div>
+
+                <p-table [value]="socialMediaList" [tableStyle]="{ 'min-width': '50rem' }" styleClass="p-datatable-sm">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th class="col-3" i18n>Réseaux Sociaux</th>
+                            <th i18n class="col-8">Liens</th>
+                            <th i18n class="col-1"></th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-social>
+                        <tr>
+                            <td class="col-3"><i class="pi {{social.icon}}"></i> {{ social.name }}</td>
+                            <td class="col-7">{{ social.link }}</td>
+                            <td class="col-2">
+                                <p-button type="button" label="Supprimer" size="small" icon="pi pi-minus" styleClass="bg-blue-200 w-full border-transparent" 
+                                (click)="removeSocialMedia(social)"></p-button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </p-fieldset>
+
+            <div class="mt-4 flex justify-content-end flex-wrap">
+                <p-button type="button" label="Annuler" i18n-label="Annuler" styleClass="bg-primary-reverse mr-2" 
+                            (onClick)="goToOrganizationListPage()"></p-button>
+                <p-button type="submit" label="Sauvegarder" i18n-label="Sauvegarder" styleClass="m-auto" [disabled]="eventOrganizerForm.invalid"></p-button>
+            </div>
+        </form>
+            
+         
+    </div>
+</section>

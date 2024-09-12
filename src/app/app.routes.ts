@@ -10,6 +10,10 @@ import { UserDataComponent } from './component/settings/user-data/user-data.comp
 import { CashAccountListComponent } from './component/settings/cash-accounts/cash-account-list/cash-account-list.component';
 import { CashAccountCreateComponent } from './component/settings/cash-accounts/cash-account-create/cash-account-create.component';
 import { CashAccountUpdateComponent } from './component/settings/cash-accounts/cash-account-update/cash-account-update.component';
+import { EventOrganisationListComponent } from './component/organisation/event-organisation-list/event-organisation-list.component';
+import { OrganisationComponent } from './component/organisation/organisation.component';
+import { EventOrganisationCreateComponent } from './component/organisation/event-organisation-create/event-organisation-create.component';
+import { EventOrganisationComponent } from './component/organisation/event-organisation/event-organisation.component';
 
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['auth/login']);
@@ -30,6 +34,16 @@ export const routes: Routes = [
                     {path: "cash-accounts/create", title: $localize `Comptes d'encaissement - creation`, component: CashAccountCreateComponent, data: { breadcrumb: $localize `Comptes d'encaissement - creation`}, canActivate: [AuthGuard]},
                     {path: "cash-accounts/:accountId", title: $localize `Comptes d'encaissement - consultation et mise à jour`, component: CashAccountUpdateComponent, data: { breadcrumb: $localize `Comptes d'encaissement - consultation et mise à jour`}, canActivate: [AuthGuard]},
                     
+                ]
+            },
+            {path : "organisations",
+                title : $localize `Organisations`, component: OrganisationComponent,
+                data : { breadcrumb: $localize `Organisations`}, canActivate: [AuthGuard],
+                children: [
+                    {path: "", redirectTo: "event-organizer-list", pathMatch: 'full'},
+                    {path: "event-organizer-list", title: $localize `Organisateur d'évènement`, component: EventOrganisationListComponent, data: { breadcrumb: $localize `Organisateur d'évènement`}, canActivate: [AuthGuard]},
+                    {path: "event-organizer-create", title: $localize `Organisateur d'évènement - creation`, component: EventOrganisationCreateComponent, data: { breadcrumb: $localize `Organisateur d'évènement - création`}, canActivate: [AuthGuard]},
+                    {path: "event-organizer/:id", title: $localize `Organisateur d'évènement - consultation et mise à jour`, component: EventOrganisationComponent, data: { breadcrumb: $localize `Organisateur d'évènement - consultation et mise à jour`}, canActivate: [AuthGuard]}
                 ]
             }
         ]
