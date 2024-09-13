@@ -1,7 +1,7 @@
 <section class="grid">
     <div class="col-12 sm:col-12 md:col-12 lg:col-12 xl:col-12">
         
-        <form [formGroup]="eventOrganizerForm" (ngSubmit)="onSubmit()">
+        <form [formGroup]="eventOrganizerForm" (ngSubmit)="submit()">
             <span class="text-5xl">Création d'un organisateur</span>
             <p class="text-lg" i18n>
                 Un "organisateur" désigne une entreprise, association ou groupe de personne en charge de l'organisation d'un évènement.
@@ -117,7 +117,7 @@
 
             <div class="mt-4 flex justify-content-end flex-wrap">
                 <p-button type="button" label="Annuler" i18n-label="Annuler" styleClass="bg-primary-reverse mr-2" 
-                            (onClick)="goToOrganizationListPage()"></p-button>
+                            (onClick)="cancel()"></p-button>
                 <p-button type="submit" label="Sauvegarder" i18n-label="Sauvegarder" styleClass="m-auto" [disabled]="eventOrganizerForm.invalid"></p-button>
             </div>
         </form>

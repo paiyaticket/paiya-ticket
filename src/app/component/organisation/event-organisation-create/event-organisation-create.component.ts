@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, output, Output } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
@@ -14,6 +14,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { SOCIALMEDIA } from '../../../data/socialmedia.data';
 import { SocialMedia, EventOrganizer } from '../../../models/event-organizer';
 import { EventOrganizerService } from '../../../service/event-organizer.service';
+import { Message } from 'primeng/api';
 
 @Component({
     selector: 'app-event-organisation-create',
@@ -36,6 +37,12 @@ import { EventOrganizerService } from '../../../service/event-organizer.service'
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EventOrganisationCreateComponent implements OnInit {
+
+    SUCCESS_MESSAGE : Message = {key: 'global', severity: 'success', summary: $localize `Succès`, detail: $localize `Organisation créee avec succès.`, life: 3000 };
+    
+    onSave = output<Message>();
+
+    onCancel = output<void>();
 
     user : User | undefined;
     
@@ -88,10 +95,12 @@ export class EventOrganisationCreateComponent implements OnInit {
     }
 
     goToOrganizationListPage(message ?: any){
-        this.router.navigate(['/organisations/event-organizer-list'], { relativeTo: this.route , state : {'message' : message}});
+        this.router.navigate(['/organisations']).then(() => {
+            this.router.navigateByUrl('/organisations/event-organizer-list');
+        });
     }
 
-    onSubmit(){
+    submit(){
         this.eventOrganizer.name = this.eventOrganizerForm.value.name;
         this.eventOrganizer.email = this.eventOrganizerForm.value.email;
         this.eventOrganizer.details = this.eventOrganizerForm.value.details;
@@ -99,9 +108,15 @@ export class EventOrganisationCreateComponent implements OnInit {
         this.eventOrganizer.phoneNumbers = this.eventOrganizerForm.value.phoneNumbers;
         this.eventOrganizer.socialMedia = this.socialMediaList;
         this.eventOrganizer.createdBy = this.user?.email;
-        this.organizationService.save(this.eventOrganizer).subscribe((org) => {
-            this.goToOrganizationListPage();
+        this.organizationService.save(this.eventOrganizer).subscribe(() => {
+            this.eventOrganizerForm.reset();
+            this.onSave.emit(this.SUCCESS_MESSAGE);
         });        
+    }
+
+    cancel(){
+        this.eventOrganizerForm.reset();
+        this.onCancel.emit();
     }
 
     get name(){
