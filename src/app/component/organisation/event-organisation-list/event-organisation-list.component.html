@@ -1,15 +1,18 @@
 <section class="mb-6">
     <div class="flex justify-content-end flex-wrap">
 
-        <p-sidebar [(visible)]="createSidebarVisible" styleClass="w-8" position="right">
+        <p-sidebar [(visible)]="createSidebarVisible" styleClass="w-8 my-closeicon" position="right" (onHide)="handleHideSidebar()">
             <app-event-organisation-create (onSave)="closeCreateSidebar($event)" (onCancel)="closeCreateSidebar()"></app-event-organisation-create>
         </p-sidebar>
 
-        <p-sidebar [(visible)]="updateSidebarVisible" styleClass="w-8" position="right">
-            <app-event-organisation></app-event-organisation>
-        </p-sidebar>
+        @if (updateSidebarParam !== undefined) {
+            <p-sidebar [(visible)]="updateSidebarVisible" styleClass="w-8" position="right" (onHide)="handleHideSidebar()">
+                <app-event-organisation [id]="updateSidebarParam" (onSave)="closeUpdateSidebar($event)" (onCancel)="closeUpdateSidebar()"></app-event-organisation>
+            </p-sidebar>
+        }
 
-        <p-button (onClick)="createSidebarVisible = true" i18n>
+
+        <p-button (onClick)="createSidebarVisible = true" styleClass="font-bold" i18n>
             <i class="pi pi-plus mr-2"></i>
             Créer une nouvelle organisation
         </p-button>
@@ -40,12 +43,11 @@
                             {{ org.details }}
                         </div>
                         <div class="flex justify-content-end">
-                            <a [routerLink]="[ '../event-organizer', org.id ]" class="p-button p-button-outlined p-button-sm p-button-info" i18n>Voir détails</a>
+                            <p-button label="Voir détails" (click)="openUpdateSidebar(org)" severity="info" outlined="true" size="small" icon="pi pi-eye" i18n>
+                            </p-button>
 
-                            <a [routerLink]="" (click)="confirm(org)" class="p-button p-button-outlined p-button-sm p-button-danger ml-3" i18n>
-                                <i class="pi pi-trash mr-2"></i>
-                                Supprimer
-                            </a>
+                            <p-button label="Supprimer" (click)="confirm(org)" severity="danger" outlined="true" size="small" icon="pi pi-trash" class="ml-3" i18n>
+                            </p-button>
                         </div>
                     </div>
                 </article>

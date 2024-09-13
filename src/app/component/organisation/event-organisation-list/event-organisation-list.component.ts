@@ -41,6 +41,7 @@ export class EventOrganisationListComponent implements OnInit{
 
     createSidebarVisible : boolean = false;
     updateSidebarVisible : boolean = false;
+    updateSidebarParam : string | undefined;
 
     user : User | null | undefined;
     
@@ -80,12 +81,37 @@ export class EventOrganisationListComponent implements OnInit{
         });
     }
 
+
+    openCreateSidebar(){
+        this.createSidebarVisible = true;
+    }
+
+    openUpdateSidebar(org : EventOrganizer){
+        this.updateSidebarParam = org.id;
+        this.updateSidebarVisible = true;
+    }
+
     closeCreateSidebar(msg ?: Message){
         this.createSidebarVisible = false;
         if(msg){
             this.messageService.add(msg);
             this.refresh();
         }
+    }
+
+    closeUpdateSidebar(msg ?: Message){
+        this.updateSidebarVisible = false;
+        this.updateSidebarParam = undefined;
+        if(msg){
+            this.messageService.add(msg);
+            this.refresh();
+        }
+    }
+
+    handleHideSidebar(){
+        this.createSidebarVisible = false;
+        this.updateSidebarVisible = false;
+        this.updateSidebarParam = undefined;
     }
 
     refresh(){

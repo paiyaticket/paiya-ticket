@@ -117,8 +117,9 @@
 
             <div class="mt-4 flex justify-content-end flex-wrap">
                 <p-button type="button" label="Annuler" i18n-label="Annuler" styleClass="bg-primary-reverse mr-2" 
-                            (onClick)="cancel()"></p-button>
-                <p-button type="submit" label="Sauvegarder" i18n-label="Sauvegarder" styleClass="m-auto" [disabled]="eventOrganizerForm.invalid"></p-button>
+                    (onClick)="cancel()" icon="pi pi-times"></p-button>
+                <p-button type="submit" label="Sauvegarder" i18n-label="Sauvegarder" [disabled]="eventOrganizerForm.invalid" 
+                    styleClass="m-auto" icon="pi pi-save"></p-button>
             </div>
         </form>
             

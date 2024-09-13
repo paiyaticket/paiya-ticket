@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, Input, OnDestroy, OnInit, output } from '@angular/core';
 import { getAuth, User } from '@angular/fire/auth';
 import { FormGroup, FormControl, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
@@ -15,6 +15,7 @@ import { InputMaskModule } from 'primeng/inputmask';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { TableModule } from 'primeng/table';
+import { Message } from 'primeng/api';
 
 @Component({
     selector: 'app-event-organisation',
@@ -39,7 +40,19 @@ import { TableModule } from 'primeng/table';
 export class EventOrganisationComponent implements OnInit, OnDestroy{
 
     @Input()
-    id !: string;
+    id : string | undefined;
+
+    SUCCESS_MESSAGE : Message = {
+        key: 'global', 
+        severity: 'success', 
+        summary: $localize `Succès`, 
+        detail: $localize `Organisation modifiée avec succès.`, 
+        life: 3000 
+    };
+    
+    onSave = output<Message>();
+
+    onCancel = output<void>();
 
     subscription !: Subscription;
 
@@ -59,7 +72,7 @@ export class EventOrganisationComponent implements OnInit, OnDestroy{
         staffMembers : new FormControl<string[] | undefined>([]),
         selectedSocialMedia : new FormControl<SocialMedia | undefined>(undefined),
         selectedSocialMediaLink : new FormControl<string | undefined>('')
-    });;
+    });
 
     private route = inject(ActivatedRoute); 
     private router = inject(Router);
@@ -69,11 +82,12 @@ export class EventOrganisationComponent implements OnInit, OnDestroy{
         const auth = getAuth();
         this.user = auth.currentUser;
 
-        this.subscription = this.eventOrganizerService.findById(this.id).subscribe((org: EventOrganizer) => {
-            this.eventOrganizer = org;
-            this.eventOrganizerForm.patchValue(org);
-            this.socialMediaList = org.socialMedia;
-        });
+        if(this.id)
+            this.subscription = this.eventOrganizerService.findById(this.id).subscribe((org: EventOrganizer) => {
+                this.eventOrganizer = org;
+                this.eventOrganizerForm.patchValue(org);
+                this.socialMediaList = org.socialMedia;
+            });
     }
 
     ngOnDestroy(): void {
@@ -102,7 +116,7 @@ export class EventOrganisationComponent implements OnInit, OnDestroy{
         this.router.navigateByUrl('/organisations/event-organizer-list');
     }
 
-    onSubmit(){
+    submit(){
         this.eventOrganizer.name = this.eventOrganizerForm.value.name;
         this.eventOrganizer.email = this.eventOrganizerForm.value.email;
         this.eventOrganizer.details = this.eventOrganizerForm.value.details;
@@ -111,8 +125,14 @@ export class EventOrganisationComponent implements OnInit, OnDestroy{
         this.eventOrganizer.socialMedia = this.socialMediaList;
         this.eventOrganizer.createdBy = this.user?.email;
         this.eventOrganizerService.update(this.eventOrganizer).subscribe((org) => {
-            this.goToOrganizationListPage();
+            this.eventOrganizerForm.reset();
+            this.onSave.emit(this.SUCCESS_MESSAGE);
         });        
+    }
+
+    cancel(){
+        this.eventOrganizerForm.reset();
+        this.onCancel.emit();
     }
 
     get name(){
