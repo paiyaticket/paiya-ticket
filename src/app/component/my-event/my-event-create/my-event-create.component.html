@@ -1,0 +1,35 @@
+<section class="grid">
+    <div class="col-12 sm:col-12 md:col-12 lg:col-3 xl:col-3">
+        <span class="text-4xl">Création d'un évènement</span>
+        <p class="text-sm text-500" i18n>
+            L'évènement est au coeur de votre activité. Ça peut être un concert, un salon, un festival, une simple réunion. 
+            Ça peut être un rassemblement physique ou virtuel! Pour vue que des gens se rassemble, au une date précise ou une cause commune.
+            Donnez le plus de détail possible.
+        </p>
+    </div>
+    <div class="col-12 sm:col-12 md:col-12 lg:col-9 xl:col-9">
+        <form>
+            <p-fieldset legend="Images et vidéos" i18n-legend="Images et vidéos" styleClass="mt-4">
+
+            </p-fieldset>
+
+            <p-fieldset legend="Vue d'ensemble" i18n-legend="Vue d'ensemble" styleClass="mt-4">
+
+            </p-fieldset>
+
+            <p-fieldset legend="Date et lieu" i18n-legend="Vue d'ensemble" styleClass="mt-4">
+
+            </p-fieldset>
+
+            <p-fieldset legend="Bon à savoir" i18n-legend="Bon à savoir" styleClass="mt-4">
+
+            </p-fieldset>
+
+            <div class="mt-4 flex justify-content-end flex-wrap">
+                <p-button type="button" label="Annuler" i18n-label="Annuler" styleClass="bg-primary-reverse mr-2" 
+                            (onClick)="goToEventListPage()"></p-button>
+                <p-button type="submit" label="Sauvegarder et continuer" i18n-label="Sauvegarder et continuer" styleClass="m-auto"></p-button>
+            </div>
+        </form>
+    </div>
+</section>

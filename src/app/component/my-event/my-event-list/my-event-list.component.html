@@ -1,106 +1,101 @@
-<div class="grid">
-    <div class="col-12">
-        <div class="card pr-6 pl-6">
-            <h2 class="uppercase font-heavy">Vos évènements</h2>
-            
-            <section class="mb-6">
-                <div class="flex justify-content-end flex-wrap">
+<h2 class="uppercase font-heavy">Liste de vos évènements</h2>
 
-                    <p-sidebar [(visible)]="createSidebarVisible" styleClass="w-8 my-closeicon" position="right" (onHide)="handleHideSidebar()">
-                        Create 
-                        <!-- <app-event-organisation-create (onSave)="closeCreateSidebar($event)" (onCancel)="closeCreateSidebar()"></app-event-organisation-create> -->
-                    </p-sidebar>
-            
-                    @if (updateSidebarParam !== undefined) {
-                        <p-sidebar [(visible)]="updateSidebarVisible" styleClass="w-8" position="right" (onHide)="handleHideSidebar()">
-                            Update
-                            <!-- <app-event-organisation [id]="updateSidebarParam" (onSave)="closeUpdateSidebar($event)" (onCancel)="closeUpdateSidebar()"></app-event-organisation> -->
-                        </p-sidebar>
-                    }
+<section class="mb-6">
+    <div class="flex justify-content-end flex-wrap">
 
-                    <p-button (onClick)="createSidebarVisible = true" styleClass="font-bold" i18n>
-                        <i class="pi pi-plus mr-2"></i>
-                        Créer un nouvel évènement
-                    </p-button>
-                </div>
-            </section>
-            
-            <section class="grid">
-                @if (eventList$ | async; as eventList) {
-                    @if (eventList.length != 0) {
-                        <p-dataView #dv [value]="eventList" [layout]="'grid'" [rows]="4" [paginator]="true" class="w-full">
-                            <ng-template pTemplate="grid" let-eventList>
-                                <div class="grid grid-nogutter">
-                                    @for (event of eventList; track $index) {
-                                        <div class="col-12 sm:col-6 md:col-4 xl:col-3 p-2">
-                                            <div class="p-4 border-1 surface-border surface-card border-round flex flex-column">
-                                                <div class="surface-50 flex justify-content-center border-round p-3">
-                                                    <div class="relative mx-auto">
-                                                        <img class="border-round w-full" [src]="event.imageCover" [alt]="event.title" style="max-height: 200px;"/>
-                                                    </div>
-                                                </div>
-                                                <div class="pt-4">
-                                                    <div class="flex flex-row justify-content-between align-items-start gap-2">
-                                                        <div>
-                                                            <span class="font-medium text-secondary text-sm">{{ event.eventType }}</span>
-                                                            <div class="text-3xl font-bold mt-1">{{ event.title }}</div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="flex flex-wrap justify-content-between mt-3">
-                                                        <p-button label="Modifier" icon="pi pi-fw pi-pencil" size="small" styleClass="bg-primary-400 border-primary-400"></p-button>
-                                                        <p-button label="Publier"  (onClick)="confirmPublish(event)" icon="pi pi-fw pi-megaphone" size="small" severity="secondary" outlined="true"></p-button>
-                                                        <p-button label="Supprimer" (onClick)="confirmDelete(event)" icon="pi pi-fw pi-trash" size="small" severity="secondary" outlined="true"></p-button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            
-                                        </div>
-                                    }
-                                </div>
-                            </ng-template>
-                        </p-dataView>
-                    }
-                    @else {
-                        <div class= "surface-200 col-12 border-round-md border-dashed ">
-                            <p class="text-gray-500 font-semibold text-center" i18n>
-                                Vous n'avez créee aucun évènement pour l'instant.
-                            </p>
-                        </div> 
-                    }
-                }
-            
-                <p-confirmDialog #cd>
-                    <ng-template pTemplate="headless" let-message>
-                        <div class="flex flex-column align-items-center p-5 surface-overlay border-round">
-                            <div class="border-circle bg-primary inline-flex justify-content-center align-items-center h-6rem w-6rem">
-                                <i class="pi {{message.icon}} text-5xl"></i>
-                            </div>
-                            <span class="font-bold text-2xl block mb-2 mt-4">
-                                {{ message.header }}
-                            </span>
-                            <p class="mb-0">{{ message.message }}</p>
-                            <div class="flex align-items-center gap-2 mt-4">
-                                <button 
-                                    pButton 
-                                    label="Oui" 
-                                    (click)="cd.accept()" 
-                                    class="w-8rem">
-                                </button>
-                                <button 
-                                    pButton 
-                                    label="Non"
-                                    (click)="cd.reject()" 
-                                    class="p-button-outlined w-8rem ">
-                                </button>
-                            </div>
-                        </div>
-                    </ng-template>
-                </p-confirmDialog>
-                 
-            </section>
-        </div>
+        <p-sidebar [(visible)]="createSidebarVisible" styleClass="w-8 my-closeicon" position="right" (onHide)="handleHideSidebar()">
+            Create 
+            <!-- <app-event-organisation-create (onSave)="closeCreateSidebar($event)" (onCancel)="closeCreateSidebar()"></app-event-organisation-create> -->
+        </p-sidebar>
+
+        @if (updateSidebarParam !== undefined) {
+            <p-sidebar [(visible)]="updateSidebarVisible" styleClass="w-8" position="right" (onHide)="handleHideSidebar()">
+                Update
+                <!-- <app-event-organisation [id]="updateSidebarParam" (onSave)="closeUpdateSidebar($event)" (onCancel)="closeUpdateSidebar()"></app-event-organisation> -->
+            </p-sidebar>
+        }
+
+        <p-button (onClick)="goToCreationPage()" styleClass="font-bold" i18n>
+            <i class="pi pi-plus mr-2"></i>
+            Créer un nouvel évènement
+        </p-button>
     </div>
-</div>
+</section>
+
+<section class="grid">
+    @if (eventList$ | async; as eventList) {
+        @if (eventList.length != 0) {
+            <p-dataView #dv [value]="eventList" [layout]="'grid'" [rows]="4" [paginator]="true" class="w-full">
+                <ng-template pTemplate="grid" let-eventList>
+                    <div class="grid grid-nogutter">
+                        @for (event of eventList; track $index) {
+                            <div class="col-12 sm:col-6 md:col-4 xl:col-3 p-2">
+                                <div class="p-4 border-1 surface-border surface-card border-round flex flex-column">
+                                    <div class="surface-50 flex justify-content-center border-round p-3">
+                                        <div class="relative mx-auto">
+                                            <img class="border-round w-full" [src]="event.imageCover" [alt]="event.title" style="max-height: 200px;"/>
+                                        </div>
+                                    </div>
+                                    <div class="pt-4">
+                                        <div class="flex flex-row justify-content-between align-items-start gap-2">
+                                            <div>
+                                                <span class="font-medium text-secondary text-sm">{{ event.eventType }}</span>
+                                                <div class="text-3xl font-bold mt-1">{{ event.title }}</div>
+                                            </div>
+                                        </div>
+                                        <div class="flex flex-wrap justify-content-between mt-3">
+                                            <p-button label="Modifier" icon="pi pi-fw pi-pencil" size="small" styleClass="bg-primary-400 border-primary-400"></p-button>
+                                            <p-button label="Publier"  (onClick)="confirmPublish(event)" icon="pi pi-fw pi-megaphone" size="small" severity="secondary" outlined="true"></p-button>
+                                            <p-button label="Supprimer" (onClick)="confirmDelete(event)" icon="pi pi-fw pi-trash" size="small" severity="secondary" outlined="true"></p-button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        }
+                    </div>
+                </ng-template>
+            </p-dataView>
+        }
+        @else {
+            <div class= "surface-200 col-12 border-round-md border-dashed ">
+                <p class="text-gray-500 font-semibold text-center" i18n>
+                    Vous n'avez créee aucun évènement pour l'instant.
+                </p>
+            </div> 
+        }
+    }
+
+    <p-confirmDialog #cd>
+        <ng-template pTemplate="headless" let-message>
+            <div class="flex flex-column align-items-center p-5 surface-overlay border-round">
+                <div class="border-circle bg-primary inline-flex justify-content-center align-items-center h-6rem w-6rem">
+                    <i class="pi {{message.icon}} text-5xl"></i>
+                </div>
+                <span class="font-bold text-2xl block mb-2 mt-4">
+                    {{ message.header }}
+                </span>
+                <p class="mb-0">{{ message.message }}</p>
+                <div class="flex align-items-center gap-2 mt-4">
+                    <button 
+                        pButton 
+                        label="Oui" 
+                        (click)="cd.accept()" 
+                        class="w-8rem">
+                    </button>
+                    <button 
+                        pButton 
+                        label="Non"
+                        (click)="cd.reject()" 
+                        class="p-button-outlined w-8rem ">
+                    </button>
+                </div>
+            </div>
+        </ng-template>
+    </p-confirmDialog>
+        
+</section>
+
 
 
 

@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { Component, ChangeDetectionStrategy, OnInit } from "@angular/core";
 import { Auth, getAuth, User } from "@angular/fire/auth";
-import { RouterLink } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 import { ConfirmationService, Message, MessageService } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -52,7 +52,8 @@ export class MyEventListComponent implements OnInit {
     constructor(
         private eventService : EventService,
         private confirmationService: ConfirmationService,
-        private messageService : MessageService
+        private messageService : MessageService,
+        private router : Router
     ) { }
 
     ngOnInit() {
@@ -119,6 +120,10 @@ export class MyEventListComponent implements OnInit {
             },
             reject: () => {}
         });
+    }
+
+    goToCreationPage(){
+        this.router.navigate(['/my-events/create']);
     }
 
     confirmPublish(event : Event) {
