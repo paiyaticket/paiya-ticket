@@ -14,6 +14,8 @@ import { EventOrganisationListComponent } from './component/organisation/event-o
 import { OrganisationComponent } from './component/organisation/organisation.component';
 import { EventOrganisationCreateComponent } from './component/organisation/event-organisation-create/event-organisation-create.component';
 import { EventOrganisationComponent } from './component/organisation/event-organisation/event-organisation.component';
+import { MyEventComponent } from './component/my-event/my-event.component';
+import { MyEventListComponent } from './component/my-event/my-event-list/my-event-list.component';
 
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['auth/login']);
@@ -42,10 +44,10 @@ export const routes: Routes = [
                 children: [
                     {path: "", redirectTo: "event-organizer-list", pathMatch: 'full'},
                     {path: "event-organizer-list", title: $localize `Organisateur d'évènement`, component: EventOrganisationListComponent, data: { breadcrumb: $localize `Organisateur d'évènement`}, canActivate: [AuthGuard]},
-                    {path: "event-organizer-create", title: $localize `Organisateur d'évènement - creation`, component: EventOrganisationCreateComponent, data: { breadcrumb: $localize `Organisateur d'évènement - création`}, canActivate: [AuthGuard]},
-                    {path: "event-organizer/:id", title: $localize `Organisateur d'évènement - consultation et mise à jour`, component: EventOrganisationComponent, data: { breadcrumb: $localize `Organisateur d'évènement - consultation et mise à jour`}, canActivate: [AuthGuard]}
                 ]
-            }
+            },
+            {path : "my-events", title: $localize `Vos évènements`, component: MyEventListComponent, data: { breadcrumb: $localize `Liste de vos évènements`}, canActivate: [AuthGuard]},
+            // {path: "create", title: $localize `Création d'un évènement`, component: OwnedEventManagementComponent, data: { breadcrumb: $localize `Création d'un évènement`}, canActivate: [AuthGuard]}
         ]
     },
     {path: 'auth/login', component: LoginComponent, title: 'Login'},

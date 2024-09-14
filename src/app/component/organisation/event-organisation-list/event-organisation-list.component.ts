@@ -67,21 +67,6 @@ export class EventOrganisationListComponent implements OnInit{
         this.eventOrganizerList$ = this.eventOrganizerService.listByUserEmail(email);
     }
 
-    confirm(org : EventOrganizer) {
-        this.confirmationService.confirm({
-            header: $localize `Etes-vous sur(e)?`,
-            message: $localize `Je confirme que je veux suprimer "${org.name}".`,
-            accept: () => {
-                if(org.id)
-                    this.eventOrganizerService.delete(org.id).subscribe();
-
-                this.reload();
-            },
-            reject: () => {}
-        });
-    }
-
-
     openCreateSidebar(){
         this.createSidebarVisible = true;
     }
@@ -125,5 +110,19 @@ export class EventOrganisationListComponent implements OnInit{
 
     showCreateForm(){
         return 'createSidebarVisible = true';
+    }
+
+    confirm(org : EventOrganizer) {
+        this.confirmationService.confirm({
+            header: $localize `Etes-vous sur(e)?`,
+            message: $localize `Je confirme que je veux suprimer "${org.name}".`,
+            accept: () => {
+                if(org.id)
+                    this.eventOrganizerService.delete(org.id).subscribe();
+
+                this.reload();
+            },
+            reject: () => {}
+        });
     }
 }
