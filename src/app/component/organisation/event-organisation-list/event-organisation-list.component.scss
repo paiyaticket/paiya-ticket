@@ -1,0 +1,12 @@
+.details-resume{
+    line-clamp: 3;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    display: -webkit-box;
+    overflow: hidden; 
+}
+
+.my-closeicon .p-sidebar-close{
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+}

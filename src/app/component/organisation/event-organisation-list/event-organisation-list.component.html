@@ -1,0 +1,90 @@
+<section class="mb-6">
+    <div class="flex justify-content-end flex-wrap">
+
+        <p-sidebar [(visible)]="createSidebarVisible" styleClass="w-8 my-closeicon" position="right" (onHide)="handleHideSidebar()">
+            <app-event-organisation-create (onSave)="closeCreateSidebar($event)" (onCancel)="closeCreateSidebar()"></app-event-organisation-create>
+        </p-sidebar>
+
+        @if (updateSidebarParam !== undefined) {
+            <p-sidebar [(visible)]="updateSidebarVisible" styleClass="w-8" position="right" (onHide)="handleHideSidebar()">
+                <app-event-organisation [id]="updateSidebarParam" (onSave)="closeUpdateSidebar($event)" (onCancel)="closeUpdateSidebar()"></app-event-organisation>
+            </p-sidebar>
+        }
+
+
+        <p-button (onClick)="createSidebarVisible = true" styleClass="font-bold" i18n>
+            <i class="pi pi-plus mr-2"></i>
+            Créer une nouvelle organisation
+        </p-button>
+        
+    </div>
+</section>
+
+<section class="grid">
+    @if (eventOrganizerList$ | async; as eventOrganizerList) {
+        @if (eventOrganizerList.length != 0) {
+            @for(org of eventOrganizerList; track org.id){
+                <article class="sm:col-12 md:col-6 lg:col-4 xl:col-3">
+                    <div class="border-top-3 border-blue-400 p-2">
+                        <div class="text-2xl font-bold">{{ org.name }}</div> 
+                        <div class="text-500 text-base"> {{ org.email }}</div>
+                        <div>
+                            @for(phone of org.phoneNumbers; track $index){
+                                <p-chip label="{{phone}}" icon="pi pi-phone" styleClass="mr-2 mt-2 text-xs"/>
+                            }
+                        </div> 
+                        <div class="details-resume mb-2">
+                            {{ org.details }}
+                        </div>
+                        <div class="flex justify-content-end">
+                            <p-button label="Voir détails" (click)="openUpdateSidebar(org)" severity="info" outlined="true" size="small" icon="pi pi-eye" i18n>
+                            </p-button>
+
+                            <p-button label="Supprimer" (click)="confirm(org)" severity="danger" outlined="true" size="small" icon="pi pi-trash" class="ml-3" i18n>
+                            </p-button>
+                        </div>
+                    </div>
+                </article>
+            }
+        }
+        @else {
+            <div class= "surface-200 col-12 border-round-md border-dashed ">
+                <p class="text-gray-500 font-semibold text-center" i18n>
+                    Vous n'avez aucun profile d'organisation pour l'instant.
+                </p>
+            </div> 
+        }
+    } 
+
+
+    <p-confirmDialog #cd>
+        <ng-template pTemplate="headless" let-message>
+            <div class="flex flex-column align-items-center p-5 surface-overlay border-round">
+                <div class="border-circle bg-primary inline-flex justify-content-center align-items-center h-6rem w-6rem">
+                    <i class="pi pi-question text-5xl"></i>
+                </div>
+                <span class="font-bold text-2xl block mb-2 mt-4">
+                    {{ message.header }}
+                </span>
+                <p class="mb-0">{{ message.message }}</p>
+                <div class="flex align-items-center gap-2 mt-4">
+                    <button 
+                        pButton 
+                        label="Oui" 
+                        (click)="cd.accept()" 
+                        class="w-8rem">
+                    </button>
+                    <button 
+                        pButton 
+                        label="Non"
+                        (click)="cd.reject()" 
+                        class="p-button-outlined w-8rem ">
+                    </button>
+                </div>
+            </div>
+        </ng-template>
+    </p-confirmDialog>
+     
+</section>
+
+
