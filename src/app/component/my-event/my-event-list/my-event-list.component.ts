@@ -2,7 +2,7 @@ import { CommonModule } from "@angular/common";
 import { Component, ChangeDetectionStrategy, OnInit } from "@angular/core";
 import { Auth, getAuth, User } from "@angular/fire/auth";
 import { Router, RouterLink } from "@angular/router";
-import { ConfirmationService, Message, MessageService } from "primeng/api";
+import { ConfirmationService, MenuItem, Message, MessageService } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ChipModule } from "primeng/chip";
@@ -15,6 +15,7 @@ import { DataViewModule } from 'primeng/dataview';
 import { SplitButtonModule } from 'primeng/splitbutton';
 import { Event } from "../../../models/Event";
 import { SidebarModule } from "primeng/sidebar";
+import { MyEventItemComponent } from "../my-event-item/my-event-item.component";
 
 
 @Component({
@@ -32,6 +33,7 @@ import { SidebarModule } from "primeng/sidebar";
         DataViewModule,
         SplitButtonModule,
         SidebarModule,
+        MyEventItemComponent
     ],
     templateUrl: './my-event-list.component.html',
     styleUrl: './my-event-list.component.scss',
@@ -61,6 +63,7 @@ export class MyEventListComponent implements OnInit {
         this.owner = this.auth.currentUser; 
         if(this.owner && this.owner.email)
             this.initEventList(this.owner.email);
+        
     }
 
     initEventList(email : string){
@@ -108,37 +111,11 @@ export class MyEventListComponent implements OnInit {
         window.location.reload();
     }
 
-    confirmDelete(event : Event) {
-        this.confirmationService.confirm({
-            header: $localize `Etes-vous sur(e)?`,
-            message: $localize `Je confirme que je veux suprimer "${event.title}"`,
-            icon: "pi-trash",
-            accept: () => {
-                if(event.id){
-                    // deletion logic
-                }
-            },
-            reject: () => {}
-        });
-    }
 
     goToCreationPage(){
         this.router.navigate(['/my-events/create']);
     }
 
-    confirmPublish(event : Event) {
-        this.confirmationService.confirm({
-            header: $localize `Etes-vous prêt(e)?`,
-            message: $localize `Je confirme que je veux publier cet evènement "${event.title}"`,
-            icon: "pi-megaphone",
-            accept: () => {
-                if(event.id){
-                    // publish logic
-                }
-            },
-            reject: () => {}
-        });
-    }
 
     modifier(event : Event){
 

@@ -23,6 +23,10 @@
     }
 </section>
 
+<!--
+This ConfirmDialog is used by all the <app-cash-account> components. 
+Therefor, the confirm method implementation is owned by CashAccountComponent, not by CashAccountListComponent.
+-->
 <p-confirmDialog #cd>
     <ng-template pTemplate="headless" let-message>
         <div class="flex flex-column align-items-center p-5 surface-overlay border-round">

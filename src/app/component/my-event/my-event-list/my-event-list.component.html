@@ -28,30 +28,8 @@
             <p-dataView #dv [value]="eventList" [layout]="'grid'" [rows]="4" [paginator]="true" class="w-full">
                 <ng-template pTemplate="grid" let-eventList>
                     <div class="grid grid-nogutter">
-                        @for (event of eventList; track $index) {
-                            <div class="col-12 sm:col-6 md:col-4 xl:col-3 p-2">
-                                <div class="p-4 border-1 surface-border surface-card border-round flex flex-column">
-                                    <div class="surface-50 flex justify-content-center border-round p-3">
-                                        <div class="relative mx-auto">
-                                            <img class="border-round w-full" [src]="event.imageCover" [alt]="event.title" style="max-height: 200px;"/>
-                                        </div>
-                                    </div>
-                                    <div class="pt-4">
-                                        <div class="flex flex-row justify-content-between align-items-start gap-2">
-                                            <div>
-                                                <span class="font-medium text-secondary text-sm">{{ event.eventType }}</span>
-                                                <div class="text-3xl font-bold mt-1">{{ event.title }}</div>
-                                            </div>
-                                        </div>
-                                        <div class="flex flex-wrap justify-content-between mt-3">
-                                            <p-button label="Modifier" icon="pi pi-fw pi-pencil" size="small" styleClass="bg-primary-400 border-primary-400"></p-button>
-                                            <p-button label="Publier"  (onClick)="confirmPublish(event)" icon="pi pi-fw pi-megaphone" size="small" severity="secondary" outlined="true"></p-button>
-                                            <p-button label="Supprimer" (onClick)="confirmDelete(event)" icon="pi pi-fw pi-trash" size="small" severity="secondary" outlined="true"></p-button>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                            </div>
+                        @for (eventItem of eventList; track $index) {
+                            <app-my-event-item [event]="eventItem" class="col-12 sm:col-6 md:col-4 xl:col-3 p-2"></app-my-event-item>
                         }
                     </div>
                 </ng-template>
