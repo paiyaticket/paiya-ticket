@@ -65,7 +65,9 @@
                             [options]="eventTypeOptions" 
                             formControlName="eventType" 
                             optionValue="value" 
-                            optionLabel="label">
+                            optionLabel="label"
+                            (onChange)="onEventTypeChange($event)"
+                            styleClass="w-full">
                                 <ng-template let-item pTemplate>
                                     <div>
                                         <div class="font-bold text-2xl" i18n>{{ item.label }}</div> 
@@ -75,22 +77,54 @@
                                 </ng-template>
                         </p-selectButton>
                     </div>
-                    
-                    <div class="field xl:col-6 lg:col-6 col-12 mt-2">
-                        <label for="title" class="font-bold" i18n>Date et heure</label>
 
-                        <p-calendar formControlName="startingDateTime" dateFormat="dd-mm-yy" [showTime]="true" hourFormat="24" 
-                            class="w-full" styleClass="w-full"/>
-            
-                        <div *ngIf="title?.invalid && (title?.touched || title?.dirty)">
-                            @if (title?.hasError('required')) {
-                                <small id="title-required-help" [hidden]="title?.pristine || title?.valid" class="p-error" i18n="Un titre est requis.">
-                                    Une date et une heure sont requis.
-                                </small>
-                            }
+                    @if (selectedEventType?.valueOf() === 'Sigle Event') {
+                        <div class="field xl:col-4 lg:col-4 col-12 mt-2">
+                            <label for="date" class="font-bold" i18n>Date</label>
+    
+                            <p-calendar id="date" formControlName="date" dateFormat="dd-mm-yy" class="w-full" styleClass="w-full"/>
+                
+                            <div *ngIf="title?.invalid && (title?.touched || title?.dirty)">
+                                @if (title?.hasError('required')) {
+                                    <small id="date-required-help" [hidden]="title?.pristine || title?.valid" class="p-error" i18n="Une date est requise.">
+                                        Une date est requise.
+                                    </small>
+                                }
+                            </div>
                         </div>
-                    </div>
-                    
+    
+                        <div class="field xl:col-4 lg:col-4 col-12 mt-2">
+                            <label for="startTime" class="font-bold" i18n>Heure de début</label>
+    
+                            <p-calendar id="startTime" formControlName="startTime" timeOnly="true" dateFormat="HH:mm" class="w-full" styleClass="w-full"/>
+                
+                            <div *ngIf="title?.invalid && (title?.touched || title?.dirty)">
+                                @if (title?.hasError('required')) {
+                                    <small id="startTime-required-help" [hidden]="title?.pristine || title?.valid" class="p-error" i18n="Une heure est requise.">
+                                        Une heure est requise.
+                                    </small>
+                                }
+                            </div>
+                        </div>
+    
+                        <div class="field xl:col-4 lg:col-4 col-12 mt-2">
+                            <label for="endTime" class="font-bold" i18n>Heure de fin</label>
+    
+                            <p-calendar id="endTime" formControlName="endTime" timeOnly="true" dateFormat="HH:mm" class="w-full" styleClass="w-full"/>
+                
+                            <div *ngIf="title?.invalid && (title?.touched || title?.dirty)">
+                                @if (title?.hasError('required')) {
+                                    <small id="endTime-required-help" [hidden]="title?.pristine || title?.valid" class="p-error" i18n="Une heure est requise.">
+                                        Une heure est requise.
+                                    </small>
+                                }
+                            </div>
+                        </div>
+                    } @else {
+                        <div class="field xl:col-12 lg:col-12 col-12">
+                            <p-messages [(value)]="messages" [enableService]="false" [closable]="false" />
+                        </div>
+                    }
                 </div>
                 
             </p-fieldset>

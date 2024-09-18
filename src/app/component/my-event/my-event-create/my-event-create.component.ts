@@ -16,6 +16,8 @@ import { CashAccount } from '../../../models/cash-account';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { EventType } from '../../../enumerations/event-type';
 import { CalendarModule } from 'primeng/calendar';
+import { MessagesModule } from 'primeng/messages';
+import { Message } from 'primeng/api/message';
 
 @Component({
     selector: 'app-my-event-create',
@@ -31,7 +33,8 @@ import { CalendarModule } from 'primeng/calendar';
         ButtonModule, 
         DropdownModule,
         SelectButtonModule,
-        CalendarModule
+        CalendarModule,
+        MessagesModule
     ],
     templateUrl: './my-event-create.component.html',
     styleUrl: './my-event-create.component.scss',
@@ -46,10 +49,16 @@ export class MyEventCreateComponent implements OnInit {
         {'label' : $localize `Evènement recurrent`, 'value' : EventType.RECURRING_EVENT, 'description' : $localize `Événement qui se deroule plusieurs fois`}
     ];
 
+    selectedEventType : EventType | undefined = EventType.SINGLE_EVENT;
+    messages!: Message[];
+    multipleEventsMessage : string = $localize `Vous définirez les dates dans la prochaine étape`;
+
 
     constructor(private router : Router){}
 
     ngOnInit(): void {
+
+        this.messages = [{ severity: 'info', detail: this.multipleEventsMessage }];
 
         this.eventForm = new FormGroup({
             title : new FormControl<string | undefined>('', [Validators.required]),
@@ -62,14 +71,20 @@ export class MyEventCreateComponent implements OnInit {
             publicationDate : new FormControl<string | undefined>(undefined),
             visibility : new FormControl<boolean>(false),
             eventPageLanguage : new FormControl<string | undefined>(undefined),
-            startingDateTime : new FormControl<string | undefined>(undefined, [Validators.required]),
-            // endingDateTime : new FormControl<string | undefined>(undefined),
+            date : new FormControl<string | undefined>(undefined, [Validators.required]),
+            startTime : new FormControl<string | undefined>(undefined, [Validators.required]),
+            endTime : new FormControl<string | undefined>(undefined, [Validators.required]),
             timeZone : new FormControl<string | undefined>(undefined),
             physicalAddress : new FormControl<PhysicalAddress | undefined>(undefined),
             onlineAdresse : new FormControl<OnlineAddress | undefined>(undefined),
             eventOrganizer : new FormControl<EventOrganizer | undefined>(undefined),
             cashAccounts : new FormControl<CashAccount[] | undefined>([]),
         })
+    }
+
+    onEventTypeChange(event: any){
+        this.selectedEventType = event.value;
+        console.log(this.selectedEventType);
     }
 
     submit(){
