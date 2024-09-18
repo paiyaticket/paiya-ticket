@@ -1,34 +1,109 @@
 <section class="grid">
     <div class="col-12 sm:col-12 md:col-12 lg:col-3 xl:col-3">
-        <span class="text-4xl">Création d'un évènement</span>
-        <p class="text-sm text-500" i18n>
+        <span class="text-4xl text-blue-500 font-bold">Création d'un évènement</span>
+        <p class="text-800" i18n>
             L'évènement est au coeur de votre activité. Ça peut être un concert, un salon, un festival, une simple réunion. 
             Ça peut être un rassemblement physique ou virtuel! Pour vue que des gens se rassemble, au une date précise ou une cause commune.
             Donnez le plus de détail possible.
         </p>
     </div>
     <div class="col-12 sm:col-12 md:col-12 lg:col-9 xl:col-9">
-        <form>
-            <p-fieldset legend="Images et vidéos" i18n-legend="Images et vidéos" styleClass="mt-4">
+        <form [formGroup]="eventForm" (ngSubmit)="submit()">
+            <p-fieldset legend="Images et vidéos" i18n-legend="Images et vidéos" styleClass="mt-4 hover:border-blue-400 border-3">
 
             </p-fieldset>
 
-            <p-fieldset legend="Vue d'ensemble" i18n-legend="Vue d'ensemble" styleClass="mt-4">
+            <p-fieldset legend="Vue d'ensemble" i18n-legend="Vue d'ensemble" styleClass="mt-4 hover:border-blue-400 border-3" class="">
+                <div class="formgrid grid">
+                    <div class="field xl:col-12 lg:col-12 col-12">
+                        <label for="title" class="font-bold" i18n>Titre</label>
+                        <p class="text-800" i18n>
+                            Soyez clair et descriptif avec un titre qui indique aux gens en quoi consiste votre événement.
+                        </p>
 
+                        <input id="title" type="text" pInputText class="w-full" formControlName="title">
+            
+                        <div *ngIf="title?.invalid && (title?.touched || title?.dirty)">
+                            @if (title?.hasError('required')) {
+                                <small id="title-required-help" [hidden]="title?.pristine || title?.valid" class="p-error" i18n="Un titre est requis.">
+                                    Un titre est requis.
+                                </small>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="field xl:col-12 lg:col-12 col-12 mt-4">
+                        <label for="summary" class="font-bold" i18n>Resumé</label>
+                        <p class="text-800" i18n>
+                            Attirez l'attention des gens avec une brève description de votre événement. 
+                            Les participants le verront en haut de la page de votre événement. (150 caractères maximum)
+                        </p>
+
+                        <textarea id="summary" pInputTextarea class="w-full" formControlName="summary" autoResize="true"></textarea>
+            
+                        @if (summary?.invalid && (summary?.touched || title?.dirty)) {
+                            <div>
+                                @if (summary?.invalid  && (summary?.touched || summary?.dirty)) {
+                                    @if (summary?.hasError('maxlength')) {
+                                        <small id="summary-required-help" class="p-error" i18n="Nombre maximum de caratère atteint.">
+                                            Le nombre maximum de caratère ({{ eventForm.get('summary')?.getError('maxlength').requiredLength}}) est atteint. 
+                                            Nombre actuel de caratère saisi: {{ eventForm.get('summary')?.getError('maxlength').actualLength}}.
+                                        </small>
+                                    }
+                                }
+                            </div>
+                        }
+                    </div>
+
+                </div>
             </p-fieldset>
 
-            <p-fieldset legend="Date et lieu" i18n-legend="Vue d'ensemble" styleClass="mt-4">
+            <p-fieldset legend="Date et lieu" i18n-legend="Vue d'ensemble" styleClass="mt-4 hover:border-blue-400 border-3">
+                <div class="formgrid grid">
+                    <div class="field xl:col-12 lg:col-12 col-12">
+                        <p-selectButton 
+                            [options]="eventTypeOptions" 
+                            formControlName="eventType" 
+                            optionValue="value" 
+                            optionLabel="label">
+                                <ng-template let-item pTemplate>
+                                    <div>
+                                        <div class="font-bold text-2xl" i18n>{{ item.label }}</div> 
+                                        
+                                        <span class="text-800" i18n>{{ item.description }}</span>
+                                    </div>
+                                </ng-template>
+                        </p-selectButton>
+                    </div>
+                    
+                    <div class="field xl:col-6 lg:col-6 col-12 mt-2">
+                        <label for="title" class="font-bold" i18n>Date et heure</label>
 
+                        <p-calendar formControlName="startingDateTime" dateFormat="dd-mm-yy" [showTime]="true" hourFormat="24" 
+                            class="w-full" styleClass="w-full"/>
+            
+                        <div *ngIf="title?.invalid && (title?.touched || title?.dirty)">
+                            @if (title?.hasError('required')) {
+                                <small id="title-required-help" [hidden]="title?.pristine || title?.valid" class="p-error" i18n="Un titre est requis.">
+                                    Une date et une heure sont requis.
+                                </small>
+                            }
+                        </div>
+                    </div>
+                    
+                </div>
+                
             </p-fieldset>
 
-            <p-fieldset legend="Bon à savoir" i18n-legend="Bon à savoir" styleClass="mt-4">
+            <p-fieldset legend="Bon à savoir" i18n-legend="Bon à savoir" styleClass="mt-4 hover:border-blue-400 border-3">
 
             </p-fieldset>
 
             <div class="mt-4 flex justify-content-end flex-wrap">
                 <p-button type="button" label="Annuler" i18n-label="Annuler" styleClass="bg-primary-reverse mr-2" 
-                            (onClick)="goToEventListPage()"></p-button>
-                <p-button type="submit" label="Sauvegarder et continuer" i18n-label="Sauvegarder et continuer" styleClass="m-auto"></p-button>
+                    (onClick)="goToEventListPage()" icon="pi pi-times"></p-button>
+                <p-button type="submit" label="Sauvegarder et continuer" i18n-label="Sauvegarder et continuer" styleClass="m-auto"
+                    icon="pi pi-save" [disabled]="eventForm.invalid"></p-button>
             </div>
         </form>
     </div>

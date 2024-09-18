@@ -13,7 +13,7 @@ import { Observable } from "rxjs";
 import { EventService } from "../../../service/event.service";
 import { DataViewModule } from 'primeng/dataview';
 import { SplitButtonModule } from 'primeng/splitbutton';
-import { Event } from "../../../models/Event";
+import { Event } from "../../../models/event";
 import { SidebarModule } from "primeng/sidebar";
 import { MyEventItemComponent } from "../my-event-item/my-event-item.component";
 

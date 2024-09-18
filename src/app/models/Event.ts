@@ -1,25 +1,36 @@
+import { EventType } from "../enumerations/event-type";
 import { CashAccount } from "./cash-account";
 import { EventOrganizer } from "./event-organizer";
 import { OnlineAddress } from "./online-address";
 import { PhysicalAddress } from "./physical-address";
+import { PublishSettings } from "./publishSettings";
+import { Scheduling } from "./scheduling";
 
 export class Event {
     id : string | undefined;
     title : string | undefined;
-    eventType : string | undefined;
+    eventType : EventType | undefined;
     eventCategory : string | undefined;
     tags : string[] = [];
     imageCover : string | undefined;
-    resume : string | undefined;
+    summary : string | undefined;
     description : string | undefined;
     publicationDate : string | undefined;
-    visibility : boolean = false;
+    published : boolean = false;
+
+    date : string | undefined;
+    startTime : string | undefined;
+    endTime : string | undefined;
+    scheduling : Scheduling | undefined;
+    timeZone : string | undefined;
+
     eventPageLanguage : string | undefined;
     startingDateTime : string | undefined;
     endingDateTime : string | undefined;
-    timeZone : string | undefined;
     physicalAddress : PhysicalAddress | undefined;
     onlineAdresse : OnlineAddress | undefined;
     eventOrganizer : EventOrganizer | undefined;
     cashAccounts : CashAccount[] = [];
+
+    publishSettings : PublishSettings | undefined;
 }
