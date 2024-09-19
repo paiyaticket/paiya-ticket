@@ -1,9 +1,11 @@
 import { EventType } from "../enumerations/event-type";
+import { AgendaPhase } from "./agenda-phase";
 import { CashAccount } from "./cash-account";
 import { EventOrganizer } from "./event-organizer";
 import { OnlineAddress } from "./online-address";
 import { PhysicalAddress } from "./physical-address";
 import { PublishSettings } from "./publishSettings";
+import { Question } from "./question";
 import { Scheduling } from "./scheduling";
 
 export class Event {
@@ -25,12 +27,13 @@ export class Event {
     timeZone : string | undefined;
 
     eventPageLanguage : string | undefined;
-    startingDateTime : string | undefined;
-    endingDateTime : string | undefined;
     physicalAddress : PhysicalAddress | undefined;
     onlineAdresse : OnlineAddress | undefined;
     eventOrganizer : EventOrganizer | undefined;
     cashAccounts : CashAccount[] = [];
 
     publishSettings : PublishSettings | undefined;
+
+    agenda : AgendaPhase[] = [];
+    faq : Question[] = [];
 }

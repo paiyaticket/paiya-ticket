@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -19,6 +19,9 @@ import { CalendarModule } from 'primeng/calendar';
 import { MessagesModule } from 'primeng/messages';
 import { Message } from 'primeng/api/message';
 import { laterDateValidator } from '../../../validators/laterDateValidator';
+import { PanelModule } from 'primeng/panel';
+import { Country } from '../../../models/country';
+import { COUNTRIES } from '../../../data/countries.data';
 
 @Component({
     selector: 'app-my-event-create',
@@ -35,11 +38,13 @@ import { laterDateValidator } from '../../../validators/laterDateValidator';
         DropdownModule,
         SelectButtonModule,
         CalendarModule,
-        MessagesModule
+        MessagesModule,
+        PanelModule
     ],
     templateUrl: './my-event-create.component.html',
     styleUrl: './my-event-create.component.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    encapsulation: ViewEncapsulation.None
 })
 export class MyEventCreateComponent implements OnInit {
 
@@ -53,6 +58,7 @@ export class MyEventCreateComponent implements OnInit {
     selectedEventType : EventType | undefined = EventType.SINGLE_EVENT;
     messages!: Message[];
     multipleEventsMessage : string = $localize `Vous définirez les dates dans la prochaine étape. Remplissez les autres champs et continuez.`;
+    countries : Country[] = COUNTRIES;
 
 
     constructor(private router : Router){}
@@ -76,7 +82,18 @@ export class MyEventCreateComponent implements OnInit {
             startTime : new FormControl<Date | undefined>(undefined, [Validators.required]),
             endTime : new FormControl<Date | undefined>(undefined, [Validators.required]),
             timeZone : new FormControl<string | undefined>(undefined),
-            physicalAddress : new FormControl<PhysicalAddress | undefined>(undefined),
+            physicalAddress : new FormGroup({
+                location : new FormControl<string | undefined>(undefined, [Validators.required] ),
+                locationIndication : new FormControl<string | undefined>(undefined, [Validators.maxLength(300)]),
+                street : new FormControl<string | undefined>(undefined),
+                streetNumber : new FormControl<string | undefined>(undefined),
+                town : new FormControl<string | undefined>(undefined),
+                postalCode : new FormControl<string | undefined>(undefined, [Validators.maxLength(15)]),
+                country : new FormControl<string | undefined>(undefined),
+                state : new FormControl<string | undefined>(undefined),
+                longitude : new FormControl<string | undefined>(undefined),
+                latitude : new FormControl<string | undefined>(undefined),
+            } ),
             onlineAdresse : new FormControl<OnlineAddress | undefined>(undefined),
             eventOrganizer : new FormControl<EventOrganizer | undefined>(undefined),
             cashAccounts : new FormControl<CashAccount[] | undefined>([]),
@@ -167,6 +184,10 @@ export class MyEventCreateComponent implements OnInit {
 
     get physicalAddress(){
         return this.eventForm.get('physicalAddress');
+    }
+
+    get location(){
+        return this.eventForm.get('location');
     }
 
     get onlineAdresse(){
