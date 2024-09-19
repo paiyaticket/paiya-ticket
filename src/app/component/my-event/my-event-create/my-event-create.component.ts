@@ -18,6 +18,7 @@ import { EventType } from '../../../enumerations/event-type';
 import { CalendarModule } from 'primeng/calendar';
 import { MessagesModule } from 'primeng/messages';
 import { Message } from 'primeng/api/message';
+import { laterDateValidator } from '../../../validators/laterDateValidator';
 
 @Component({
     selector: 'app-my-event-create',
@@ -51,7 +52,7 @@ export class MyEventCreateComponent implements OnInit {
 
     selectedEventType : EventType | undefined = EventType.SINGLE_EVENT;
     messages!: Message[];
-    multipleEventsMessage : string = $localize `Vous définirez les dates dans la prochaine étape`;
+    multipleEventsMessage : string = $localize `Vous définirez les dates dans la prochaine étape. Remplissez les autres champs et continuez.`;
 
 
     constructor(private router : Router){}
@@ -71,21 +72,33 @@ export class MyEventCreateComponent implements OnInit {
             publicationDate : new FormControl<string | undefined>(undefined),
             visibility : new FormControl<boolean>(false),
             eventPageLanguage : new FormControl<string | undefined>(undefined),
-            date : new FormControl<string | undefined>(undefined, [Validators.required]),
-            startTime : new FormControl<string | undefined>(undefined, [Validators.required]),
-            endTime : new FormControl<string | undefined>(undefined, [Validators.required]),
+            date : new FormControl<Date | undefined>(undefined, [Validators.required]),
+            startTime : new FormControl<Date | undefined>(undefined, [Validators.required]),
+            endTime : new FormControl<Date | undefined>(undefined, [Validators.required]),
             timeZone : new FormControl<string | undefined>(undefined),
             physicalAddress : new FormControl<PhysicalAddress | undefined>(undefined),
             onlineAdresse : new FormControl<OnlineAddress | undefined>(undefined),
             eventOrganizer : new FormControl<EventOrganizer | undefined>(undefined),
             cashAccounts : new FormControl<CashAccount[] | undefined>([]),
-        })
+        }, {validators : [laterDateValidator]})
     }
 
     onEventTypeChange(event: any){
         this.selectedEventType = event.value;
         console.log(this.selectedEventType);
     }
+
+    onDateSelect(event: Date){
+        console.log(event);
+    }
+
+    onTimeSelect(event: any){
+        console.log(event);
+        if(this.eventForm.get('startTime')?.value && this.eventForm.get('endTime')?.value){
+            console.log(this.eventForm.getError('laterDate'));
+        }
+    }
+
 
     submit(){
         
@@ -136,12 +149,16 @@ export class MyEventCreateComponent implements OnInit {
         return this.eventForm.get('eventPageLanguage');
     }
 
-    get startingDateTime(){
-        return this.eventForm.get('startingDateTime');
+    get date(){
+        return this.eventForm.get('date');
     }
 
-    get endingDateTime(){
-        return this.eventForm.get('endingDateTime');
+    get startTime(){
+        return this.eventForm.get('startTime');
+    }
+
+    get endTime(){
+        return this.eventForm.get('endTime');
     }
 
     get timeZone(){
