@@ -82,7 +82,7 @@
                         <div class="field xl:col-4 lg:col-4 col-12 mt-2">
                             <label for="date" class="font-bold" i18n>Date</label>
     
-                            <p-calendar id="date" formControlName="date" dateFormat="DD dd MM yy" class="w-full" styleClass="w-full" (onSelect)="onDateSelect($event)"/>
+                            <p-calendar id="date" formControlName="date" dateFormat="dd-mm-yy" class="w-full" styleClass="w-full" (onSelect)="onDateSelect($event)"/>
                 
                             <div *ngIf="date?.invalid && (date?.touched || date?.dirty)">
                                 @if (date?.hasError('required')) {
