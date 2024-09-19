@@ -11,6 +11,8 @@ import { HttpClient, provideHttpClient, withFetch, withInterceptors, withNoXsrfP
 import { MessageService } from 'primeng/api';
 import { HttpErrorInterceptor } from './interceptors/http-error-interceptor';
 import { loggingInterceptor } from './interceptors/log-interceptor';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 
 export const appConfig: ApplicationConfig = {
     providers: [
@@ -24,6 +26,19 @@ export const appConfig: ApplicationConfig = {
             withFetch(),
             withInterceptors([HttpErrorInterceptor, loggingInterceptor])
         ),
-        MessageService
+        MessageService,
+        TranslateModule.forRoot({
+            defaultLanguage: 'fr',
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient]
+            }
+        }).providers!
+        
     ]
 };
+
+export function HttpLoaderFactory(http: HttpClient) {
+    return new TranslateHttpLoader(http);
+}
