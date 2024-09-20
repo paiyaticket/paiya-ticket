@@ -22,6 +22,8 @@ import { laterDateValidator } from '../../../validators/laterDateValidator';
 import { PanelModule } from 'primeng/panel';
 import { Country } from '../../../models/country';
 import { COUNTRIES } from '../../../data/countries.data';
+import { EditorModule } from 'primeng/editor';
+import { CardModule } from 'primeng/card';
 
 @Component({
     selector: 'app-my-event-create',
@@ -39,7 +41,9 @@ import { COUNTRIES } from '../../../data/countries.data';
         SelectButtonModule,
         CalendarModule,
         MessagesModule,
-        PanelModule
+        PanelModule,
+        EditorModule,
+        CardModule
     ],
     templateUrl: './my-event-create.component.html',
     styleUrl: './my-event-create.component.scss',
@@ -59,6 +63,7 @@ export class MyEventCreateComponent implements OnInit {
     messages!: Message[];
     multipleEventsMessage : string = $localize `Vous définirez les dates dans la prochaine étape. Remplissez les autres champs et continuez.`;
     countries : Country[] = COUNTRIES;
+
 
 
     constructor(private router : Router){}
