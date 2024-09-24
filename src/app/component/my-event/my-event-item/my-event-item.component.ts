@@ -37,6 +37,7 @@ export class MyEventItemComponent {
     event !: Event;
 
     items !: MenuItem[];
+    defaultImageCover : string = '../../../../assets/layout/images/image-placeholder.png';
 
     constructor(private confirmationService : ConfirmationService){
         this.items = [
