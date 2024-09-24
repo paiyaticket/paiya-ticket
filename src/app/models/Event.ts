@@ -36,4 +36,8 @@ export class Event {
 
     agenda : AgendaPhase[] = [];
     faq : Question[] = [];
+
+    owner : string | undefined;
+    createdDate : string | undefined;
+    lastModifiedDate : string | undefined;
 }

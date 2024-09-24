@@ -15,13 +15,13 @@
 
             <p-fieldset legend="Vue d'ensemble" i18n-legend="Vue d'ensemble" styleClass="mt-4 hover:border-blue-400 border-3" class="">
                 <div class="formgrid grid">
-                    <div class="field xl:col-12 lg:col-12 col-12">
+                    <div class="field xl:col-12 lg:col-12 col-12 p-fluid">
                         <label for="title" class="font-bold" i18n>Titre</label>
                         <p class="text-800" i18n>
                             Soyez clair et descriptif avec un titre qui indique aux gens en quoi consiste votre événement.
                         </p>
 
-                        <input id="title" type="text" pInputText class="w-full" formControlName="title">
+                        <input id="title" type="text" pInputText formControlName="title">
             
                         <div *ngIf="title?.invalid && (title?.touched || title?.dirty)">
                             @if (title?.hasError('required')) {
@@ -32,16 +32,16 @@
                         </div>
                     </div>
 
-                    <div class="field xl:col-12 lg:col-12 col-12 mt-4">
+                    <div class="field xl:col-12 lg:col-12 col-12 mt-4 p-fluid">
                         <label for="summary" class="font-bold" i18n>Resumé</label>
                         <p class="text-800" i18n>
                             Attirez l'attention des gens avec une brève description de votre événement. 
                             Les participants le verront en haut de la page de votre événement. (150 caractères maximum)
                         </p>
 
-                        <textarea id="summary" pInputTextarea class="w-full" formControlName="summary" autoResize="true"></textarea>
+                        <textarea id="summary" pInputTextarea formControlName="summary" autoResize="true"></textarea>
             
-                        @if (summary?.invalid && (summary?.touched || title?.dirty)) {
+                        @if (summary?.invalid && (summary?.touched || summary?.dirty)) {
                             <div>
                                 @if (summary?.invalid  && (summary?.touched || summary?.dirty)) {
                                     @if (summary?.hasError('maxlength')) {
@@ -53,6 +53,14 @@
                                 }
                             </div>
                         }
+                    </div>
+
+                    <div class="field xl:col-12 lg:col-12 col-12  p-fluid">
+                        <label for="tags"class="font-bold" i18n>Mots clés</label>
+                        <p class="text-800" i18n>
+                            Quelques mots clés pour faciliter la recherche de votre événement.
+                        </p>
+                        <p-chips formControlName="tags"/>
                     </div>
 
                 </div>
@@ -78,7 +86,7 @@
                         </p-selectButton>
                     </div>
 
-                    @if (selectedEventType?.valueOf() === 'Sigle Event') {
+                    @if (selectedEventType?.valueOf() === 'SINGLE_EVENT') {
                         <!-- DATE -->
                         <div class="field xl:col-4 lg:col-4 col-12 mt-2">
                             <label for="date" class="font-bold" i18n>Date</label>
@@ -135,57 +143,84 @@
                         </div>
 
                         <!-- LOCATION -->
-                        <div class="field xl:col-12 lg:col-12 col-12 mt-2" formGroupName="physicalAddress">
-                            <label for="location" class="font-bold" i18n>Lieu</label>
-                            
-                            <input id="location" type="text" pInputText class="w-full" formControlName="title">
-            
-                            <div *ngIf="location?.invalid && (location?.touched || location?.dirty)">
-                                @if (location?.hasError('required')) {
-                                    <small id="location-required-help" [hidden]="location?.pristine || location?.valid" class="p-error font-bold" i18n="Une adresse est requise.">
-                                        Une adresse est requise.
-                                    </small>
-                                }
+                        <div class="field xl:col-12 lg:col-12 col-12 mt-2">
+                            <p-selectButton 
+                                [options]="venueTypeOptions" 
+                                formControlName="venueType" 
+                                optionValue="value" 
+                                optionLabel="label"
+                                (onChange)="onVenueTypeChange($event)"
+                                styleClass="w-full">
+                                    <ng-template let-item pTemplate>
+                                        <div>
+                                            <div class="font-bold" i18n>{{ item.label }}</div> 
+                                        </div>
+                                    </ng-template>
+                            </p-selectButton>
+                        </div>
+
+                        @if (selectedVenueType?.valueOf() === 'FACE_TO_FACE') {
+
+                            <div class="field xl:col-12 lg:col-12 col-12 mt-2" formGroupName="physicalAddress">
+                                <label for="location" class="font-bold" i18n>Lieu</label>
+                                
+                                <input id="location" type="text" pInputText class="w-full" formControlName="location">
+                
+                                <div *ngIf="location?.invalid && (location?.touched || location?.dirty)">
+                                    @if (location?.hasError('required')) {
+                                        <small id="location-required-help" [hidden]="location?.pristine || location?.valid" class="p-error font-bold" i18n="Une adresse est requise.">
+                                            Une adresse est requise.
+                                        </small>
+                                    }
+                                </div>
+    
+                                <p-panel header="Plus de détails sur l'adresse" [toggleable]="true" [collapsed]="true" [iconPos]="'start'" class="mt-2" styleClass="location-details w-full">
+                                    
+                                    <div class="formgrid grid">
+                                        <div class="field xl:col-12 lg:col-12 col-12 mt-2">
+                                            <label for="locationIndication" class="font-bold" i18n>Indication supplémentaire</label>
+                                            <textarea id="locationIndication" rows="2" pInputTextarea formControlName="locationIndication" class="w-full" autoResize="true"></textarea>
+                                        </div>
+                                        <div class="field xl:col-3 lg:col-3 col-12 mt-2">
+                                            <label for="streetNumber" class="font-bold" i18n>Numéro de rue</label>
+                                            <input id="streetNumber" type="text" pInputText class="w-full" formControlName="streetNumber">
+                                        </div>
+                                        <div class="field xl:col-3 lg:col-3 col-12 mt-2">
+                                            <label for="street" class="font-bold" i18n>Nom de rue</label>
+                                            <input id="street" type="text" pInputText class="w-full" formControlName="street">
+                                        </div>
+                                        <div class="field xl:col-3 lg:col-3 col-12 mt-2">
+                                            <label for="town" class="font-bold" i18n>Ville</label>
+                                            <input id="town" type="text" pInputText class="w-full" formControlName="town">
+                                        </div>
+                                        <div class="field xl:col-3 lg:col-3 col-12 mt-2">
+                                            <label for="postalCode" class="font-bold" i18n>Code postal</label>
+                                            <input id="postalCode" type="text" pInputText class="w-full" formControlName="postalCode">
+                                        </div>
+                                        <div class="field xl:col-4 lg:col-4 col-12 mt-2">
+                                            <label for="state" class="font-bold" i18n>Province ou Région ou État</label>
+                                            <input id="state" type="text" pInputText class="w-full" formControlName="state">
+                                        </div>
+                                        <div class="field xl:col-4 lg:col-4 col-12 mt-2">
+                                            <label for="country" class="font-bold" i18n>Pays</label><br>
+                                            <p-dropdown id="country" [options]="countries" formControlName="country" optionValue="name" optionLabel="name" [filter]="true"
+                                                filterBy="name" styleClass="w-full" placeholder="Choisir un pays" i18n-placeholder="Choisir un pays" 
+                                                i18n-placeholder="Select a country"/>
+                                        </div>
+    
+                                    </div>
+                                    
+                                </p-panel>
                             </div>
 
-                            <p-panel header="Plus de détails sur l'adresse" [toggleable]="true" [collapsed]="true" [iconPos]="'start'" class="mt-2" styleClass="location-details w-full">
-                                
-                                <div class="formgrid grid">
-                                    <div class="field xl:col-12 lg:col-12 col-12 mt-2">
-                                        <label for="locationIndication" class="font-bold" i18n>Indication supplémentaire</label>
-                                        <textarea id="locationIndication" rows="2" pInputTextarea formControlName="locationIndication" class="w-full" autoResize="true"></textarea>
-                                    </div>
-                                    <div class="field xl:col-3 lg:col-3 col-12 mt-2">
-                                        <label for="streetNumber" class="font-bold" i18n>Numéro de rue</label>
-                                        <input id="streetNumber" type="text" pInputText class="w-full" formControlName="streetNumber">
-                                    </div>
-                                    <div class="field xl:col-3 lg:col-3 col-12 mt-2">
-                                        <label for="street" class="font-bold" i18n>Nom de rue</label>
-                                        <input id="street" type="text" pInputText class="w-full" formControlName="street">
-                                    </div>
-                                    <div class="field xl:col-3 lg:col-3 col-12 mt-2">
-                                        <label for="town" class="font-bold" i18n>Ville</label>
-                                        <input id="town" type="text" pInputText class="w-full" formControlName="town">
-                                    </div>
-                                    <div class="field xl:col-3 lg:col-3 col-12 mt-2">
-                                        <label for="postalCode" class="font-bold" i18n>Code postal</label>
-                                        <input id="postalCode" type="text" pInputText class="w-full" formControlName="postalCode">
-                                    </div>
-                                    <div class="field xl:col-4 lg:col-4 col-12 mt-2">
-                                        <label for="state" class="font-bold" i18n>Province ou Région ou État</label>
-                                        <input id="state" type="text" pInputText class="w-full" formControlName="state">
-                                    </div>
-                                    <div class="field xl:col-4 lg:col-4 col-12 mt-2">
-                                        <label for="country" class="font-bold" i18n>Pays</label><br>
-                                        <p-dropdown id="country" [options]="countries" formControlName="country" optionValue="name" optionLabel="name" [filter]="true"
-                                            filterBy="name" styleClass="w-full" placeholder="Choisir un pays" i18n-placeholder="Choisir un pays" 
-                                            i18n-placeholder="Select a country"/>
-                                    </div>
+                        } @else {
+                            <div class="field xl:col-12 lg:col-12 col-12 mt-2 p-fluid" formGroupName="onlineAdresse">
+                                <label for="link" class="font-bold" i18n>Lien</label>
+                                <input id="link" type="text" pInputText formControlName="link">
+                            </div>
+                        }
 
-                                </div>
-                                
-                            </p-panel>
-                        </div>
+                        
                     } @else {
                         <div class="field xl:col-12 lg:col-12 col-12">
                             <p-messages [(value)]="messages" [enableService]="false" [closable]="false" />

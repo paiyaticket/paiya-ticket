@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { Auth } from '@angular/fire/auth';
+import { Auth, getAuth, User } from '@angular/fire/auth';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -9,8 +9,6 @@ import { FieldsetModule } from 'primeng/fieldset';
 import { InputMaskModule } from 'primeng/inputmask';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
-import { PhysicalAddress } from '../../../models/physical-address';
-import { OnlineAddress } from '../../../models/online-address';
 import { EventOrganizer } from '../../../models/event-organizer';
 import { CashAccount } from '../../../models/cash-account';
 import { SelectButtonModule } from 'primeng/selectbutton';
@@ -21,9 +19,15 @@ import { Message } from 'primeng/api/message';
 import { laterDateValidator } from '../../../validators/laterDateValidator';
 import { PanelModule } from 'primeng/panel';
 import { Country } from '../../../models/country';
-import { COUNTRIES } from '../../../data/countries.data';
+import { COUNTRIES } from '../../../data/countries-old.data';
 import { EditorModule } from 'primeng/editor';
 import { CardModule } from 'primeng/card';
+import { GalleriaModule } from 'primeng/galleria';
+import { ChipsModule } from 'primeng/chips';
+import { VenueType } from '../../../enumerations/venueType';
+import { Event } from '../../../models/event';
+import { UserData } from '../../../models/user-data';
+import { EventService } from '../../../service/event.service';
 
 @Component({
     selector: 'app-my-event-create',
@@ -43,7 +47,9 @@ import { CardModule } from 'primeng/card';
         MessagesModule,
         PanelModule,
         EditorModule,
-        CardModule
+        CardModule,
+        GalleriaModule,
+        ChipsModule
     ],
     templateUrl: './my-event-create.component.html',
     styleUrl: './my-event-create.component.scss',
@@ -52,29 +58,39 @@ import { CardModule } from 'primeng/card';
 })
 export class MyEventCreateComponent implements OnInit {
 
+    // TODO : donner la possibilité à l'utilisateur de préciser le FUSEAU HORRAIRE de l'evènement;
+    // TODO : donner la possibilité à l'utilisateur de préciser la LANGUE de l'evènement;
+    // TODO : donner la possibilité à l'utilisateur de télécharger 3 photos de couverture pour son evènement.
+
     auth : Auth | undefined;
     eventForm !: FormGroup;
+    selectedEventType : EventType | undefined = EventType.SINGLE_EVENT;
+    selectedVenueType : VenueType | undefined = VenueType.FACE_TO_FACE;
+    messages!: Message[];
+    countries : Country[] = COUNTRIES;
+    currentUser : User | null = null;
+    multipleEventsMessage : string = $localize `Vous définirez les dates dans la prochaine étape. Remplissez les autres champs et continuez.`;
     eventTypeOptions : any[] = [
         {'label' : $localize `Evènement Unique`, 'value' : EventType.SINGLE_EVENT, 'description' : $localize `Évènement qui ne se deroule qu'une seule fois`},
         {'label' : $localize `Evènement recurrent`, 'value' : EventType.RECURRING_EVENT, 'description' : $localize `Événement qui se deroule plusieurs fois`}
     ];
+    venueTypeOptions : any[] = [
+        {'label' : $localize `Lieu`, 'value' : VenueType.FACE_TO_FACE},
+        {'label' : $localize `Évènement en ligne`, 'value' : VenueType.VIRTUAL}
+    ];
 
-    selectedEventType : EventType | undefined = EventType.SINGLE_EVENT;
-    messages!: Message[];
-    multipleEventsMessage : string = $localize `Vous définirez les dates dans la prochaine étape. Remplissez les autres champs et continuez.`;
-    countries : Country[] = COUNTRIES;
-
-
-
-    constructor(private router : Router){}
+    constructor(private router : Router, private eventService : EventService){}
 
     ngOnInit(): void {
+        this.auth = getAuth();
+        this.currentUser = this.auth?.currentUser;
 
         this.messages = [{ severity: 'info', detail: this.multipleEventsMessage }];
 
         this.eventForm = new FormGroup({
             title : new FormControl<string | undefined>('', [Validators.required]),
             eventType : new FormControl<EventType | undefined>(EventType.SINGLE_EVENT),
+            venueType : new FormControl<VenueType | undefined>(VenueType.FACE_TO_FACE),
             eventCategory : new FormControl<string | undefined>(undefined),
             tags : new FormControl<string[]>([]),
             imageCover : new FormControl<string | undefined>(undefined),
@@ -98,8 +114,11 @@ export class MyEventCreateComponent implements OnInit {
                 state : new FormControl<string | undefined>(undefined),
                 longitude : new FormControl<string | undefined>(undefined),
                 latitude : new FormControl<string | undefined>(undefined),
-            } ),
-            onlineAdresse : new FormControl<OnlineAddress | undefined>(undefined),
+            }),
+            onlineAdresse : new FormGroup({
+                onlinePlatform : new FormControl<string | undefined>(undefined),
+                link : new FormControl<string | undefined>(undefined),
+            }),
             eventOrganizer : new FormControl<EventOrganizer | undefined>(undefined),
             cashAccounts : new FormControl<CashAccount[] | undefined>([]),
         }, {validators : [laterDateValidator]})
@@ -107,7 +126,10 @@ export class MyEventCreateComponent implements OnInit {
 
     onEventTypeChange(event: any){
         this.selectedEventType = event.value;
-        console.log(this.selectedEventType);
+    }
+
+    onVenueTypeChange(event: any){
+        this.selectedVenueType = event.value;
     }
 
     onDateSelect(event: Date){
@@ -121,10 +143,20 @@ export class MyEventCreateComponent implements OnInit {
         }
     }
 
-
     submit(){
+        let event : Event = this.eventForm.value as Event;
         
+        event.date = this.eventForm.get('date')?.value?.toISOString().split('T')[0];
+        event.startTime = this.eventForm.get('startTime')?.value?.toISOString().split('T')[1].split('.')[0];
+        event.endTime = this.eventForm.get('endTime')?.value?.toISOString().split('T')[1].split('.')[0];
+        event.timeZone = (this.eventForm.get('timeZone')?.value) ? this.eventForm.get('timeZone')?.value : Intl.DateTimeFormat().resolvedOptions().timeZone;
+        event.owner = (this.currentUser?.email) ? this.currentUser?.email : undefined;
+
+        // this.goToEventListPage();
+        this.eventService.create(event).subscribe((event) => console.log(event));
     }
+
+
 
 
     goToEventListPage(){
@@ -137,6 +169,10 @@ export class MyEventCreateComponent implements OnInit {
 
     get eventType(){
         return this.eventForm.get('eventType');
+    }
+
+    get venueType(){
+        return this.eventForm.get('venueType');
     }
 
     get eventCategory(){

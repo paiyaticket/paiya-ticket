@@ -1,7 +1,9 @@
 export enum OnlinePlatform {
-    SKYPE = "SKYPE", 
-    ZOOM = "ZOOM", 
     GOOGLE_MEET = "GOOGLE MEET", 
     MICROSOFT_TEEMS = "MICROSOFT TEEMS",
-    DISCORD = "DISCORD"
+    ZOOM = "ZOOM", 
+    DISCORD = "DISCORD",
+    SLACK = "SLACK", 
+    TELEGRAM = "TELEGRAM", 
+    TIKTOK = "TIKTOK"
 }
