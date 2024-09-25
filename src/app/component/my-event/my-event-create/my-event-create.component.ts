@@ -19,16 +19,14 @@ import { Message } from 'primeng/api/message';
 import { laterDateValidator } from '../../../validators/laterDateValidator';
 import { PanelModule } from 'primeng/panel';
 import { Country } from '../../../models/country';
-import { COUNTRIES } from '../../../data/countries-old.data';
+import { COUNTRIES } from '../../../data/countries.data';
 import { EditorModule } from 'primeng/editor';
 import { CardModule } from 'primeng/card';
 import { GalleriaModule } from 'primeng/galleria';
 import { ChipsModule } from 'primeng/chips';
 import { VenueType } from '../../../enumerations/venueType';
 import { Event } from '../../../models/event';
-import { UserData } from '../../../models/user-data';
 import { EventService } from '../../../service/event.service';
-import e from 'express';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -108,7 +106,7 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
             date : new FormControl<Date | undefined>(undefined, [Validators.required]),
             startTime : new FormControl<Date | undefined>(undefined, [Validators.required]),
             endTime : new FormControl<Date | undefined>(undefined, [Validators.required]),
-            timeZone : new FormControl<string | undefined>(undefined),
+            timeZone : new FormControl<Intl.DateTimeFormatOptions['timeZone'] | undefined>(undefined),
             physicalAddress : new FormGroup({
                 location : new FormControl<string | undefined>(undefined, [Validators.required] ),
                 locationIndication : new FormControl<string | undefined>(undefined, [Validators.maxLength(300)]),

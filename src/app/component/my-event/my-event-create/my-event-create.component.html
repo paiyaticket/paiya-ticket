@@ -142,6 +142,22 @@
                             }
                         </div>
 
+                        <div class="field xl:col-12 lg:col-12 col-12" styleClass="w-full">
+                            <p-panel header="Plus de détails sur la date" [toggleable]="true" [collapsed]="true" [iconPos]="'start'" styleClass="details w-full">
+                                <!-- TIME ZONE -->
+                                <div class="field xl:col-4 lg:col-4 col-12">
+                                    <label for="country" class="font-bold" i18n>Fuseau Horaire</label><br>
+                                    <p-dropdown id="country" [options]="countries" formControlName="timeZone" optionValue="timezone" optionLabel="timezone" [filter]="true"
+                                        filterBy="name" styleClass="w-full" placeholder="Choisir un pays" i18n-placeholder="Choisir un pays" 
+                                        i18n-placeholder="Select a country"/>
+                                </div>
+                            </p-panel>
+                        </div>
+
+                        
+
+                        
+
                         <!-- LOCATION -->
                         <div class="field xl:col-12 lg:col-12 col-12 mt-2">
                             <p-selectButton 
@@ -174,7 +190,7 @@
                                     }
                                 </div>
     
-                                <p-panel header="Plus de détails sur l'adresse" [toggleable]="true" [collapsed]="true" [iconPos]="'start'" class="mt-2" styleClass="location-details w-full">
+                                <p-panel header="Plus de détails sur le lieu" [toggleable]="true" [collapsed]="true" [iconPos]="'start'" class="mt-2" styleClass="details w-full">
                                     
                                     <div class="formgrid grid">
                                         <div class="field xl:col-12 lg:col-12 col-12 mt-2">
