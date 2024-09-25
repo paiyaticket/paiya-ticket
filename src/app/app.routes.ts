@@ -52,6 +52,7 @@ export const routes: Routes = [
                     {path: "", redirectTo: "my-event-list", pathMatch: "full"},
                     {path: "my-event-list", title: $localize `Liste de vos évènements`, component: MyEventListComponent, data: { breadcrumb: $localize `Liste de vos évènements`}, canActivate: [AuthGuard]},
                     {path: "create", title: $localize `Création d'un évènement`, component: MyEventCreateComponent, data: { breadcrumb: $localize `Création d'un évènement`}, canActivate: [AuthGuard]},
+                    {path: ":eventId/details", title: $localize `Configuration de évènement`, component: MyEventCreateComponent, data: { breadcrumb: $localize `Configuration de évènement`}, canActivate: [AuthGuard]},
                 ]
             },
             

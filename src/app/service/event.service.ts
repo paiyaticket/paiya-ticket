@@ -14,7 +14,7 @@ export class EventService {
     apiBaseUrl : string = environment.backendApi.eventManager.baseUrl;
     resourcePath : string = `${this.apiBaseUrl}/v1/events`;
 
-    create(event : Event) : Observable<Event>{
+    save(event : Event) : Observable<Event>{
         return this.httpClient.post<Event>(this.resourcePath, event);
     }
 

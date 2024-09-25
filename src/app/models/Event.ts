@@ -20,11 +20,11 @@ export class Event {
     publicationDate : string | undefined;
     published : boolean = false;
 
-    date : string | undefined;
     startTime : string | undefined;
     endTime : string | undefined;
     scheduling : Scheduling | undefined;
     timeZone : string | undefined;
+    timeZoneOffset : number | undefined;
 
     eventPageLanguage : string | undefined;
     physicalAddress : PhysicalAddress | undefined;

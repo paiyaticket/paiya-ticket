@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { ChangeDetectionStrategy, Component, Input, OnDestroy } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 import { ConfirmationService, MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -11,6 +11,8 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DataViewModule } from 'primeng/dataview';
 import { PanelModule } from 'primeng/panel';
 import { TableModule } from 'primeng/table';
+import { EventService } from '../../../service/event.service';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-my-event-item',
@@ -32,14 +34,20 @@ import { TableModule } from 'primeng/table';
     styleUrl: './my-event-item.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MyEventItemComponent {
+export class MyEventItemComponent implements OnDestroy {
     @Input()
     event !: Event;
 
     items !: MenuItem[];
     defaultImageCover : string = '../../../../assets/layout/images/image-placeholder.png';
+    deleteSubscription : Subscription | undefined;
+    publishSubscription : Subscription | undefined;
 
-    constructor(private confirmationService : ConfirmationService){
+
+    constructor(private router : Router, 
+                private confirmationService : ConfirmationService,
+                private eventService : EventService){
+        
         this.items = [
             {
                 label: 'Supprimer',
@@ -65,7 +73,9 @@ export class MyEventItemComponent {
             icon: "pi-trash",
             accept: () => {
                 if(event.id){
-                    // deletion logic
+                    this.deleteSubscription = this.eventService.delete(event.id).subscribe(() => {
+                        this.reloadComponent();
+                    });
                 }
             },
             reject: () => {}
@@ -86,7 +96,20 @@ export class MyEventItemComponent {
         });
     }
 
-    goToUpdatePage(event : Event){
+    goToDetailsPage(event : Event){
+        this.router.navigate([`/my-events/${event.id}/details`])
+    }
 
+    reloadComponent(){
+        window.location.reload();
+    }
+
+    ngOnDestroy(): void {
+        if(this.deleteSubscription){
+            this.deleteSubscription.unsubscribe();
+        }
+        if(this.publishSubscription){
+            this.publishSubscription.unsubscribe();
+        }
     }
 }

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { Auth, getAuth, User } from '@angular/fire/auth';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -28,6 +28,8 @@ import { VenueType } from '../../../enumerations/venueType';
 import { Event } from '../../../models/event';
 import { UserData } from '../../../models/user-data';
 import { EventService } from '../../../service/event.service';
+import e from 'express';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-my-event-create',
@@ -56,12 +58,17 @@ import { EventService } from '../../../service/event.service';
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None
 })
-export class MyEventCreateComponent implements OnInit {
+export class MyEventCreateComponent implements OnInit, OnDestroy {
 
     // TODO : donner la possibilité à l'utilisateur de préciser le FUSEAU HORRAIRE de l'evènement;
     // TODO : donner la possibilité à l'utilisateur de préciser la LANGUE de l'evènement;
     // TODO : donner la possibilité à l'utilisateur de télécharger 3 photos de couverture pour son evènement.
 
+    @Input()
+    eventId : string | undefined;
+    eventSubscription : Subscription | undefined;
+    createEventSubscription : Subscription | undefined;
+    updateEventSubscription : Subscription | undefined;
     auth : Auth | undefined;
     eventForm !: FormGroup;
     selectedEventType : EventType | undefined = EventType.SINGLE_EVENT;
@@ -84,7 +91,6 @@ export class MyEventCreateComponent implements OnInit {
     ngOnInit(): void {
         this.auth = getAuth();
         this.currentUser = this.auth?.currentUser;
-
         this.messages = [{ severity: 'info', detail: this.multipleEventsMessage }];
 
         this.eventForm = new FormGroup({
@@ -121,7 +127,31 @@ export class MyEventCreateComponent implements OnInit {
             }),
             eventOrganizer : new FormControl<EventOrganizer | undefined>(undefined),
             cashAccounts : new FormControl<CashAccount[] | undefined>([]),
-        }, {validators : [laterDateValidator]})
+        }, {validators : [laterDateValidator]});
+
+        // init event informations if the eventId is passed. 
+        this.initEventIfIdIsPassed();
+    }
+
+    initEventIfIdIsPassed(){
+        if(this.eventId){
+            this.eventSubscription = this.eventService.findById(this.eventId).subscribe((event) => {
+                this.eventForm.patchValue(event);
+                if(event.startTime && event.endTime && event.timeZone){
+                    this.eventForm.patchValue({
+                        date : this.utcDateToZonedDateTime(event.startTime, event.timeZone),
+                        startTime : this.utcDateToZonedDateTime(event.startTime, event.timeZone),
+                        endTime : this.utcDateToZonedDateTime(event.endTime, event.timeZone)
+                    });
+                }
+                console.log(this.eventForm.value);
+            });
+        }
+    }
+
+    utcDateToZonedDateTime(utcDate : string, timeZone : string) : Date | null{
+        const zonedDateTime = new Date(utcDate).toLocaleString("en-US" , {timeZone: timeZone});
+        return new Date(zonedDateTime);
     }
 
     onEventTypeChange(event: any){
@@ -132,35 +162,73 @@ export class MyEventCreateComponent implements OnInit {
         this.selectedVenueType = event.value;
     }
 
-    onDateSelect(event: Date){
-        console.log(event);
-    }
-
-    onTimeSelect(event: any){
-        console.log(event);
-        if(this.eventForm.get('startTime')?.value && this.eventForm.get('endTime')?.value){
-            console.log(this.eventForm.getError('laterDate'));
-        }
-    }
 
     submit(){
         let event : Event = this.eventForm.value as Event;
-        
-        event.date = this.eventForm.get('date')?.value?.toISOString().split('T')[0];
-        event.startTime = this.eventForm.get('startTime')?.value?.toISOString().split('T')[1].split('.')[0];
-        event.endTime = this.eventForm.get('endTime')?.value?.toISOString().split('T')[1].split('.')[0];
-        event.timeZone = (this.eventForm.get('timeZone')?.value) ? this.eventForm.get('timeZone')?.value : Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const startTime : Date = this.mergeDateAndTime(this.date?.value, this.startTime?.value);
+        const endTime : Date = this.mergeDateAndTime(this.date?.value, this.endTime?.value);
+
+        event.startTime = startTime.toISOString();
+        event.endTime = endTime.toISOString();
+        event.timeZone = (this.timeZone?.value) ? this.timeZone?.value : Intl.DateTimeFormat().resolvedOptions().timeZone;
+        event.timeZoneOffset = startTime.getTimezoneOffset();
         event.owner = (this.currentUser?.email) ? this.currentUser?.email : undefined;
 
-        // this.goToEventListPage();
-        this.eventService.create(event).subscribe((event) => console.log(event));
+        if(this.eventId){
+            this.updateEvent(event);
+        } else {
+            this.createEvent(event);
+        }
     }
 
+    updateEvent(event : Event){
+        event.id = this.eventId;
+        this.updateEventSubscription = this.eventService.update(event).subscribe({
+            next : (event) => {
+                this.reloadPageWithEventId(event.id);
+            },
+            error : (error) => {
+                console.log(error);
+            }
+        });
+    }
 
+    createEvent(event : Event){
 
+        this.createEventSubscription = this.eventService.save(event).subscribe({
+            next : (event) => {
+                this.reloadPageWithEventId(event.id);
+            },
+            error : (error) => {
+                console.log(error);
+            }
+        });
+    }
+
+    mergeDateAndTime(date : Date, time : Date){
+        return new Date(date.getFullYear(), date.getMonth(), date.getDate(), time.getHours(), time.getMinutes());
+    }
+
+    reloadPageWithEventId(eventId : string | undefined){
+        this.router.navigate([`/my-events/${eventId}/details`]);
+    }
 
     goToEventListPage(){
         this.router.navigate(['/my-events']);
+    }
+
+    ngOnDestroy(): void {
+        if(this.eventSubscription){
+            this.eventSubscription.unsubscribe();
+        }
+
+        if(this.createEventSubscription){
+            this.createEventSubscription.unsubscribe();
+        }
+
+        if(this.updateEventSubscription){
+            this.updateEventSubscription.unsubscribe();
+        }
     }
 
     get title(){

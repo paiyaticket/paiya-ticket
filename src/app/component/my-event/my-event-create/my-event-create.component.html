@@ -91,7 +91,7 @@
                         <div class="field xl:col-4 lg:col-4 col-12 mt-2">
                             <label for="date" class="font-bold" i18n>Date</label>
     
-                            <p-calendar id="date" formControlName="date" dateFormat="dd-mm-yy" class="w-full" styleClass="w-full" (onSelect)="onDateSelect($event)"/>
+                            <p-calendar id="date" formControlName="date" dateFormat="dd/mm/yy" class="w-full" styleClass="w-full"/>
                 
                             <div *ngIf="date?.invalid && (date?.touched || date?.dirty)">
                                 @if (date?.hasError('required')) {
@@ -106,7 +106,7 @@
                         <div class="field xl:col-4 lg:col-4 col-12 mt-2">
                             <label for="startTime" class="font-bold" i18n>Heure de début</label>
     
-                            <p-calendar id="startTime" formControlName="startTime" timeOnly="true" dateFormat="HH:mm" class="w-full" styleClass="w-full" (onSelect)="onTimeSelect($event)"/>
+                            <p-calendar id="startTime" formControlName="startTime" timeOnly="true" dateFormat="HH:mm" class="w-full" styleClass="w-full"/>
                 
                             <div *ngIf="startTime?.invalid && (startTime?.touched || startTime?.dirty)">
                                 @if (startTime?.hasError('required')) {
@@ -126,7 +126,7 @@
                         <div class="field xl:col-4 lg:col-4 col-12 mt-2">
                             <label for="endTime" class="font-bold" i18n>Heure de fin</label>
     
-                            <p-calendar id="endTime" formControlName="endTime" timeOnly="true" dateFormat="HH:mm" class="w-full" styleClass="w-full" (onSelect)="onTimeSelect($event)"/>
+                            <p-calendar id="endTime" formControlName="endTime" timeOnly="true" dateFormat="HH:mm" class="w-full" styleClass="w-full"/>
                 
                             <div *ngIf="endTime?.invalid && (endTime?.touched || endTime?.dirty)">
                                 @if (endTime?.hasError('required')) {
