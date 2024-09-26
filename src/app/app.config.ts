@@ -26,6 +26,7 @@ export const appConfig: ApplicationConfig = {
             withFetch(),
             withInterceptors([HttpErrorInterceptor, loggingInterceptor])
         ),
+        // primeng features providers
         MessageService,
         TranslateModule.forRoot({
             defaultLanguage: 'fr',

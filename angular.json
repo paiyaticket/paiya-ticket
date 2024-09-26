@@ -22,7 +22,8 @@
             "index": "src/index.html",
             "browser": "src/main.ts",
             "allowedCommonJsDependencies": [
-                "undici"
+                "undici",
+                "quill-delta"
             ],
             "polyfills": [
               "zone.js"
@@ -30,11 +31,12 @@
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
-              "src/favicon.ico",
-              "src/assets"
+                "src/favicon.ico",
+                "src/assets"
             ],
             "styles": [
-              "src/styles.scss"
+                "src/styles.scss",
+                "node_modules/filepond/dist/filepond.min.css"
             ],
             "scripts": [],
             "server": "src/main.server.ts",

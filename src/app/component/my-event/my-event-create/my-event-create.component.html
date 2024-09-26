@@ -10,7 +10,16 @@
     <div class="col-12 sm:col-12 md:col-12 lg:col-9 xl:col-9">
         <form [formGroup]="eventForm" (ngSubmit)="submit()">
             <p-fieldset legend="Images et vidéos" i18n-legend="Images et vidéos" styleClass="mt-4 hover:border-blue-400 border-3">
+                <div class="formgrid grid">
+                    <div class="field xl:col-12 lg:col-12 col-12">
+                        <file-pond #imageCoverPond
+                        [options]="pondOptions"
+                        (oninit)="pondHandleInit()"
+                        (onaddfile)="pondHandleAddFile($event)">
 
+                        </file-pond>
+                    </div>
+                </div>
             </p-fieldset>
 
             <p-fieldset legend="Vue d'ensemble" i18n-legend="Vue d'ensemble" styleClass="mt-4 hover:border-blue-400 border-3" class="">

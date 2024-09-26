@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Auth, getAuth, User } from '@angular/fire/auth';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -28,6 +28,13 @@ import { VenueType } from '../../../enumerations/venueType';
 import { Event } from '../../../models/event';
 import { EventService } from '../../../service/event.service';
 import { Subscription } from 'rxjs';
+import { FilePondModule, registerPlugin } from 'ngx-filepond';
+import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
+
+
+registerPlugin(FilePondPluginFileValidateType);
+
+
 
 @Component({
     selector: 'app-my-event-create',
@@ -49,7 +56,8 @@ import { Subscription } from 'rxjs';
         EditorModule,
         CardModule,
         GalleriaModule,
-        ChipsModule
+        ChipsModule,
+        FilePondModule
     ],
     templateUrl: './my-event-create.component.html',
     styleUrl: './my-event-create.component.scss',
@@ -64,6 +72,28 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
 
     @Input()
     eventId : string | undefined;
+
+    @ViewChild('imageCoverPond') imageCoverPond: any;
+    pondOptions = {
+        class: 'image-cover-pond',
+        multiple: true,
+        maxFiles: 4,
+        acceptedFileTypes: 'image/jpeg, image/png',
+        labelInvalidField: $localize `Ce champ contient des fichiers invalides.`,
+        labelIdle: $localize `Glisser & Déposer vos fichiers OU <span class="filepond--label-action"> Cliquez pour sélectionner </span>.`,
+
+    };
+
+    pondFiles = ['index.html'];
+
+    pondHandleInit() {
+        console.log('FilePond has initialised', this.imageCoverPond);
+    }
+
+    pondHandleAddFile(event: any) {
+        console.log('A file was added', event);
+    }
+
     eventSubscription : Subscription | undefined;
     createEventSubscription : Subscription | undefined;
     updateEventSubscription : Subscription | undefined;
