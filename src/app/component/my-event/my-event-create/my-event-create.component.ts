@@ -30,10 +30,10 @@ import { EventService } from '../../../service/event.service';
 import { Subscription } from 'rxjs';
 import { FilePondModule, registerPlugin } from 'ngx-filepond';
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
+import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 
 
-registerPlugin(FilePondPluginFileValidateType);
-
+registerPlugin(FilePondPluginFileValidateType, FilePondPluginImagePreview);
 
 
 @Component({
@@ -66,33 +66,22 @@ registerPlugin(FilePondPluginFileValidateType);
 })
 export class MyEventCreateComponent implements OnInit, OnDestroy {
 
-    // TODO : donner la possibilité à l'utilisateur de préciser le FUSEAU HORRAIRE de l'evènement;
     // TODO : donner la possibilité à l'utilisateur de préciser la LANGUE de l'evènement;
-    // TODO : donner la possibilité à l'utilisateur de télécharger 3 photos de couverture pour son evènement.
 
     @Input()
     eventId : string | undefined;
 
-    @ViewChild('imageCoverPond') imageCoverPond: any;
+    @ViewChild('imagesCoverPond') imageCoverPond: any;
     pondOptions = {
-        class: 'image-cover-pond',
+        name: 'imagesCoverPond',
+        class: 'images-cover-pond',
         multiple: true,
         maxFiles: 4,
         acceptedFileTypes: 'image/jpeg, image/png',
         labelInvalidField: $localize `Ce champ contient des fichiers invalides.`,
-        labelIdle: $localize `Glisser & Déposer vos fichiers OU <span class="filepond--label-action"> Cliquez pour sélectionner </span>.`,
-
+        labelIdle: $localize `Glisser & Déposer vos fichiers OU <span class="filepond--label-action"> Cliquez pour sélectionner</span>.`,
+        allowReorder: true
     };
-
-    pondFiles = ['index.html'];
-
-    pondHandleInit() {
-        console.log('FilePond has initialised', this.imageCoverPond);
-    }
-
-    pondHandleAddFile(event: any) {
-        console.log('A file was added', event);
-    }
 
     eventSubscription : Subscription | undefined;
     createEventSubscription : Subscription | undefined;
@@ -190,6 +179,13 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         this.selectedVenueType = event.value;
     }
 
+    pondHandleInit() {
+        console.log('FilePond has initialised', this.imageCoverPond);
+    }
+
+    pondHandleAddFile(event: any) {
+        console.log('A file was added', event);
+    }
 
     submit(){
         let event : Event = this.eventForm.value as Event;
