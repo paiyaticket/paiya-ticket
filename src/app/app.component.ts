@@ -23,9 +23,11 @@ export class AppComponent {
     ngOnInit(): void {
         this.primengConfig.ripple = true;
     }
-
+    
+    /*
     translate(lang: string) {
         this.translateService.use(lang);
         this.translateService.get('primeng').subscribe(res => this.primengConfig.setTranslation(res));
     }
+    */
 }
