@@ -22,7 +22,7 @@ import { Country } from '../../../models/country';
 import { COUNTRIES } from '../../../data/countries.data';
 import { EditorModule } from 'primeng/editor';
 import { CardModule } from 'primeng/card';
-import { GalleriaModule } from 'primeng/galleria';
+import { Galleria, GalleriaModule } from 'primeng/galleria';
 import { ChipsModule } from 'primeng/chips';
 import { VenueType } from '../../../enumerations/venueType';
 import { Event } from '../../../models/event';
@@ -77,6 +77,9 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
     eventForm !: FormGroup;
     selectedEventType : EventType | undefined = EventType.SINGLE_EVENT;
     selectedVenueType : VenueType | undefined = VenueType.FACE_TO_FACE;
+    showGalleriaPlaceholder : boolean = true;
+    images: any[] | undefined;
+    placeholderImages: any[] | undefined;
     messages!: Message[];
     countries : Country[] = COUNTRIES;
     currentUser : User | null = null;
@@ -93,12 +96,14 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
     @Input()
     eventId : string | undefined;
 
+    @ViewChild('galleria') galleria!: Galleria;
+
     @ViewChild('imagesCoverPond') imageCoverPond: any;
     pondOptions = {
         name: 'imagesCoverPond',
         class: 'images-cover-pond',
         multiple: true,
-        maxFiles: 4,
+        maxFiles: 5,
         acceptedFileTypes: 'image/jpeg, image/png',
         labelInvalidField: $localize `Ce champ contient des fichiers invalides.`,
         labelIdle: $localize `Glisser & Déposer vos fichiers OU <span class="filepond--label-action"> Cliquez pour sélectionner</span>.`,
@@ -119,8 +124,7 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
                     () => {
                         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
                             load(downloadURL);
-                            this.imageCover?.value?.push(downloadURL);
-                            console.log(this.eventForm.get('imageCover')?.value);
+                            this.addImageCover(downloadURL)
                         });
                     }
                 );
@@ -143,6 +147,13 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
                 private fileStorageService : FileStorageService){}
 
     ngOnInit(): void {
+        this.placeholderImages = [
+            {source : 'assets/layout/images/galleria/cover1.jpg'},
+            {source : 'assets/layout/images/galleria/cover2.jpg'},
+            {source : 'assets/layout/images/galleria/cover3.jpg'},
+        ];
+        this.images = [];
+
         this.auth = getAuth();
         this.currentUser = this.auth?.currentUser;
         this.messages = [{ severity: 'info', detail: this.multipleEventsMessage }];
@@ -239,6 +250,23 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         }
         let index = this.imageCover?.value?.findIndex(filter);
         this.imageCover?.value?.splice(index, 1);
+        this.images?.splice(index, 1);
+        // this.galleria.value = this.images;
+        console.log("images length : "+this.images?.length);
+        if(this.images && this.images.length === 0){
+            this.showGalleriaPlaceholder = true;
+        }
+    }
+
+    addImageCover(downloadURL : string){
+        this.imageCover?.value?.push(downloadURL);
+        this.images?.push({source: downloadURL});
+        // this.galleria.value = this.images;
+        console.log("images length : "+this.images?.length);
+        if(this.images && this.images.length > 0){
+            this.showGalleriaPlaceholder = false;
+        }
+    
     }
 
     submit(){

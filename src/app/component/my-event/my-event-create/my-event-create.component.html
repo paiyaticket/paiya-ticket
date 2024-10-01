@@ -12,11 +12,36 @@
             <p-fieldset legend="Images et vidéos" i18n-legend="Images et vidéos" styleClass="mt-4 hover:border-blue-400 border-3">
                 <div class="formgrid grid">
                     <div class="field xl:col-12 lg:col-12 col-12">
+                        @if (showGalleriaPlaceholder) {
+                            <p-galleria #galleriaPlaceholder class="fadein animation-duration-2000 animation-iteration-2"
+                                [value]="placeholderImages" [numVisible]="3" showThumbnails="false"
+                                 circular="true" autoPlay="true" transitionInterval="3000"
+                                [containerStyle]="{'max-height': '420px'}" [showIndicators]="true" >
+                                    <ng-template pTemplate="item" let-item>
+                                        <img [src]="item.source" class="w-full align-content-start overflow-hidden" 
+                                        style="height: auto; max-height: 400px; object-fit: cover;"/>
+                                    </ng-template>
+                            </p-galleria>
+                        } @else {
+                            <p-galleria #galleria class="fadein animation-duration-2000 animation-iteration-2"
+                                [value]="images" [numVisible]="3" showThumbnails="false" circular="true" autoPlay="true" transitionInterval="3000"
+                                [containerStyle]="{'max-height': '420px'}" [showIndicators]="true" >
+                                    <ng-template pTemplate="item" let-item>
+                                        <img [src]="item.source" class="w-full align-content-start overflow-hidden" 
+                                        style="height: auto; max-height: 400px; object-fit: cover;"/>
+                                    </ng-template>
+                            </p-galleria>
+                        }
+                        
+
+                        
+                    </div>
+                    <div class="field xl:col-12 lg:col-12 col-12">
                         <file-pond #imagesCoverPond
                             [options]="pondOptions"
-                            (onremovefile)="pondHandleRemoveFile($event)">
-
+                            (onremovefile)="pondHandleRemoveFile($event)" class="mt-2">
                         </file-pond>
+                        
                     </div>
                 </div>
             </p-fieldset>
