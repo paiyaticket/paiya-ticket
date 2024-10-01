@@ -12,42 +12,44 @@
             <p-fieldset legend="Images et vidéos" i18n-legend="Images et vidéos" styleClass="mt-4 hover:border-blue-400 border-3">
                 <div class="formgrid grid">
                     <div class="field xl:col-12 lg:col-12 col-12">
-                        @if (showGalleriaPlaceholder) {
-                            <p-galleria #galleriaPlaceholder class="fadein animation-duration-2000 animation-iteration-2"
-                                [value]="placeholderImages" [numVisible]="3" showThumbnails="false"
-                                 circular="true" autoPlay="true" transitionInterval="3000"
-                                [containerStyle]="{'max-height': '420px'}" [showIndicators]="true" >
-                                    <ng-template pTemplate="item" let-item>
-                                        <img [src]="item.source" class="w-full align-content-start overflow-hidden" 
-                                        style="height: auto; max-height: 400px; object-fit: cover;"/>
-                                    </ng-template>
-                            </p-galleria>
-                        } @else {
-                            <p-galleria #galleria class="fadein animation-duration-2000 animation-iteration-2"
-                                [value]="images" [numVisible]="3" showThumbnails="false" circular="true" autoPlay="true" transitionInterval="3000"
-                                [containerStyle]="{'max-height': '420px'}" [showIndicators]="true" >
-                                    <ng-template pTemplate="item" let-item>
-                                        <img [src]="item.source" class="w-full align-content-start overflow-hidden" 
-                                        style="height: auto; max-height: 400px; object-fit: cover;"/>
-                                    </ng-template>
-                            </p-galleria>
-                        }
-                        
-
-                        
-                    </div>
-                    <div class="field xl:col-12 lg:col-12 col-12">
-                        <file-pond #imagesCoverPond
-                            [options]="pondOptions"
-                            (onremovefile)="pondHandleRemoveFile($event)" class="mt-2">
-                        </file-pond>
-                        
+                        <p-inplace #imageInplace>
+                            <ng-template pTemplate="display">
+                                @if (showGalleriaPlaceholder) {
+                                    <p-galleria #galleriaPlaceholder class="fadein animation-duration-2000 animation-iteration-2"
+                                        [value]="placeholderImages" [numVisible]="3" showThumbnails="false" [showIndicators]="false"
+                                        circular="true" autoPlay="true" [showItemNavigators]="false" transitionInterval="3000" 
+                                        [containerStyle]="{'max-height': '420px'}" showTransitionOptions="'5s cubic-bezier(0, 0, 0.2, 1)'"
+                                        hideTransitionOptions="'5s cubic-bezier(0, 0, 0.2, 1)'">
+                                            <ng-template pTemplate="item" let-item>
+                                                <img [src]="item.source" class="w-full align-content-start overflow-hidden" 
+                                                style="height: auto; max-height: 400px; object-fit: cover;"/>
+                                            </ng-template>
+                                    </p-galleria>
+                                } @else {
+                                    <p-galleria #galleria class="fadein animation-duration-2000 animation-iteration-2"
+                                        [value]="images" [numVisible]="3" showThumbnails="false" [showIndicators]="false" 
+                                        circular="true" autoPlay="true" [showItemNavigators]="false" transitionInterval="3000"
+                                        [containerStyle]="{'max-height': '420px'}">
+                                            <ng-template pTemplate="item" let-item>
+                                                <img [src]="item.source" class="w-full align-content-start overflow-hidden" 
+                                                style="height: auto; max-height: 400px; object-fit: cover;"/>
+                                            </ng-template>
+                                    </p-galleria>
+                                }
+                            </ng-template>
+                            <ng-template pTemplate="content">
+                                <file-pond #imagesCoverPond
+                                    [options]="pondOptions"
+                                    (onremovefile)="pondHandleRemoveFile($event)" class="mt-2">
+                                </file-pond>
+                            </ng-template>
+                        </p-inplace>
                     </div>
                 </div>
             </p-fieldset>
 
-            <p-fieldset legend="Vue d'ensemble" i18n-legend="Vue d'ensemble" styleClass="mt-4 hover:border-blue-400 border-3" class="">
-                <div class="formgrid grid">
+            <p-fieldset legend="Vue d'ensemble" i18n-legend="Vue d'ensemble" styleClass="mt-4 hover:border-blue-400 border-3">
+                <div class="formgrid grid" (click)="showImageInplace()">
                     <div class="field xl:col-12 lg:col-12 col-12 p-fluid">
                         <label for="title" class="font-bold" i18n>Titre</label>
                         <p class="text-800" i18n>
@@ -100,7 +102,7 @@
             </p-fieldset>
 
             <p-fieldset legend="Date et lieu" i18n-legend="Vue d'ensemble" styleClass="mt-4 hover:border-blue-400 border-3">
-                <div class="formgrid grid">
+                <div class="formgrid grid" (click)="showImageInplace()">
                     <div class="field xl:col-12 lg:col-12 col-12">
                         <p-selectButton 
                             [options]="eventTypeOptions" 
@@ -280,36 +282,39 @@
             </p-fieldset>
 
             <p-fieldset legend="Bon à savoir" i18n-legend="Bon à savoir" styleClass="mt-4 hover:border-blue-400 border-3">
-                <p class="text-800" i18n>
-                    Utilisez cette section pour fournir plus de détails sur votre événement. 
-                    Vous pouvez inclure des éléments à savoir, des informations sur le lieu, le stationnement, les options d'accessibilité, 
-                    tout ce qui aidera les gens à savoir à quoi s'attendre.
-                </p>
-                <p-editor formControlName="description" styleClass="w-full" />
+                <div (click)="showImageInplace()">
+                    <p class="text-800" i18n>
+                        Utilisez cette section pour fournir plus de détails sur votre événement. 
+                        Vous pouvez inclure des éléments à savoir, des informations sur le lieu, le stationnement, les options d'accessibilité, 
+                        tout ce qui aidera les gens à savoir à quoi s'attendre.
+                    </p>
+                    <p-editor formControlName="description" styleClass="w-full" />
+                </div>
             </p-fieldset>
 
             <p-fieldset legend="Ajouter plus de sections à votre évènement (facultatif)" i18n-legend="Bon à savoir" styleClass="mt-4 border-dashed border-3">
-                <p class="text-800" i18n>
-                    Faites ressortir encore plus votre événement. Ces sections aident les participants à trouver des informations 
-                    et à répondre à leurs questions, ce qui signifie plus de ventes de billets et moins de temps pour répondre aux messages.
-                </p>
-                <div class="flex flex-wrap flex-row align-items-stretch gap-3">
-                    <p-card header="{{'agenda' | uppercase}}" class="w-25rem">
-                        <p i18n>
-                            Présenter le programme de votre événement, les activités et les intervenants afin de donner plus d'informations sur le déroulement.
-                        </p>
-                        <p-button label="Ajouter" size="small" severity="info" icon="pi pi-plus"/>
-                        <p-button label="Voir un exemple" size="small" severity="info" outlined="true" icon="pi pi-eye" class="ml-2"/>
-                    </p-card>
-                    <p-card header="{{'Foire aux questions'| uppercase}}" class="w-25rem">
-                        <p i18n>
-                            Lister les questions fréquement posées et leurs réponses afin que les participants n'aient à vous les poser toutes les fois.
-                        </p>
-                        <p-button label="Ajouter" size="small" severity="info" icon="pi pi-plus"/>
-                        <p-button label="Voir un exemple" size="small" severity="info" outlined="true" icon="pi pi-eye" class="ml-2"/>
-                    </p-card>
+                <div (click)="showImageInplace()">
+                    <p class="text-800" i18n>
+                        Faites ressortir encore plus votre événement. Ces sections aident les participants à trouver des informations 
+                        et à répondre à leurs questions, ce qui signifie plus de ventes de billets et moins de temps pour répondre aux messages.
+                    </p>
+                    <div class="flex flex-wrap flex-row align-items-stretch gap-3">
+                        <p-card header="{{'agenda' | uppercase}}" class="w-25rem">
+                            <p i18n>
+                                Présenter le programme de votre événement, les activités et les intervenants afin de donner plus d'informations sur le déroulement.
+                            </p>
+                            <p-button label="Ajouter" size="small" severity="info" icon="pi pi-plus"/>
+                            <p-button label="Voir un exemple" size="small" severity="info" outlined="true" icon="pi pi-eye" class="ml-2"/>
+                        </p-card>
+                        <p-card header="{{'Foire aux questions'| uppercase}}" class="w-25rem">
+                            <p i18n>
+                                Lister les questions fréquement posées et leurs réponses afin que les participants n'aient à vous les poser toutes les fois.
+                            </p>
+                            <p-button label="Ajouter" size="small" severity="info" icon="pi pi-plus"/>
+                            <p-button label="Voir un exemple" size="small" severity="info" outlined="true" icon="pi pi-eye" class="ml-2"/>
+                        </p-card>
+                    </div>
                 </div>
-                
             </p-fieldset>
 
             <div class="mt-4 flex justify-content-end flex-wrap">

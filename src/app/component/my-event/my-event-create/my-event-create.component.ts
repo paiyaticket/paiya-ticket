@@ -33,6 +33,8 @@ import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 import { FileStorageService } from '../../../service/file-storage.service';
 import { getDownloadURL } from '@angular/fire/storage';
+import { Inplace, InplaceModule } from 'primeng/inplace';
+import { Console } from 'console';
 
 
 registerPlugin(FilePondPluginFileValidateType, FilePondPluginImagePreview);
@@ -59,7 +61,8 @@ registerPlugin(FilePondPluginFileValidateType, FilePondPluginImagePreview);
         CardModule,
         GalleriaModule,
         ChipsModule,
-        FilePondModule
+        FilePondModule,
+        InplaceModule
     ],
     templateUrl: './my-event-create.component.html',
     styleUrl: './my-event-create.component.scss',
@@ -96,9 +99,10 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
     @Input()
     eventId : string | undefined;
 
+    @ViewChild('imageInplace') imageInplace!: Inplace;
     @ViewChild('galleria') galleria!: Galleria;
-
     @ViewChild('imagesCoverPond') imageCoverPond: any;
+
     pondOptions = {
         name: 'imagesCoverPond',
         class: 'images-cover-pond',
@@ -136,8 +140,6 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
                     },
                 };
             }
-
-            
         }
     };
 
@@ -244,6 +246,17 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         });
     }
 
+    // IMAGE INPLACE
+    showImageInplace(){
+        this.imageInplace.deactivate();
+    }
+
+    hideImageInplace(){
+        this.imageInplace.activate();
+    }
+
+
+    // IMAGE GALLERIA LISTENER
     removeImageCover(event : any){
         let filter = (value : string, index : number , array : []) => {
             return value.includes(event.file.file.name);
@@ -269,6 +282,8 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
     
     }
 
+
+    // FORM DATA PROCESS
     submit(){
         let event : Event = this.eventForm.value as Event;
         const startTime : Date = this.mergeDateAndTime(this.date?.value, this.startTime?.value);
