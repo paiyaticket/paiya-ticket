@@ -31,6 +31,8 @@ import { Subscription } from 'rxjs';
 import { FilePondModule, registerPlugin } from 'ngx-filepond';
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
+import { FileStorageService } from '../../../service/file-storage.service';
+import { getDownloadURL } from '@angular/fire/storage';
 
 
 registerPlugin(FilePondPluginFileValidateType, FilePondPluginImagePreview);
@@ -68,21 +70,6 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
 
     // TODO : donner la possibilité à l'utilisateur de préciser la LANGUE de l'evènement;
 
-    @Input()
-    eventId : string | undefined;
-
-    @ViewChild('imagesCoverPond') imageCoverPond: any;
-    pondOptions = {
-        name: 'imagesCoverPond',
-        class: 'images-cover-pond',
-        multiple: true,
-        maxFiles: 4,
-        acceptedFileTypes: 'image/jpeg, image/png',
-        labelInvalidField: $localize `Ce champ contient des fichiers invalides.`,
-        labelIdle: $localize `Glisser & Déposer vos fichiers OU <span class="filepond--label-action"> Cliquez pour sélectionner</span>.`,
-        allowReorder: true
-    };
-
     eventSubscription : Subscription | undefined;
     createEventSubscription : Subscription | undefined;
     updateEventSubscription : Subscription | undefined;
@@ -103,7 +90,57 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         {'label' : $localize `Évènement en ligne`, 'value' : VenueType.VIRTUAL}
     ];
 
-    constructor(private router : Router, private eventService : EventService){}
+    @Input()
+    eventId : string | undefined;
+
+    @ViewChild('imagesCoverPond') imageCoverPond: any;
+    pondOptions = {
+        name: 'imagesCoverPond',
+        class: 'images-cover-pond',
+        multiple: true,
+        maxFiles: 4,
+        acceptedFileTypes: 'image/jpeg, image/png',
+        labelInvalidField: $localize `Ce champ contient des fichiers invalides.`,
+        labelIdle: $localize `Glisser & Déposer vos fichiers OU <span class="filepond--label-action"> Cliquez pour sélectionner</span>.`,
+        allowReorder: true,
+        server : {
+            process : (fieldName : string, file : File, metadata : any, load : Function, error : Function, progress : Function, abort : Function, transfer : Function, options : any) => {
+                let path = 'repos/'+this.auth?.currentUser?.uid+'/images';
+                const uploadTask = this.fileStorageService.uploadFile(file, path);
+
+                uploadTask.on('state_changed', 
+                    (snapshot) => {
+                        const p = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        progress(true, snapshot.bytesTransferred, snapshot.totalBytes);
+                    }, 
+                    (err) => {
+                        error(err);
+                    }, 
+                    () => {
+                        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                            load(downloadURL);
+                            this.imageCover?.value?.push(downloadURL);
+                            console.log(this.eventForm.get('imageCover')?.value);
+                        });
+                    }
+                );
+
+                return {
+                    abort: () => {
+                        uploadTask.cancel();
+                        abort();
+                    },
+                };
+            }
+
+            
+        }
+    };
+
+
+    constructor(private router : Router, 
+                private eventService : EventService,
+                private fileStorageService : FileStorageService){}
 
     ngOnInit(): void {
         this.auth = getAuth();
@@ -116,7 +153,7 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
             venueType : new FormControl<VenueType | undefined>(VenueType.FACE_TO_FACE),
             eventCategory : new FormControl<string | undefined>(undefined),
             tags : new FormControl<string[]>([]),
-            imageCover : new FormControl<string | undefined>(undefined),
+            imageCover : new FormControl<string[]>([]),
             summary : new FormControl<string | undefined>('', [Validators.maxLength(150)]),
             description : new FormControl<string | undefined>(undefined),
             publicationDate : new FormControl<string | undefined>(undefined),
@@ -179,12 +216,29 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         this.selectedVenueType = event.value;
     }
 
-    pondHandleInit() {
-        console.log('FilePond has initialised', this.imageCoverPond);
+    pondHandleAddFile(event: any) {
+        console.log(event);
     }
 
-    pondHandleAddFile(event: any) {
-        console.log('A file was added', event);
+    pondHandleRemoveFile(event: any) {
+        this.fileStorageService.removeFile(event.file.file, 'repos/'+this.auth?.currentUser?.uid+'/images')
+        .then(() => {
+            // console.log("BEFOR : "+this.imageCover?.value.length);
+            if(this.imageCover?.value)
+                this.removeImageCover(event);
+            // console.log("AFTER : "+this.imageCover?.value.length);
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+    }
+
+    removeImageCover(event : any){
+        let filter = (value : string, index : number , array : []) => {
+            return value.includes(event.file.file.name);
+        }
+        let index = this.imageCover?.value?.findIndex(filter);
+        this.imageCover?.value?.splice(index, 1);
     }
 
     submit(){

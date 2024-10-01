@@ -13,9 +13,8 @@
                 <div class="formgrid grid">
                     <div class="field xl:col-12 lg:col-12 col-12">
                         <file-pond #imagesCoverPond
-                        [options]="pondOptions"
-                        (oninit)="pondHandleInit()"
-                        (onaddfile)="pondHandleAddFile($event)">
+                            [options]="pondOptions"
+                            (onremovefile)="pondHandleRemoveFile($event)">
 
                         </file-pond>
                     </div>

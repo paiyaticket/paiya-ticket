@@ -13,6 +13,7 @@ import { HttpErrorInterceptor } from './interceptors/http-error-interceptor';
 import { loggingInterceptor } from './interceptors/log-interceptor';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
+import { getStorage, provideStorage } from '@angular/fire/storage';
 
 export const appConfig: ApplicationConfig = {
     providers: [
@@ -21,10 +22,11 @@ export const appConfig: ApplicationConfig = {
         provideAnimations(), 
         provideFirebaseApp(() => initializeApp(environment.firebaseConfig)), 
         provideAuth(() => getAuth()),
+        provideStorage(() => getStorage()),
         provideHttpClient(
             withNoXsrfProtection(),
             withFetch(),
-            withInterceptors([HttpErrorInterceptor, loggingInterceptor])
+            withInterceptors([HttpErrorInterceptor])
         ),
         // primeng features providers
         MessageService,
