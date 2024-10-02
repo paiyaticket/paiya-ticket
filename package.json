@@ -30,6 +30,8 @@
     "@fullcalendar/timegrid": "^6.0.3",
     "@ngx-translate/core": "^15.0.0",
     "@ngx-translate/http-loader": "^8.0.0",
+    "@pqina/angular-pintura": "^9.0.3",
+    "@pqina/pintura": "^8.88.3",
     "chart.js": "^3.3.2",
     "express": "^4.18.2",
     "filepond": "^4.31.4",

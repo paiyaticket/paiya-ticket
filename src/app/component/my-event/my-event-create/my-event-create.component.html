@@ -18,8 +18,7 @@
                                     <p-galleria #galleriaPlaceholder class="fadein animation-duration-2000 animation-iteration-2"
                                         [value]="placeholderImages" [numVisible]="3" showThumbnails="false" [showIndicators]="false"
                                         circular="true" autoPlay="true" [showItemNavigators]="false" transitionInterval="3000" 
-                                        [containerStyle]="{'max-height': '420px'}" showTransitionOptions="'5s cubic-bezier(0, 0, 0.2, 1)'"
-                                        hideTransitionOptions="'5s cubic-bezier(0, 0, 0.2, 1)'">
+                                        [containerStyle]="{'max-height': '420px'}">
                                             <ng-template pTemplate="item" let-item>
                                                 <img [src]="item.source" class="w-full align-content-start overflow-hidden" 
                                                 style="height: auto; max-height: 400px; object-fit: cover;"/>
