@@ -38,6 +38,7 @@
     "filepond": "^4.31.4",
     "filepond-plugin-file-poster": "^2.5.1",
     "filepond-plugin-file-validate-type": "^1.2.9",
+    "filepond-plugin-image-edit": "^1.6.3",
     "filepond-plugin-image-preview": "^4.6.12",
     "ngx-filepond": "^7.0.3",
     "primeflex": "^3.3.1",

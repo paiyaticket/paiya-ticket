@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { afterNextRender, ChangeDetectionStrategy, Component, Inject, Input, OnDestroy, OnInit, PLATFORM_ID, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Auth, getAuth, User } from '@angular/fire/auth';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -34,10 +34,10 @@ import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 import { FileStorageService } from '../../../service/file-storage.service';
 import { getDownloadURL } from '@angular/fire/storage';
 import { Inplace, InplaceModule } from 'primeng/inplace';
-import { Console } from 'console';
+import { createDefaultImageReader, createDefaultImageWriter, getEditorDefaults, legacyDataToImageState, openEditor, processImage } from '@pqina/pintura';
 
 
-registerPlugin(FilePondPluginFileValidateType, FilePondPluginImagePreview);
+
 
 
 @Component({
@@ -71,7 +71,6 @@ registerPlugin(FilePondPluginFileValidateType, FilePondPluginImagePreview);
 })
 export class MyEventCreateComponent implements OnInit, OnDestroy {
 
-    // TODO : donner la possibilité à l'utilisateur de préciser la LANGUE de l'evènement;
 
     eventSubscription : Subscription | undefined;
     createEventSubscription : Subscription | undefined;
@@ -80,8 +79,11 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
     eventForm !: FormGroup;
     selectedEventType : EventType | undefined = EventType.SINGLE_EVENT;
     selectedVenueType : VenueType | undefined = VenueType.FACE_TO_FACE;
+    showGalleria : boolean = true;
     showGalleriaPlaceholder : boolean = true;
-    images: any[] | undefined;
+    DEFAULT_IMAGE = '../../../../assets/layout/images/image-placeholder.png';
+    images: any[] = [];
+    pondOptions : any;
     placeholderImages: any[] | undefined;
     messages!: Message[];
     countries : Country[] = COUNTRIES;
@@ -96,65 +98,71 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         {'label' : $localize `Évènement en ligne`, 'value' : VenueType.VIRTUAL}
     ];
 
-    @Input()
-    eventId : string | undefined;
-
+    @Input() eventId : string | undefined;
     @ViewChild('imageInplace') imageInplace!: Inplace;
     @ViewChild('galleria') galleria!: Galleria;
-    @ViewChild('imagesCoverPond') imageCoverPond: any;
+    @ViewChild('imageCoverPond') imageCoverPond!: any;
 
-    pondOptions = {
-        name: 'imagesCoverPond',
-        class: 'images-cover-pond',
-        multiple: true,
-        maxFiles: 5,
-        acceptedFileTypes: 'image/jpeg, image/png',
-        labelInvalidField: $localize `Ce champ contient des fichiers invalides.`,
-        labelIdle: $localize `Glisser & Déposer vos fichiers OU <span class="filepond--label-action"> Cliquez pour sélectionner</span>.`,
-        allowReorder: true,
-        server : {
-            process : (fieldName : string, file : File, metadata : any, load : Function, error : Function, progress : Function, abort : Function, transfer : Function, options : any) => {
-                let path = 'repos/'+this.auth?.currentUser?.uid+'/images';
-                const uploadTask = this.fileStorageService.uploadFile(file, path);
-
-                uploadTask.on('state_changed', 
-                    (snapshot) => {
-                        const p = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                        progress(true, snapshot.bytesTransferred, snapshot.totalBytes);
-                    }, 
-                    (err) => {
-                        error(err);
-                    }, 
-                    () => {
-                        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                            load(downloadURL);
-                            this.addImageCover(downloadURL)
-                        });
-                    }
-                );
-
-                return {
-                    abort: () => {
-                        uploadTask.cancel();
-                        abort();
-                    },
-                };
-            }
-        }
-    };
-
-
+    
     constructor(private router : Router, 
                 private eventService : EventService,
-                private fileStorageService : FileStorageService){}
-
+                private fileStorageService : FileStorageService,
+                @Inject(PLATFORM_ID) private platformId: any){
+                    registerPlugin(FilePondPluginFileValidateType, FilePondPluginImagePreview);
+                    if (isPlatformBrowser(this.platformId)) {
+                        import('filepond-plugin-file-poster').then(m => registerPlugin(m.default));
+                    }
+                }
+    
     ngOnInit(): void {
+        this.images = [{source: this.DEFAULT_IMAGE}];
         this.placeholderImages = [
             {source : 'assets/layout/images/galleria/cover1.jpg'},
             {source : 'assets/layout/images/galleria/cover2.jpg'},
             {source : 'assets/layout/images/galleria/cover3.jpg'},
         ];
-        this.images = [];
+        this.pondOptions = {
+            name: 'imagesCoverPond',
+            class: 'images-cover-pond',
+            multiple: true,
+            maxFiles: 5,
+            acceptedFileTypes: 'image/jpeg, image/png',
+            labelInvalidField: $localize `Ce champ contient des fichiers invalides.`,
+            labelIdle: $localize `Glisser & Déposer vos fichiers OU <span class="filepond--label-action"> Cliquez pour sélectionner</span>.`,
+            allowReorder: true,
+            imagePreviewMaxHeight: 200,
+            server : {
+                process : (fieldName : string, file : File, metadata : any, load : Function, error : Function, progress : Function, abort : Function, transfer : Function, options : any) => {
+                    let path = 'repos/'+this.auth?.currentUser?.uid+'/images';
+                    const uploadTask = this.fileStorageService.uploadFile(file, path);
+    
+                    uploadTask.on('state_changed', 
+                        (snapshot) => {
+                            const p = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                            progress(true, snapshot.bytesTransferred, snapshot.totalBytes);
+                        }, 
+                        (err) => {
+                            error(err);
+                        }, 
+                        () => {
+                            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                                load(downloadURL);
+                                this.addImageCover(downloadURL)
+                            });
+                        }
+                    );
+    
+                    return {
+                        abort: () => {
+                            uploadTask.cancel();
+                            abort();
+                        },
+                    };
+                }
+            },
+
+
+        };
 
         this.auth = getAuth();
         this.currentUser = this.auth?.currentUser;
@@ -247,11 +255,13 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
     }
 
     // IMAGE INPLACE
-    showImageInplace(){
-        this.imageInplace.deactivate();
+    showInplaceContent(){
+        if(this.images && this.images.length == 0){
+            this.imageInplace.deactivate();
+        }
     }
 
-    hideImageInplace(){
+    hideInplaceContent(){
         this.imageInplace.activate();
     }
 
@@ -262,9 +272,8 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
             return value.includes(event.file.file.name);
         }
         let index = this.imageCover?.value?.findIndex(filter);
-        this.imageCover?.value?.splice(index, 1);
         this.images?.splice(index, 1);
-        // this.galleria.value = this.images;
+        this.galleria.value = this.images;
         console.log("images length : "+this.images?.length);
         if(this.images && this.images.length === 0){
             this.showGalleriaPlaceholder = true;
@@ -272,14 +281,15 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
     }
 
     addImageCover(downloadURL : string){
-        this.imageCover?.value?.push(downloadURL);
-        this.images?.push({source: downloadURL});
-        // this.galleria.value = this.images;
-        console.log("images length : "+this.images?.length);
-        if(this.images && this.images.length > 0){
-            this.showGalleriaPlaceholder = false;
+        let size = this.images?.unshift({source: downloadURL});
+        if(this.images.length === 2 && this.images[1].source === this.DEFAULT_IMAGE){
+            this.images.pop();
         }
-    
+        this.updateGalerieImage(this.images);
+    }
+
+    updateGalerieImage(images : any[]){
+        this.galleria.value = images;
     }
 
 
