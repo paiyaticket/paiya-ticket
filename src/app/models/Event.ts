@@ -2,6 +2,7 @@ import { EventType } from "../enumerations/event-type";
 import { AgendaPhase } from "./agenda-phase";
 import { CashAccount } from "./cash-account";
 import { EventOrganizer } from "./event-organizer";
+import { ImageCover } from "./image-cover";
 import { OnlineAddress } from "./online-address";
 import { PhysicalAddress } from "./physical-address";
 import { PublishSettings } from "./publishSettings";
@@ -14,7 +15,7 @@ export class Event {
     eventType : EventType | undefined;
     eventCategory : string | undefined;
     tags : string[] = [];
-    imageCover : string | undefined;
+    imageCovers : ImageCover[] = [];
     summary : string | undefined;
     description : string | undefined;
     publicationDate : string | undefined;

@@ -1,5 +1,5 @@
-import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { afterNextRender, ChangeDetectionStrategy, Component, Inject, Input, OnDestroy, OnInit, PLATFORM_ID, ViewChild, ViewEncapsulation } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { ChangeDetectionStrategy, Component, Inject, Input, OnDestroy, OnInit, PLATFORM_ID, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Auth, getAuth, User } from '@angular/fire/auth';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -22,7 +22,7 @@ import { Country } from '../../../models/country';
 import { COUNTRIES } from '../../../data/countries.data';
 import { EditorModule } from 'primeng/editor';
 import { CardModule } from 'primeng/card';
-import { Galleria, GalleriaModule } from 'primeng/galleria';
+import { GalleriaModule } from 'primeng/galleria';
 import { ChipsModule } from 'primeng/chips';
 import { VenueType } from '../../../enumerations/venueType';
 import { Event } from '../../../models/event';
@@ -31,10 +31,14 @@ import { Subscription } from 'rxjs';
 import { FilePondModule, registerPlugin } from 'ngx-filepond';
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
+import FilePondPluginImageResize from 'filepond-plugin-image-resize';
+import FilePondPluginImageTransform from 'filepond-plugin-image-transform';
 import { FileStorageService } from '../../../service/file-storage.service';
 import { getDownloadURL } from '@angular/fire/storage';
 import { Inplace, InplaceModule } from 'primeng/inplace';
-import { createDefaultImageReader, createDefaultImageWriter, getEditorDefaults, legacyDataToImageState, openEditor, processImage } from '@pqina/pintura';
+import { ImageCover } from '../../../models/image-cover';
+import { MessageService } from 'primeng/api';
+import { FilePond, FilePondOptions } from 'filepond';
 
 
 
@@ -79,11 +83,10 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
     eventForm !: FormGroup;
     selectedEventType : EventType | undefined = EventType.SINGLE_EVENT;
     selectedVenueType : VenueType | undefined = VenueType.FACE_TO_FACE;
-    showGalleria : boolean = true;
     showGalleriaPlaceholder : boolean = true;
     DEFAULT_IMAGE = '../../../../assets/layout/images/image-placeholder.png';
-    images: any[] = [];
-    pondOptions : any;
+    images: ImageCover[] = [];
+    pondOptions : FilePondOptions | undefined;
     placeholderImages: any[] | undefined;
     messages!: Message[];
     countries : Country[] = COUNTRIES;
@@ -100,41 +103,55 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
 
     @Input() eventId : string | undefined;
     @ViewChild('imageInplace') imageInplace!: Inplace;
-    @ViewChild('galleria') galleria!: Galleria;
-    @ViewChild('imageCoverPond') imageCoverPond!: any;
+    @ViewChild('imageCoverPond') imageCoverPond!: FilePond;
 
     
     constructor(private router : Router, 
                 private eventService : EventService,
                 private fileStorageService : FileStorageService,
+                private messageService: MessageService,
                 @Inject(PLATFORM_ID) private platformId: any){
-                    registerPlugin(FilePondPluginFileValidateType, FilePondPluginImagePreview);
+                    registerPlugin(FilePondPluginFileValidateType, FilePondPluginImagePreview, 
+                                    FilePondPluginImageResize, FilePondPluginImageTransform);
                     if (isPlatformBrowser(this.platformId)) {
                         import('filepond-plugin-file-poster').then(m => registerPlugin(m.default));
                     }
                 }
     
     ngOnInit(): void {
-        this.images = [{source: this.DEFAULT_IMAGE}];
         this.placeholderImages = [
             {source : 'assets/layout/images/galleria/cover1.jpg'},
             {source : 'assets/layout/images/galleria/cover2.jpg'},
             {source : 'assets/layout/images/galleria/cover3.jpg'},
         ];
+
         this.pondOptions = {
             name: 'imagesCoverPond',
-            class: 'images-cover-pond',
-            multiple: true,
-            maxFiles: 5,
-            acceptedFileTypes: 'image/jpeg, image/png',
+            allowMultiple: true,
+            maxFiles: 10,
+            acceptedFileTypes: ['image/jpeg', 'image/png'],
             labelInvalidField: $localize `Ce champ contient des fichiers invalides.`,
             labelIdle: $localize `Glisser & Déposer vos fichiers OU <span class="filepond--label-action"> Cliquez pour sélectionner</span>.`,
-            allowReorder: true,
-            imagePreviewMaxHeight: 200,
+            allowReorder: false,
+            imagePreviewHeight:300,
+            allowImageResize : true,
+            imageResizeTargetWidth : 600,
+            imageResizeTargetHeight : 300,
+            files: [
+                {
+                    // the server file reference
+                    source: 'assets/layout/images/galleria/cover1.jpg',
+        
+                    // set type to local to indicate an already uploaded file
+                    options: {
+                        type: 'local',
+                    },
+                },
+            ],
             server : {
-                process : (fieldName : string, file : File, metadata : any, load : Function, error : Function, progress : Function, abort : Function, transfer : Function, options : any) => {
+                process : (fieldName : string, file : any, metadata : any, load : Function, error : Function, progress : Function, abort : Function, transfer : Function, options : any) => {
                     let path = 'repos/'+this.auth?.currentUser?.uid+'/images';
-                    const uploadTask = this.fileStorageService.uploadFile(file, path);
+                    const uploadTask = this.fileStorageService.uploadFile(file as File, path);
     
                     uploadTask.on('state_changed', 
                         (snapshot) => {
@@ -146,8 +163,11 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
                         }, 
                         () => {
                             getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                                let image = new ImageCover;
+                                image.source = downloadURL;
+                                image.isDefault = false;
+                                this.images.push(image);
                                 load(downloadURL);
-                                this.addImageCover(downloadURL)
                             });
                         }
                     );
@@ -158,10 +178,8 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
                             abort();
                         },
                     };
-                }
+                } 
             },
-
-
         };
 
         this.auth = getAuth();
@@ -174,7 +192,7 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
             venueType : new FormControl<VenueType | undefined>(VenueType.FACE_TO_FACE),
             eventCategory : new FormControl<string | undefined>(undefined),
             tags : new FormControl<string[]>([]),
-            imageCover : new FormControl<string[]>([]),
+            imageCovers : new FormControl<ImageCover[]>([]),
             summary : new FormControl<string | undefined>('', [Validators.maxLength(150)]),
             description : new FormControl<string | undefined>(undefined),
             publicationDate : new FormControl<string | undefined>(undefined),
@@ -218,11 +236,43 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
                         startTime : this.utcDateToZonedDateTime(event.startTime, event.timeZone),
                         endTime : this.utcDateToZonedDateTime(event.endTime, event.timeZone)
                     });
-                }
-                console.log(this.eventForm.value);
+                }  
+
+                this.initImagesIfEventIsLoaded(event);
+                
             });
         }
     }
+
+    initImagesIfEventIsLoaded(event : Event){
+        if(this.pondOptions && event){
+            this.pondOptions.files = [];
+            event.imageCovers
+            .map((image: { source: any; }) => image.source)
+            .forEach((source) => {
+                if(source){
+                    this.pondOptions?.files?.push({
+                        source : source, options : {type : 'local'}
+                    });
+                }
+            });
+            console.log("initImagesIfEventIsLoaded : "+this.pondOptions.files.length);
+        }
+    }
+
+    /*
+    initImagesIfEventIsLoaded(){
+        this.imageCovers?
+        .map((image: { source: any; }) => image.source)
+        .forEach((source) => {
+            if(source){
+                this.imageCoverPond.files.push({
+                    source : source, options : {type : 'local'}
+                });
+            }
+        });
+    }
+        */
 
     utcDateToZonedDateTime(utcDate : string, timeZone : string) : Date | null{
         const zonedDateTime = new Date(utcDate).toLocaleString("en-US" , {timeZone: timeZone});
@@ -237,23 +287,6 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         this.selectedVenueType = event.value;
     }
 
-    pondHandleAddFile(event: any) {
-        console.log(event);
-    }
-
-    pondHandleRemoveFile(event: any) {
-        this.fileStorageService.removeFile(event.file.file, 'repos/'+this.auth?.currentUser?.uid+'/images')
-        .then(() => {
-            // console.log("BEFOR : "+this.imageCover?.value.length);
-            if(this.imageCover?.value)
-                this.removeImageCover(event);
-            // console.log("AFTER : "+this.imageCover?.value.length);
-        })
-        .catch((error) => {
-            console.log(error);
-        });
-    }
-
     // IMAGE INPLACE
     showInplaceContent(){
         if(this.images && this.images.length == 0){
@@ -266,31 +299,42 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
     }
 
 
+    // FILEPOND EVENT HANDLERS
+    pondHandleReorderFiles(event: any) {
+        this.reorderImageCover(event.origin, event.target);
+    }
+
+    pondHandleRemoveFile(event: any) {
+        this.fileStorageService.removeFile(event.file.file, 'repos/'+this.auth?.currentUser?.uid+'/images')
+        .then(() => {
+            if(this.imageCovers?.value)
+                this.removeImageCover(event);
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+    }
+
+    reorderImageCover(origin : number, target : number){
+        this.images.splice(target, 0, this.images.splice(origin, 1)[0]);
+    }
+
+    
+
     // IMAGE GALLERIA LISTENER
     removeImageCover(event : any){
-        let filter = (value : string, index : number , array : []) => {
-            return value.includes(event.file.file.name);
+        let filter = (value : any, index : number , obj : any[]) => {
+            return value.source.includes(event.file.file.name);
         }
-        let index = this.imageCover?.value?.findIndex(filter);
+
+        let index = this.images.findIndex(filter);
         this.images?.splice(index, 1);
-        this.galleria.value = this.images;
-        console.log("images length : "+this.images?.length);
-        if(this.images && this.images.length === 0){
+
+        if(this.images && this.images.length === 1){
             this.showGalleriaPlaceholder = true;
         }
-    }
+    }    
 
-    addImageCover(downloadURL : string){
-        let size = this.images?.unshift({source: downloadURL});
-        if(this.images.length === 2 && this.images[1].source === this.DEFAULT_IMAGE){
-            this.images.pop();
-        }
-        this.updateGalerieImage(this.images);
-    }
-
-    updateGalerieImage(images : any[]){
-        this.galleria.value = images;
-    }
 
 
     // FORM DATA PROCESS
@@ -299,11 +343,13 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         const startTime : Date = this.mergeDateAndTime(this.date?.value, this.startTime?.value);
         const endTime : Date = this.mergeDateAndTime(this.date?.value, this.endTime?.value);
 
+        event.imageCovers = this.images;
         event.startTime = startTime.toISOString();
         event.endTime = endTime.toISOString();
         event.timeZone = (this.timeZone?.value) ? this.timeZone?.value : Intl.DateTimeFormat().resolvedOptions().timeZone;
         event.timeZoneOffset = startTime.getTimezoneOffset();
         event.owner = (this.currentUser?.email) ? this.currentUser?.email : undefined;
+
 
         if(this.eventId){
             this.updateEvent(event);
@@ -316,9 +362,11 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         event.id = this.eventId;
         this.updateEventSubscription = this.eventService.update(event).subscribe({
             next : (event) => {
+                this.messageService.add({ severity: 'success', key: "global", summary: $localize`Succès`, detail: $localize`Mise a jour réussie.` });
                 this.reloadPageWithEventId(event.id);
             },
             error : (error) => {
+                this.messageService.add({ severity: 'error', key: "global", summary: $localize`Erreur`, detail: $localize`Un problème est survenu lors de la mise a jour de l'événement.` });
                 console.log(error);
             }
         });
@@ -328,9 +376,11 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
 
         this.createEventSubscription = this.eventService.save(event).subscribe({
             next : (event) => {
+                this.messageService.add({ severity: 'success', key: "global", summary: $localize`Succès`, detail: $localize`Création de l'événement réussie.` });
                 this.reloadPageWithEventId(event.id);
             },
             error : (error) => {
+                this.messageService.add({ severity: 'error', key: "global", summary: $localize`Erreur`, detail: $localize`Un problème est survenu lors de la création de l'événement.` });
                 console.log(error);
             }
         });
@@ -382,8 +432,8 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         return this.eventForm.get('tags');
     }
 
-    get imageCover(){
-        return this.eventForm.get('imageCover');
+    get imageCovers(){
+        return this.eventForm.get('imageCovers');
     }
 
     get summary(){

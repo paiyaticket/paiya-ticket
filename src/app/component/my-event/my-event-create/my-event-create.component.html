@@ -12,13 +12,20 @@
             <p-fieldset legend="Images et vidéos" i18n-legend="Images et vidéos" styleClass="mt-4 hover:border-blue-400 border-3">
                 <div class="formgrid grid">
                     <div class="field xl:col-12 lg:col-12 col-12">
+                        <file-pond #imagesCoverPond
+                            [options]="pondOptions"
+                            (onremovefile)="pondHandleRemoveFile($event)" 
+                            (onreorderfiles)="pondHandleReorderFiles($event)"
+                            class="my-2">
+                        </file-pond>
+                        <!--
                         <p-inplace #imageInplace>
                             <ng-template pTemplate="display">
                                 @if (showGalleriaPlaceholder) {
                                     <p-galleria #galleriaPlaceholder class="fadein animation-duration-2000 animation-iteration-2"
-                                        [value]="placeholderImages" [numVisible]="3" showThumbnails="false" [showIndicators]="true"
-                                        circular="true" autoPlay="true" [showItemNavigators]="false" transitionInterval="3000" 
-                                        [containerStyle]="{'max-height': '420px'}">
+                                        [value]="placeholderImages" [numVisible]="3" showThumbnails="false" showIndicatorsOnItem="true"
+                                        [showIndicators]="true" circular="true" autoPlay="true" [showItemNavigators]="false" 
+                                        transitionInterval="3000" [containerStyle]="{'max-height': '420px'}">
                                             <ng-template pTemplate="item" let-item>
                                                 <img [src]="item.source" class="w-full align-content-start overflow-hidden" 
                                                 style="height: auto; max-height: 400px; object-fit: cover;"/>
@@ -27,11 +34,8 @@
                                 }
                             </ng-template>
                             <ng-template pTemplate="content">
-                                <file-pond #imagesCoverPond
-                                    [options]="pondOptions"
-                                    (onremovefile)="pondHandleRemoveFile($event)" class="my-2">
-                                </file-pond>
-                                <p-galleria #galleria [value]="images" showThumbnails="false" [showIndicators]="true" 
+                            
+                                <p-galleria #galleria [value]="images"  showThumbnails="false" [showIndicators]="true" 
                                     circular="true" autoPlay="true" [showItemNavigators]="false" showIndicatorsOnItem="true" 
                                     shouldStopAutoplayByClick="true" transitionInterval="3000" 
                                     [containerStyle]="{'max-height': '420px'}">
@@ -40,8 +44,11 @@
                                             style="height: auto; max-height: 400px; object-fit: cover;"/>
                                         </ng-template>
                                 </p-galleria>
+                                
                             </ng-template>
                         </p-inplace>
+                        -->
+                        
                     </div>
                 </div>
             </p-fieldset>

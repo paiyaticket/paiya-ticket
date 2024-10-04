@@ -66,6 +66,11 @@ export class MyEventItemComponent implements OnDestroy {
         ]
     }
 
+    get imageCover(){
+        return (this.event.imageCovers && this.event.imageCovers.length > 0 && this.event.imageCovers[0] != null) ? 
+        this.event.imageCovers[0].source : this.defaultImageCover;
+    }
+
     confirmDelete(event : Event) {
         this.confirmationService.confirm({
             header: $localize `Etes-vous sur(e)?`,
