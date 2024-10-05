@@ -223,7 +223,7 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
                     console.log("REMOVE...");
                     // Should somehow send `source` to server so server can remove the file with this source
                     this.fileStorageService.removeFile(source).then(() => {
-                        this.removeImage(source);
+                        // this.removeImage(source);
                         load();
                     }).catch((e) => {
                         error(e.message);
@@ -337,30 +337,33 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         let image = new ImageCover();
         image.source = downloadURL;
         image.isDefault = false;
+
         const filter = (value: ImageCover) => {
-            return value.source == downloadURL;
+            return Object.is(value.source.split("?")[0],downloadURL.split("?")[0]);
         }
-        console.log("Image already added : "+this.imageCovers?.value.some(filter));
         if(!this.imageCovers?.value.some(filter)){
             this.imageCovers?.value.push(image);
-            console.log("image added")
         }
     }
 
     removeImage(url : string){
-        console.log("BEFORE REMOVING imageCovers :" + this.imageCovers?.value.length);
-        console.log("BEFORE REMOVING pondOptions :" + this.pondOptions?.files?.length);
         let filter = (value : any, index : number , obj : any[]) => {
-            return value.source.includes(url);
+            return Object.is(value.source.split("?")[0],url.split("?")[0]);
         }
         let i = this.imageCovers?.value.findIndex(filter);
         let j = this.pondOptions?.files?.findIndex(filter);
-        if(i)
+
+        if(this.imageCovers?.value.length > 1){
             this.imageCovers?.value.splice(i, 1);
-        if(j)
-            this.pondOptions?.files?.splice(j, 1);
-        console.log("AFTER REMOVING imageCovers :" + this.imageCovers?.value.length);
-        console.log("AFTER REMOVING pondOptions :" + this.pondOptions?.files?.length);
+        } else {
+            this.imageCovers?.value.pop();
+        }
+
+        if(this.pondOptions?.files && this.pondOptions?.files?.length > 1 && j){
+            this.pondOptions?.files.splice(j, 1);
+        } else {
+            this.pondOptions?.files?.pop();
+        }
     }
 
 
