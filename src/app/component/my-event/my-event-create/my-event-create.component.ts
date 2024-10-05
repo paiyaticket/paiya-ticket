@@ -38,7 +38,8 @@ import { getDownloadURL } from '@angular/fire/storage';
 import { Inplace, InplaceModule } from 'primeng/inplace';
 import { ImageCover } from '../../../models/image-cover';
 import { MessageService } from 'primeng/api';
-import { FilePond, FilePondOptions } from 'filepond';
+import { FilePond, FilePondInitialFile, FilePondOptions } from 'filepond';
+import { randomUUID } from 'crypto';
 
 
 
@@ -129,27 +130,20 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
             name: 'imagesCoverPond',
             allowMultiple: true,
             maxFiles: 10,
+            allowReorder: false,
+            allowRevert: true,
+            allowRemove: true,
             acceptedFileTypes: ['image/jpeg', 'image/png'],
             labelInvalidField: $localize `Ce champ contient des fichiers invalides.`,
             labelIdle: $localize `Glisser & Déposer vos fichiers OU <span class="filepond--label-action"> Cliquez pour sélectionner</span>.`,
-            allowReorder: false,
             imagePreviewHeight:300,
             allowImageResize : true,
             imageResizeTargetWidth : 600,
             imageResizeTargetHeight : 300,
-            files: [
-                {
-                    // the server file reference
-                    source: 'assets/layout/images/galleria/cover1.jpg',
-        
-                    // set type to local to indicate an already uploaded file
-                    options: {
-                        type: 'local',
-                    },
-                },
-            ],
+            files: [],
             server : {
-                process : (fieldName : string, file : any, metadata : any, load : Function, error : Function, progress : Function, abort : Function, transfer : Function, options : any) => {
+                process : (fieldName, file, metadata, load, error, progress, abort, transfer, options) => {
+                    console.log("PROCESS...");
                     let path = 'repos/'+this.auth?.currentUser?.uid+'/images';
                     const uploadTask = this.fileStorageService.uploadFile(file as File, path);
     
@@ -158,15 +152,12 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
                             const p = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                             progress(true, snapshot.bytesTransferred, snapshot.totalBytes);
                         }, 
-                        (err) => {
-                            error(err);
+                        (storageError) => {
+                            error(storageError.message);
                         }, 
                         () => {
                             getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                                let image = new ImageCover;
-                                image.source = downloadURL;
-                                image.isDefault = false;
-                                this.images.push(image);
+                                this.addImage(downloadURL);
                                 load(downloadURL);
                             });
                         }
@@ -178,7 +169,66 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
                             abort();
                         },
                     };
-                } 
+                }, 
+                load : (source, load, error, progress, abort, headers) => {
+                    console.log("LOAD...");
+
+                    this.fileStorageService.downloadFile(source).then((downloadURL) => {
+                        const xhr = new XMLHttpRequest();
+                        xhr.responseType = 'blob';
+                        xhr.onload = (event) => {
+                            const blob = xhr.response;
+                            const file : File = new File(blob, source);
+                            load(file);
+                        };
+                        xhr.open('GET', downloadURL);
+                        xhr.send();
+
+                    }).catch((error) => {
+                        error(error.message);
+                    })
+                    
+                    return {
+                        abort: () => {
+                            abort();
+                        },
+                    };
+                },
+                fetch: (url, load, error, progress, abort, headers) => {
+                    console.log("FETCH...");
+                    this.fileStorageService.downloadBlod(url).then((blob) => {
+                        let urlParts = url.split("%2F");
+                        blob.name = urlParts[urlParts.length - 1].split("?")[0];
+                        load(blob);
+                    }).catch((e) => {
+                        error(e.message);
+                    });
+                    
+                    return {
+                        abort: () => {
+                            abort();
+                        },
+                    };
+                },
+                revert: (url, load, error) => {
+                    console.log("REVERT...");
+                    this.fileStorageService.removeFile(url).then(() => {
+                        this.removeImage(url);
+                        load();
+                    }).catch((e) => {
+                        error(e.message);
+                    });
+                },
+                remove: (source, load, error) => {
+                    console.log("REMOVE...");
+                    // Should somehow send `source` to server so server can remove the file with this source
+                    this.fileStorageService.removeFile(source).then(() => {
+                        this.removeImage(source);
+                        load();
+                    }).catch((e) => {
+                        error(e.message);
+                    });
+                },
             },
         };
 
@@ -236,43 +286,10 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
                         startTime : this.utcDateToZonedDateTime(event.startTime, event.timeZone),
                         endTime : this.utcDateToZonedDateTime(event.endTime, event.timeZone)
                     });
-                }  
-
-                this.initImagesIfEventIsLoaded(event);
-                
-            });
-        }
-    }
-
-    initImagesIfEventIsLoaded(event : Event){
-        if(this.pondOptions && event){
-            this.pondOptions.files = [];
-            event.imageCovers
-            .map((image: { source: any; }) => image.source)
-            .forEach((source) => {
-                if(source){
-                    this.pondOptions?.files?.push({
-                        source : source, options : {type : 'local'}
-                    });
                 }
             });
-            console.log("initImagesIfEventIsLoaded : "+this.pondOptions.files.length);
         }
     }
-
-    /*
-    initImagesIfEventIsLoaded(){
-        this.imageCovers?
-        .map((image: { source: any; }) => image.source)
-        .forEach((source) => {
-            if(source){
-                this.imageCoverPond.files.push({
-                    source : source, options : {type : 'local'}
-                });
-            }
-        });
-    }
-        */
 
     utcDateToZonedDateTime(utcDate : string, timeZone : string) : Date | null{
         const zonedDateTime = new Date(utcDate).toLocaleString("en-US" , {timeZone: timeZone});
@@ -304,36 +321,55 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         this.reorderImageCover(event.origin, event.target);
     }
 
-    pondHandleRemoveFile(event: any) {
-        this.fileStorageService.removeFile(event.file.file, 'repos/'+this.auth?.currentUser?.uid+'/images')
-        .then(() => {
-            if(this.imageCovers?.value)
-                this.removeImageCover(event);
-        })
-        .catch((error) => {
-            console.log(error);
-        });
-    }
-
     reorderImageCover(origin : number, target : number){
         this.images.splice(target, 0, this.images.splice(origin, 1)[0]);
     }
 
+    initImagesIfEventIdIsPassed(){
+        if(this.eventId)
+            return this.imageCovers?.value.map((image: { source: string }) => {
+                return { source: image.source, options: {} };
+            });
+        return [];
+    }
+
+    addImage(downloadURL : string){
+        let image = new ImageCover();
+        image.source = downloadURL;
+        image.isDefault = false;
+        const filter = (value: ImageCover) => {
+            return value.source == downloadURL;
+        }
+        console.log("Image already added : "+this.imageCovers?.value.some(filter));
+        if(!this.imageCovers?.value.some(filter)){
+            this.imageCovers?.value.push(image);
+            console.log("image added")
+        }
+    }
+
+    removeImage(url : string){
+        console.log("BEFORE REMOVING imageCovers :" + this.imageCovers?.value.length);
+        console.log("BEFORE REMOVING pondOptions :" + this.pondOptions?.files?.length);
+        let filter = (value : any, index : number , obj : any[]) => {
+            return value.source.includes(url);
+        }
+        let i = this.imageCovers?.value.findIndex(filter);
+        let j = this.pondOptions?.files?.findIndex(filter);
+        if(i)
+            this.imageCovers?.value.splice(i, 1);
+        if(j)
+            this.pondOptions?.files?.splice(j, 1);
+        console.log("AFTER REMOVING imageCovers :" + this.imageCovers?.value.length);
+        console.log("AFTER REMOVING pondOptions :" + this.pondOptions?.files?.length);
+    }
+
+
+
+
     
 
-    // IMAGE GALLERIA LISTENER
-    removeImageCover(event : any){
-        let filter = (value : any, index : number , obj : any[]) => {
-            return value.source.includes(event.file.file.name);
-        }
-
-        let index = this.images.findIndex(filter);
-        this.images?.splice(index, 1);
-
-        if(this.images && this.images.length === 1){
-            this.showGalleriaPlaceholder = true;
-        }
-    }    
+    
+        
 
 
 
@@ -342,8 +378,6 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         let event : Event = this.eventForm.value as Event;
         const startTime : Date = this.mergeDateAndTime(this.date?.value, this.startTime?.value);
         const endTime : Date = this.mergeDateAndTime(this.date?.value, this.endTime?.value);
-
-        event.imageCovers = this.images;
         event.startTime = startTime.toISOString();
         event.endTime = endTime.toISOString();
         event.timeZone = (this.timeZone?.value) ? this.timeZone?.value : Intl.DateTimeFormat().resolvedOptions().timeZone;

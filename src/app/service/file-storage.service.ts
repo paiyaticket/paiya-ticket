@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { deleteObject, ref, Storage, uploadBytesResumable, UploadTask } from '@angular/fire/storage';
+import { deleteObject, getBlob, getDownloadURL, ref, Storage, StorageReference, uploadBytesResumable, UploadTask } from '@angular/fire/storage';
 
 @Injectable({
   providedIn: 'root'
@@ -15,9 +15,23 @@ export class FileStorageService {
         return uploadBytesResumable(storageRef, file);
     }
 
-    removeFile(file: File, path : string) : Promise<void> {
-        const storageRef = ref(this.storage, `${path}/${file.name}`);
+    downloadFile(path : string) : Promise<any> {
+        const storageRef = ref(this.storage, path);
+        return getDownloadURL(storageRef);
+    }
+
+    downloadBlod(path : string) : Promise<any> {
+        const storageRef = ref(this.storage, path);
+        return getBlob(storageRef);
+    }
+
+
+    removeFile(path : string) : Promise<void> {
+        const storageRef = ref(this.storage, path);
         return deleteObject(storageRef);
     }
 
+
+
 }
+

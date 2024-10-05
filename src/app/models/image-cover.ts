@@ -1,4 +1,4 @@
 export class ImageCover {
-    source : string | undefined;
-    isDefault : boolean | undefined;
+    source !: string;
+    isDefault : boolean = false;
 }
