@@ -35,11 +35,11 @@ import FilePondPluginImageResize from 'filepond-plugin-image-resize';
 import FilePondPluginImageTransform from 'filepond-plugin-image-transform';
 import { FileStorageService } from '../../../service/file-storage.service';
 import { getDownloadURL } from '@angular/fire/storage';
-import { Inplace, InplaceModule } from 'primeng/inplace';
 import { ImageCover } from '../../../models/image-cover';
 import { MessageService } from 'primeng/api';
-import { FilePond, FilePondInitialFile, FilePondOptions } from 'filepond';
-import { randomUUID } from 'crypto';
+import { FilePond, FilePondOptions } from 'filepond';
+import { DialogModule } from 'primeng/dialog';
+import { DataViewModule } from 'primeng/dataview';
 
 
 
@@ -67,7 +67,8 @@ import { randomUUID } from 'crypto';
         GalleriaModule,
         ChipsModule,
         FilePondModule,
-        InplaceModule
+        DialogModule,
+        DataViewModule
     ],
     templateUrl: './my-event-create.component.html',
     styleUrl: './my-event-create.component.scss',
@@ -76,7 +77,7 @@ import { randomUUID } from 'crypto';
 })
 export class MyEventCreateComponent implements OnInit, OnDestroy {
 
-
+    visible: boolean = false;
     eventSubscription : Subscription | undefined;
     createEventSubscription : Subscription | undefined;
     updateEventSubscription : Subscription | undefined;
@@ -101,9 +102,7 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         {'label' : $localize `Lieu`, 'value' : VenueType.FACE_TO_FACE},
         {'label' : $localize `Évènement en ligne`, 'value' : VenueType.VIRTUAL}
     ];
-
     @Input() eventId : string | undefined;
-    @ViewChild('imageInplace') imageInplace!: Inplace;
     @ViewChild('imageCoverPond') imageCoverPond!: FilePond;
 
     
@@ -130,6 +129,7 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
             name: 'imagesCoverPond',
             allowMultiple: true,
             maxFiles: 10,
+            itemInsertLocation: 'after',
             allowReorder: false,
             allowRevert: true,
             allowRemove: true,
@@ -230,6 +230,7 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
                     });
                 },
             },
+            credits : false
         };
 
         this.auth = getAuth();
@@ -304,27 +305,16 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         this.selectedVenueType = event.value;
     }
 
-    // IMAGE INPLACE
-    showInplaceContent(){
-        if(this.images && this.images.length == 0){
-            this.imageInplace.deactivate();
-        }
+
+
+    // MODAL
+    showDialog() {
+        this.visible = true;
     }
 
-    hideInplaceContent(){
-        this.imageInplace.activate();
-    }
 
 
     // FILEPOND EVENT HANDLERS
-    pondHandleReorderFiles(event: any) {
-        this.reorderImageCover(event.origin, event.target);
-    }
-
-    reorderImageCover(origin : number, target : number){
-        this.images.splice(target, 0, this.images.splice(origin, 1)[0]);
-    }
-
     initImagesIfEventIdIsPassed(){
         if(this.eventId)
             return this.imageCovers?.value.map((image: { source: string }) => {
@@ -364,6 +354,20 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         } else {
             this.pondOptions?.files?.pop();
         }
+        
+        this.partialUpdateEvent(this.eventForm.value);
+    }
+
+    pondHandleReorderFiles(event: any) {
+        this.reorderImageCover(event.origin, event.target);
+
+    }
+
+    reorderImageCover(origin : number, target : number){
+        let images = this.imageCovers?.value;
+        images.splice(target, 0, images.splice(origin, 1)[0] as ImageCover);
+        // this.imageCovers?.value.splice(target, 0, this.images.splice(origin, 1)[0]);
+        console.log(images)
     }
 
 
@@ -393,6 +397,12 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         } else {
             this.createEvent(event);
         }
+    }
+
+    partialUpdateEvent(event : Event){
+        this.updateEventSubscription = this.eventService.update(event).subscribe(()=>{
+            console.log("Event partialy updated");
+        });
     }
 
     updateEvent(event : Event){

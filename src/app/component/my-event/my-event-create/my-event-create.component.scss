@@ -13,11 +13,10 @@
 .filepond--item {
     width: calc(20% - 0.5em);
 }
-.filepond--image-canvas-wrapper{
-    transform-origin: 115.5px 100px;
-    transform: none;
-    opacity: 1;
-    height: 200px;
-    width: 231px;
+
+.filepond--drop-label{
+    border-bottom: solid 3px #fff;
+    margin-bottom: 2px !important;
+    font-weight: bolder;
 }
 
