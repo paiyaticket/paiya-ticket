@@ -37,9 +37,9 @@ import { FileStorageService } from '../../../service/file-storage.service';
 import { getDownloadURL } from '@angular/fire/storage';
 import { ImageCover } from '../../../models/image-cover';
 import { MessageService } from 'primeng/api';
-import { FilePond, FilePondOptions } from 'filepond';
+import { FetchServerConfigFunction, FilePond, FilePondOptions, LoadServerConfigFunction, ProcessServerConfigFunction, RemoveServerConfigFunction, RevertServerConfigFunction } from 'filepond';
 import { DialogModule } from 'primeng/dialog';
-import { DataViewModule } from 'primeng/dataview';
+
 
 
 
@@ -67,8 +67,7 @@ import { DataViewModule } from 'primeng/dataview';
         GalleriaModule,
         ChipsModule,
         FilePondModule,
-        DialogModule,
-        DataViewModule
+        DialogModule
     ],
     templateUrl: './my-event-create.component.html',
     styleUrl: './my-event-create.component.scss',
@@ -86,10 +85,9 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
     selectedEventType : EventType | undefined = EventType.SINGLE_EVENT;
     selectedVenueType : VenueType | undefined = VenueType.FACE_TO_FACE;
     showGalleriaPlaceholder : boolean = true;
-    DEFAULT_IMAGE = '../../../../assets/layout/images/image-placeholder.png';
     images: ImageCover[] = [];
+    defaultImage : ImageCover | undefined;
     pondOptions : FilePondOptions | undefined;
-    placeholderImages: any[] | undefined;
     messages!: Message[];
     countries : Country[] = COUNTRIES;
     currentUser : User | null = null;
@@ -103,7 +101,6 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         {'label' : $localize `Évènement en ligne`, 'value' : VenueType.VIRTUAL}
     ];
     @Input() eventId : string | undefined;
-    @ViewChild('imageCoverPond') imageCoverPond!: FilePond;
 
     
     constructor(private router : Router, 
@@ -119,11 +116,11 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
                 }
     
     ngOnInit(): void {
-        this.placeholderImages = [
-            {source : 'assets/layout/images/galleria/cover1.jpg'},
-            {source : 'assets/layout/images/galleria/cover2.jpg'},
-            {source : 'assets/layout/images/galleria/cover3.jpg'},
-        ];
+
+        this.auth = getAuth();
+        this.currentUser = this.auth?.currentUser;
+        this.messages = [{ severity: 'info', detail: this.multipleEventsMessage }];
+        
 
         this.pondOptions = {
             name: 'imagesCoverPond',
@@ -142,100 +139,14 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
             imageResizeTargetHeight : 300,
             files: [],
             server : {
-                process : (fieldName, file, metadata, load, error, progress, abort, transfer, options) => {
-                    console.log("PROCESS...");
-                    let path = 'repos/'+this.auth?.currentUser?.uid+'/images';
-                    const uploadTask = this.fileStorageService.uploadFile(file as File, path);
-    
-                    uploadTask.on('state_changed', 
-                        (snapshot) => {
-                            const p = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                            progress(true, snapshot.bytesTransferred, snapshot.totalBytes);
-                        }, 
-                        (storageError) => {
-                            error(storageError.message);
-                        }, 
-                        () => {
-                            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                                this.addImage(downloadURL);
-                                load(downloadURL);
-                            });
-                        }
-                    );
-    
-                    return {
-                        abort: () => {
-                            uploadTask.cancel();
-                            abort();
-                        },
-                    };
-                }, 
-                load : (source, load, error, progress, abort, headers) => {
-                    console.log("LOAD...");
-
-                    this.fileStorageService.downloadFile(source).then((downloadURL) => {
-                        const xhr = new XMLHttpRequest();
-                        xhr.responseType = 'blob';
-                        xhr.onload = (event) => {
-                            const blob = xhr.response;
-                            const file : File = new File(blob, source);
-                            load(file);
-                        };
-                        xhr.open('GET', downloadURL);
-                        xhr.send();
-
-                    }).catch((error) => {
-                        error(error.message);
-                    })
-                    
-                    return {
-                        abort: () => {
-                            abort();
-                        },
-                    };
-                },
-                fetch: (url, load, error, progress, abort, headers) => {
-                    console.log("FETCH...");
-                    this.fileStorageService.downloadBlod(url).then((blob) => {
-                        let urlParts = url.split("%2F");
-                        blob.name = urlParts[urlParts.length - 1].split("?")[0];
-                        load(blob);
-                    }).catch((e) => {
-                        error(e.message);
-                    });
-                    
-                    return {
-                        abort: () => {
-                            abort();
-                        },
-                    };
-                },
-                revert: (url, load, error) => {
-                    console.log("REVERT...");
-                    this.fileStorageService.removeFile(url).then(() => {
-                        this.removeImage(url);
-                        load();
-                    }).catch((e) => {
-                        error(e.message);
-                    });
-                },
-                remove: (source, load, error) => {
-                    console.log("REMOVE...");
-                    // Should somehow send `source` to server so server can remove the file with this source
-                    this.fileStorageService.removeFile(source).then(() => {
-                        // this.removeImage(source);
-                        load();
-                    }).catch((e) => {
-                        error(e.message);
-                    });
-                },
+                process : this.process(), 
+                load : this.load(),
+                fetch: this.fetch(),
+                revert: this.revert(),
+                remove: this.remove(),
             },
             credits : false
         };
-
-        this.auth = getAuth();
-        this.currentUser = this.auth?.currentUser;
-        this.messages = [{ severity: 'info', detail: this.multipleEventsMessage }];
 
         this.eventForm = new FormGroup({
             title : new FormControl<string | undefined>('', [Validators.required]),
@@ -273,8 +184,10 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
             cashAccounts : new FormControl<CashAccount[] | undefined>([]),
         }, {validators : [laterDateValidator]});
 
+        
         // init event informations if the eventId is passed. 
         this.initEventIfIdIsPassed();
+        
     }
 
     initEventIfIdIsPassed(){
@@ -307,26 +220,146 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
 
 
 
-    // MODAL
-    showDialog() {
-        this.visible = true;
-    }
-
-
 
     // FILEPOND EVENT HANDLERS
+
+    process() : ProcessServerConfigFunction {
+        return (fieldName, file, metadata, load, error, progress, abort, transfer, options) => {
+            console.log("PROCESS...");
+            let path = 'repos/'+this.auth?.currentUser?.uid+'/images';
+            const uploadTask = this.fileStorageService.uploadFile(file as File, path);
+
+            uploadTask.on('state_changed', 
+                (snapshot) => {
+                    const p = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    progress(true, snapshot.bytesTransferred, snapshot.totalBytes);
+                }, 
+                (storageError) => {
+                    error(storageError.message);
+                }, 
+                () => {
+                    getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                        this.addImage(downloadURL);
+                        load(downloadURL);
+                    });
+                }
+            );
+
+            return {
+                abort: () => {
+                    uploadTask.cancel();
+                    abort();
+                },
+            };
+            
+        }
+    }
+
+    load() : LoadServerConfigFunction {
+        return (source, load, error, progress, abort, headers) => {
+            console.log("LOAD...");
+
+            this.fileStorageService.downloadFile(source).then((downloadURL) => {
+                const xhr = new XMLHttpRequest();
+                xhr.responseType = 'blob';
+                xhr.onload = (event) => {
+                    const blob = xhr.response;
+                    const file : File = new File(blob, source);
+                    load(file);
+                };
+                xhr.open('GET', downloadURL);
+                xhr.send();
+
+            }).catch((error) => {
+                error(error.message);
+            })
+            
+            return {
+                abort: () => {
+                    abort();
+                },
+            };
+        }
+    }
+
+    revert() : RevertServerConfigFunction {
+        return (source, load, error) => {
+            console.log("REVERT...");
+            this.fileStorageService.removeFile(source).then(() => {
+                this.removeImage(source);
+                load();
+            }).catch((e) => {
+                error(e.message);
+            });
+        }
+    }
+
+    fetch() : FetchServerConfigFunction {
+        return (url, load, error, progress, abort, headers) => {
+            console.log("FETCH...");
+            this.fileStorageService.downloadBlod(url).then((blob) => {
+                let urlParts = url.split("%2F");
+                blob.name = urlParts[urlParts.length - 1].split("?")[0];
+                load(blob);
+            }).catch((e) => {
+                error(e.message);
+            });
+            
+            return {
+                abort: () => {
+                    abort();
+                },
+            };
+        }
+    }
+
+    remove() : RemoveServerConfigFunction {
+        return (source, load, error) => {
+            console.log("REMOVE...");
+            // Should somehow send `source` to server so server can remove the file with this source
+            this.fileStorageService.removeFile(source).then(() => {
+                
+                // this.removeImage(source);
+                load();
+            }).catch((e) => {
+                error(e.message);
+            });
+        }
+    }
+
+    // initialise le fileuploader avec des fichiers existants
     initImagesIfEventIdIsPassed(){
         if(this.eventId)
             return this.imageCovers?.value.map((image: { source: string }) => {
-                return { source: image.source, options: {} };
+                return { source: image.source, options: {
+                    metadata: {
+                        revertUrl: image.source,
+                    },
+                } };
             });
         return [];
+    }
+
+    extractFileNameFromUrl(url : string){
+        let urlParts = url.split("%2F");
+        const filename = urlParts[urlParts.length - 1].split("?")[0];
+        return filename;
+    }
+
+    isFileAlreadyExist(filename : string){
+        const filter = (value: ImageCover) => {
+            return Object.is(value.name,filename);
+        }
+        return this.imageCovers?.value.some(filter);
     }
 
     addImage(downloadURL : string){
         let image = new ImageCover();
         image.source = downloadURL;
-        image.isDefault = false;
+        image.byDefault = false;
+        image.name = this.extractFileNameFromUrl(downloadURL);
+        image.alt = image.name;
+
 
         const filter = (value: ImageCover) => {
             return Object.is(value.source.split("?")[0],downloadURL.split("?")[0]);
@@ -334,6 +367,7 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         if(!this.imageCovers?.value.some(filter)){
             this.imageCovers?.value.push(image);
         }
+        this.images = this.imageCovers?.value;
     }
 
     removeImage(url : string){
@@ -355,19 +389,36 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
             this.pondOptions?.files?.pop();
         }
         
+        // this.images = this.imageCovers?.value;
         this.partialUpdateEvent(this.eventForm.value);
     }
 
-    pondHandleReorderFiles(event: any) {
-        this.reorderImageCover(event.origin, event.target);
 
+
+
+
+
+
+
+
+    // DEFAULT IMAGE MODAL
+    showDialog() {
+        this.visible = true;
     }
 
-    reorderImageCover(origin : number, target : number){
+    makeImageDefault(index : number){
         let images = this.imageCovers?.value;
-        images.splice(target, 0, images.splice(origin, 1)[0] as ImageCover);
-        // this.imageCovers?.value.splice(target, 0, this.images.splice(origin, 1)[0]);
-        console.log(images)
+
+        if(images[index]){
+            images[index].byDefault = true;
+            this.defaultImage = images[index];
+            for(let i = 0; i < images.length; i++) {
+                if(i !== index){
+                    images[i].byDefault = false;
+                }
+            }
+            this.eventForm.patchValue({imageCovers : images});
+        }
     }
 
 
@@ -390,7 +441,7 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         event.timeZone = (this.timeZone?.value) ? this.timeZone?.value : Intl.DateTimeFormat().resolvedOptions().timeZone;
         event.timeZoneOffset = startTime.getTimezoneOffset();
         event.owner = (this.currentUser?.email) ? this.currentUser?.email : undefined;
-
+        console.log(event.imageCovers);
 
         if(this.eventId){
             this.updateEvent(event);

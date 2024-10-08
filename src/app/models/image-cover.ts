@@ -1,4 +1,6 @@
 export class ImageCover {
     source !: string;
-    isDefault : boolean = false;
+    byDefault : boolean = false;
+    name : string | undefined;
+    alt : string | undefined;
 }

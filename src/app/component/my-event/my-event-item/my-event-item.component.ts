@@ -13,6 +13,7 @@ import { PanelModule } from 'primeng/panel';
 import { TableModule } from 'primeng/table';
 import { EventService } from '../../../service/event.service';
 import { Subscription } from 'rxjs';
+import { ImageCover } from '../../../models/image-cover';
 
 @Component({
     selector: 'app-my-event-item',
@@ -67,8 +68,18 @@ export class MyEventItemComponent implements OnDestroy {
     }
 
     get imageCover(){
-        return (this.event.imageCovers && this.event.imageCovers.length > 0 && this.event.imageCovers[0] != null) ? 
-        this.event.imageCovers[0].source : this.defaultImageCover;
+        if(this.event.imageCovers && this.event.imageCovers.length > 0){
+            const filter = (value : any, index : number , obj : any[]) => {
+                return value.byDefault;
+            }
+            if(this.event.imageCovers.some(filter)){
+                return this.event.imageCovers.find(filter)?.source;
+            } else {
+                return this.event.imageCovers[0].source;
+            }
+        } else {
+            return this.defaultImageCover;
+        }
     }
 
     confirmDelete(event : Event) {
