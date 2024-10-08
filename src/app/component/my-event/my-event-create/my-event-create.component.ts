@@ -121,33 +121,6 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         this.currentUser = this.auth?.currentUser;
         this.messages = [{ severity: 'info', detail: this.multipleEventsMessage }];
         
-
-        this.pondOptions = {
-            name: 'imagesCoverPond',
-            allowMultiple: true,
-            maxFiles: 10,
-            itemInsertLocation: 'after',
-            allowReorder: false,
-            allowRevert: true,
-            allowRemove: true,
-            acceptedFileTypes: ['image/jpeg', 'image/png'],
-            labelInvalidField: $localize `Ce champ contient des fichiers invalides.`,
-            labelIdle: $localize `Glisser & Déposer vos fichiers OU <span class="filepond--label-action"> Cliquez pour sélectionner</span>.`,
-            imagePreviewHeight:300,
-            allowImageResize : true,
-            imageResizeTargetWidth : 600,
-            imageResizeTargetHeight : 300,
-            files: [],
-            server : {
-                process : this.process(), 
-                load : this.load(),
-                fetch: this.fetch(),
-                revert: this.revert(),
-                remove: this.remove(),
-            },
-            credits : false
-        };
-
         this.eventForm = new FormGroup({
             title : new FormControl<string | undefined>('', [Validators.required]),
             eventType : new FormControl<EventType | undefined>(EventType.SINGLE_EVENT),
@@ -183,6 +156,34 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
             eventOrganizer : new FormControl<EventOrganizer | undefined>(undefined),
             cashAccounts : new FormControl<CashAccount[] | undefined>([]),
         }, {validators : [laterDateValidator]});
+
+        this.pondOptions = {
+            name: 'imagesCoverPond',
+            allowMultiple: true,
+            maxFiles: 10,
+            itemInsertLocation: 'after',
+            allowReorder: false,
+            allowRevert: true,
+            allowRemove: true,
+            acceptedFileTypes: ['image/jpeg', 'image/png'],
+            labelInvalidField: $localize `Ce champ contient des fichiers invalides.`,
+            labelIdle: $localize `Glisser & Déposer vos fichiers OU <span class="filepond--label-action"> Cliquez pour sélectionner</span>.`,
+            imagePreviewHeight:300,
+            allowImageResize : true,
+            imageResizeTargetWidth : 600,
+            imageResizeTargetHeight : 300,
+            files: [],
+            server : {
+                process : this.process(), 
+                load : this.load(),
+                fetch: this.fetch(),
+                revert: this.revert(),
+                remove: this.remove(),
+            },
+            credits : false
+        };
+
+        
 
         
         // init event informations if the eventId is passed. 
@@ -329,7 +330,7 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
 
     // initialise le fileuploader avec des fichiers existants
     initImagesIfEventIdIsPassed(){
-        if(this.eventId)
+        if(this.eventId){
             return this.imageCovers?.value.map((image: { source: string }) => {
                 return { source: image.source, options: {
                     metadata: {
@@ -337,7 +338,7 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
                     },
                 } };
             });
-        return [];
+        }
     }
 
     extractFileNameFromUrl(url : string){
