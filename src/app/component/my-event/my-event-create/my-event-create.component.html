@@ -101,25 +101,27 @@
 
                     @if (selectedEventType?.valueOf() === 'SINGLE_EVENT') {
                         <!-- DATE -->
-                        <div class="field xl:col-4 lg:col-4 col-12 mt-2">
-                            <label for="date" class="font-bold" i18n>Date</label>
-    
-                            <p-calendar id="date" formControlName="date" dateFormat="dd/mm/yy" class="w-full" styleClass="w-full"/>
-                
-                            <div *ngIf="date?.invalid && (date?.touched || date?.dirty)">
-                                @if (date?.hasError('required')) {
-                                    <small id="date-required-help" [hidden]="date?.pristine || date?.valid" class="p-error font-bold" i18n="Une date est requise.">
-                                        Une date est requise.
-                                    </small>
-                                }
+                        <!--
+                            <div class="field xl:col-4 lg:col-4 col-12 mt-2">
+                                <label for="date" class="font-bold" i18n>Date et Heure de début</label>
+        
+                                <p-calendar id="date" formControlName="date" dateFormat="dd/mm/yy"  class="w-full" styleClass="w-full"/>
+                    
+                                <div *ngIf="date?.invalid && (date?.touched || date?.dirty)">
+                                    @if (date?.hasError('required')) {
+                                        <small id="date-required-help" [hidden]="date?.pristine || date?.valid" class="p-error font-bold" i18n="Une date est requise.">
+                                            Une date est requise.
+                                        </small>
+                                    }
+                                </div>
                             </div>
-                        </div>
+                        -->
     
                         <!-- START TIME -->
-                        <div class="field xl:col-4 lg:col-4 col-12 mt-2">
-                            <label for="startTime" class="font-bold" i18n>Heure de début</label>
+                        <div class="field xl:col-6 lg:col-6 col-12 mt-2">
+                            <label for="startTime" class="font-bold" i18n>Date et Heure de début</label>
     
-                            <p-calendar id="startTime" formControlName="startTime" timeOnly="true" dateFormat="HH:mm" class="w-full" styleClass="w-full"/>
+                            <p-calendar id="startTime" formControlName="startTime" [showTime]="true" dateFormat="dd/mm/yy" hourFormat="24" class="w-full" styleClass="w-full"/>
                 
                             <div *ngIf="startTime?.invalid && (startTime?.touched || startTime?.dirty)">
                                 @if (startTime?.hasError('required')) {
@@ -136,10 +138,10 @@
                         </div>
     
                         <!-- END TIME -->
-                        <div class="field xl:col-4 lg:col-4 col-12 mt-2">
-                            <label for="endTime" class="font-bold" i18n>Heure de fin</label>
+                        <div class="field xl:col-6 lg:col-6 col-12 mt-2">
+                            <label for="endTime" class="font-bold" i18n>Date et Heure de fin</label>
     
-                            <p-calendar id="endTime" formControlName="endTime" timeOnly="true" dateFormat="HH:mm" class="w-full" styleClass="w-full"/>
+                            <p-calendar id="endTime" formControlName="endTime"  [showTime]="true" dateFormat="dd/mm/yy" hourFormat="24" class="w-full" styleClass="w-full"/>
                 
                             <div *ngIf="endTime?.invalid && (endTime?.touched || endTime?.dirty)">
                                 @if (endTime?.hasError('required')) {

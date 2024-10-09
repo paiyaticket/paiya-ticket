@@ -133,7 +133,7 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
             publicationDate : new FormControl<string | undefined>(undefined),
             visibility : new FormControl<boolean>(false),
             eventPageLanguage : new FormControl<string | undefined>(undefined),
-            date : new FormControl<Date | undefined>(undefined, [Validators.required]),
+            // date : new FormControl<Date | undefined>(undefined, [Validators.required]),
             startTime : new FormControl<Date | undefined>(undefined, [Validators.required]),
             endTime : new FormControl<Date | undefined>(undefined, [Validators.required]),
             timeZone : new FormControl<Intl.DateTimeFormatOptions['timeZone'] | undefined>(undefined),
@@ -197,18 +197,13 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
                 this.eventForm.patchValue(event);
                 if(event.startTime && event.endTime && event.timeZone){
                     this.eventForm.patchValue({
-                        date : this.utcDateToZonedDateTime(event.startTime, event.timeZone),
+                        // date : this.utcDateToZonedDateTime(event.startTime, event.timeZone),
                         startTime : this.utcDateToZonedDateTime(event.startTime, event.timeZone),
                         endTime : this.utcDateToZonedDateTime(event.endTime, event.timeZone)
                     });
                 }
             });
         }
-    }
-
-    utcDateToZonedDateTime(utcDate : string, timeZone : string) : Date | null{
-        const zonedDateTime = new Date(utcDate).toLocaleString("en-US" , {timeZone: timeZone});
-        return new Date(zonedDateTime);
     }
 
     onEventTypeChange(event: any){
@@ -435,12 +430,12 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
     // FORM DATA PROCESS
     submit(){
         let event : Event = this.eventForm.value as Event;
-        const startTime : Date = this.mergeDateAndTime(this.date?.value, this.startTime?.value);
-        const endTime : Date = this.mergeDateAndTime(this.date?.value, this.endTime?.value);
-        event.startTime = startTime.toISOString();
-        event.endTime = endTime.toISOString();
+        // const startTime : Date = this.mergeDateAndTime(this.date?.value, this.startTime?.value);
+        // const endTime : Date = this.mergeDateAndTime(this.date?.value, this.endTime?.value);
+        event.startTime = this.startTime?.value.toISOString();
+        event.endTime = this.endTime?.value.toISOString();
         event.timeZone = (this.timeZone?.value) ? this.timeZone?.value : Intl.DateTimeFormat().resolvedOptions().timeZone;
-        event.timeZoneOffset = startTime.getTimezoneOffset();
+        event.timeZoneOffset = this.startTime?.value.getTimezoneOffset();
         event.owner = (this.currentUser?.email) ? this.currentUser?.email : undefined;
         console.log(event.imageCovers);
 
@@ -487,6 +482,11 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
 
     mergeDateAndTime(date : Date, time : Date){
         return new Date(date.getFullYear(), date.getMonth(), date.getDate(), time.getHours(), time.getMinutes());
+    }
+
+    utcDateToZonedDateTime(utcDate : string, timeZone : string) : Date | null{
+        const zonedDateTime = new Date(utcDate).toLocaleString("en-US" , {timeZone: timeZone});
+        return new Date(zonedDateTime);
     }
 
     reloadPageWithEventId(eventId : string | undefined){
