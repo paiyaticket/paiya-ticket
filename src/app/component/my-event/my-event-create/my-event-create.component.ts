@@ -39,6 +39,9 @@ import { ImageCover } from '../../../models/image-cover';
 import { MessageService } from 'primeng/api';
 import { FetchServerConfigFunction, FilePond, FilePondOptions, LoadServerConfigFunction, ProcessServerConfigFunction, RemoveServerConfigFunction, RevertServerConfigFunction } from 'filepond';
 import { DialogModule } from 'primeng/dialog';
+import { TimeSlot } from '../../../models/time-slot';
+import { Question } from '../../../models/question';
+import { AgendaComponent } from './agenda/agenda.component';
 
 
 
@@ -67,7 +70,8 @@ import { DialogModule } from 'primeng/dialog';
         GalleriaModule,
         ChipsModule,
         FilePondModule,
-        DialogModule
+        DialogModule,
+        AgendaComponent
     ],
     templateUrl: './my-event-create.component.html',
     styleUrl: './my-event-create.component.scss',
@@ -77,6 +81,7 @@ import { DialogModule } from 'primeng/dialog';
 export class MyEventCreateComponent implements OnInit, OnDestroy {
 
     visible: boolean = false;
+    displayAgenda : boolean = false;
     eventSubscription : Subscription | undefined;
     createEventSubscription : Subscription | undefined;
     updateEventSubscription : Subscription | undefined;
@@ -133,7 +138,6 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
             publicationDate : new FormControl<string | undefined>(undefined),
             visibility : new FormControl<boolean>(false),
             eventPageLanguage : new FormControl<string | undefined>(undefined),
-            // date : new FormControl<Date | undefined>(undefined, [Validators.required]),
             startTime : new FormControl<Date | undefined>(undefined, [Validators.required]),
             endTime : new FormControl<Date | undefined>(undefined, [Validators.required]),
             timeZone : new FormControl<Intl.DateTimeFormatOptions['timeZone'] | undefined>(undefined),
@@ -155,6 +159,8 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
             }),
             eventOrganizer : new FormControl<EventOrganizer | undefined>(undefined),
             cashAccounts : new FormControl<CashAccount[] | undefined>([]),
+            agenda : new FormControl<TimeSlot[]>([]),
+            faq : new FormControl<Question[]>([]),
         }, {validators : [laterDateValidator]});
 
         this.pondOptions = {
@@ -167,7 +173,7 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
             allowRemove: true,
             acceptedFileTypes: ['image/jpeg', 'image/png'],
             labelInvalidField: $localize `Ce champ contient des fichiers invalides.`,
-            labelIdle: $localize `Glisser & Déposer vos fichiers OU <span class="filepond--label-action"> Cliquez pour sélectionner</span>.`,
+            labelIdle: $localize `Glisser & déposer OU <span class="filepond--label-action"> naviguer </span>.`,
             imagePreviewHeight:300,
             allowImageResize : true,
             imageResizeTargetWidth : 600,
@@ -183,9 +189,6 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
             credits : false
         };
 
-        
-
-        
         // init event informations if the eventId is passed. 
         this.initEventIfIdIsPassed();
         
@@ -197,7 +200,6 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
                 this.eventForm.patchValue(event);
                 if(event.startTime && event.endTime && event.timeZone){
                     this.eventForm.patchValue({
-                        // date : this.utcDateToZonedDateTime(event.startTime, event.timeZone),
                         startTime : this.utcDateToZonedDateTime(event.startTime, event.timeZone),
                         endTime : this.utcDateToZonedDateTime(event.endTime, event.timeZone)
                     });
@@ -206,19 +208,15 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         }
     }
 
-    onEventTypeChange(event: any){
-        this.selectedEventType = event.value;
-    }
-
-    onVenueTypeChange(event: any){
-        this.selectedVenueType = event.value;
-    }
 
 
 
 
-    // FILEPOND EVENT HANDLERS
 
+
+    /* *********************** */
+    // FILEPOND EVENT HANDLERS //
+    /* *********************** */
     process() : ProcessServerConfigFunction {
         return (fieldName, file, metadata, load, error, progress, abort, transfer, options) => {
             console.log("PROCESS...");
@@ -397,7 +395,9 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
 
 
 
-    // DEFAULT IMAGE MODAL
+    /* *********************** */
+    //   DEFAULT IMAGE MODAL   //
+    /* *********************** */
     showDialog() {
         this.visible = true;
     }
@@ -420,24 +420,39 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
 
 
 
+
+
+
+
+    /* ***************************** */
+    // CHANGEMENT D'ÉTATS DES CHAMPS //
+    /* ***************************** */
+
+    onEventTypeChange(event: any){
+        this.selectedEventType = event.value;
+    }
+
+    onVenueTypeChange(event: any){
+        this.selectedVenueType = event.value;
+    }
+
+
     
 
     
         
 
 
-
-    // FORM DATA PROCESS
+    /* ***************************** */
+    //        FORM DATA PROCESS      //
+    /* ***************************** */
     submit(){
         let event : Event = this.eventForm.value as Event;
-        // const startTime : Date = this.mergeDateAndTime(this.date?.value, this.startTime?.value);
-        // const endTime : Date = this.mergeDateAndTime(this.date?.value, this.endTime?.value);
         event.startTime = this.startTime?.value.toISOString();
         event.endTime = this.endTime?.value.toISOString();
         event.timeZone = (this.timeZone?.value) ? this.timeZone?.value : Intl.DateTimeFormat().resolvedOptions().timeZone;
         event.timeZoneOffset = this.startTime?.value.getTimezoneOffset();
         event.owner = (this.currentUser?.email) ? this.currentUser?.email : undefined;
-        console.log(event.imageCovers);
 
         if(this.eventId){
             this.updateEvent(event);
@@ -480,9 +495,6 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         });
     }
 
-    mergeDateAndTime(date : Date, time : Date){
-        return new Date(date.getFullYear(), date.getMonth(), date.getDate(), time.getHours(), time.getMinutes());
-    }
 
     utcDateToZonedDateTime(utcDate : string, timeZone : string) : Date | null{
         const zonedDateTime = new Date(utcDate).toLocaleString("en-US" , {timeZone: timeZone});
@@ -511,6 +523,23 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         }
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /* ******************* */
+    //        GETTERS      //
+    /* ******************* */
     get title(){
         return this.eventForm.get('title');
     }
@@ -589,6 +618,14 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
 
     get cashAccounts(){
         return this.eventForm.get('cashAccounts');
+    }
+
+    get agenda(){
+        return this.eventForm.get('agenda');
+    }
+
+    get faq(){
+        return this.eventForm.get('faq');
     }
 
 

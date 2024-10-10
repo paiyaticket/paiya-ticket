@@ -1,4 +1,4 @@
-export class AgendaPhase{
+export class TimeSlot{
     order : string | undefined;
     startTime : string | undefined;
     endTime : string | undefined;

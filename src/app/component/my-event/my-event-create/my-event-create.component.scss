@@ -10,14 +10,17 @@
     }
 }
 
-.filepond--item {
-    width: calc(20% - 0.5em);
-}
+.imageCover{
+    .filepond--item {
+        width: calc(20% - 0.5em);
+    }
+    
+    .filepond--drop-label{
+        border-bottom: solid 3px #fff;
+        margin-bottom: 2px !important;
+        font-weight: bolder;
+    }
 
-.filepond--drop-label{
-    border-bottom: solid 3px #fff;
-    margin-bottom: 2px !important;
-    font-weight: bolder;
 }
 
 

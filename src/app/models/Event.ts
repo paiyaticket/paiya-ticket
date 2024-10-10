@@ -1,5 +1,5 @@
 import { EventType } from "../enumerations/event-type";
-import { AgendaPhase } from "./agenda-phase";
+import { TimeSlot } from "./time-slot";
 import { CashAccount } from "./cash-account";
 import { EventOrganizer } from "./event-organizer";
 import { ImageCover } from "./image-cover";
@@ -35,7 +35,7 @@ export class Event {
 
     publishSettings : PublishSettings | undefined;
 
-    agenda : AgendaPhase[] = [];
+    agenda : TimeSlot[] = [];
     faq : Question[] = [];
 
     owner : string | undefined;

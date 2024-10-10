@@ -1,0 +1,74 @@
+<div class="flex justify-content-end mt-0">
+    <p-button label="Supprimer la section Agenda" [text]="true" severity="danger" icon="pi pi-minus" class="font-bold align-items-end"></p-button>
+</div>
+<form [formGroup]="timeSlotForm" (ngSubmit)="submit()">
+    <div class="formgrid grid">
+        <!-- START TIME -->
+        <div class="field xl:col-6 lg:col-6 col-12 mt-2">
+            <label for="startTime" class="font-bold" i18n>Heure de début</label>
+    
+            <p-calendar id="startTime" formControlName="startTime" [timeOnly]="true" hourFormat="24" class="w-full" styleClass="w-full"/>
+    
+            <div *ngIf="startTime?.invalid && (startTime?.touched || startTime?.dirty)">
+                @if (startTime?.hasError('required')) {
+                    <small id="startTime-required-help" [hidden]="startTime?.pristine || startTime?.valid" class="p-error font-bold" i18n="Une heure est requise.">
+                        Une heure est requise.
+                    </small>
+                }
+            </div>
+        </div>
+    
+        <!-- END TIME -->
+        <div class="field xl:col-6 lg:col-6 col-12 mt-2">
+            <label for="endTime" class="font-bold" i18n>Heure de fin</label>
+    
+            <p-calendar id="startTime" formControlName="endTime" [timeOnly]="true" hourFormat="24" class="w-full" styleClass="w-full"/>
+    
+            <div *ngIf="endTime?.invalid && (endTime?.touched || endTime?.dirty)">
+                @if (endTime?.hasError('required')) {
+                    <small id="endTime-required-help" [hidden]="endTime?.pristine || endTime?.valid" class="p-error font-bold" i18n="Une heure est requise.">
+                        Une heure est requise.
+                    </small>
+                }
+            </div>
+        </div>
+    
+        <!-- TITRE -->
+        <div class="field xl:col-12 lg:col-12 col-12 p-fluid">
+            <label for="title" class="font-bold" i18n>Titre</label>
+    
+            <input id="title" type="text" pInputText formControlName="title">
+    
+            <div *ngIf="title?.invalid && (title?.touched || title?.dirty)">
+                @if (title?.hasError('required')) {
+                    <small id="title-required-help" [hidden]="title?.pristine || title?.valid" class="p-error font-bold" i18n="Un titre est requis.">
+                        Un titre est requis.
+                    </small>
+                }
+            </div>
+        </div>
+    </div>
+    
+    <!--- SPEAKER -->
+    <div class="formgrid grid" formGroupName="speaker">
+        <div class="xl:col-4 lg:col-4 col-12 mt-2 flex align-content-center justify-content-center">
+            <div class="field xl:col-6 lg:col-6 col-12 mt-2 photo-profile">
+                <label for="startTime" class="w-full font-bold align-items-center" i18n>Photo de profil</label>
+                <file-pond [options]="pondOptions" class="align-items-center"></file-pond>
+            </div>
+        </div>
+        <div class="xl:col-8 lg:col-8 col-12 mt-2">
+            <div class="field xl:col-12 lg:col-12 col-12 mt-2 ">
+                <label for="completeName" class="font-bold" i18n>Nom complet du speaker</label>
+                <input id="completeName" type="text" pInputText formControlName="completeName" class="w-full">
+            </div>
+            <div class="field xl:col-12 lg:col-12 col-12 mt-2">
+                <label for="description" class="font-bold" i18n>Description du speaker</label>
+                <textarea id="description" pInputTextarea formControlName="description" autoResize="true" 
+                    rows="3" styleClass="w-full" class="w-full">
+                </textarea>
+            </div>
+        </div>
+    </div>
+        
+</form>

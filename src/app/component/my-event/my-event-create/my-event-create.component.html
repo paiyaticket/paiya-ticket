@@ -9,9 +9,11 @@
     </div>
     <div class="col-12 sm:col-12 md:col-12 lg:col-9 xl:col-9">
         <form [formGroup]="eventForm" (ngSubmit)="submit()">
+
+            <!-- IMAGES AND VIDEO -->
             <p-fieldset legend="Images et vidéos" i18n-legend="Images et vidéos" styleClass="mt-4 hover:border-blue-400 border-3">
                 <div class="formgrid grid">
-                    <div class="field xl:col-12 lg:col-12 col-12">
+                    <div class="field xl:col-12 lg:col-12 col-12 imageCover">
                         <file-pond
                             [files]="initImagesIfEventIdIsPassed()"
                             [options]="pondOptions"
@@ -26,6 +28,10 @@
                 </div>
             </p-fieldset>
 
+
+
+
+            <!-- OVERVIEW -->
             <p-fieldset legend="Vue d'ensemble" i18n-legend="Vue d'ensemble" styleClass="mt-4 hover:border-blue-400 border-3">
                 <div class="formgrid grid" >
                     <div class="field xl:col-12 lg:col-12 col-12 p-fluid">
@@ -79,6 +85,10 @@
                 </div>
             </p-fieldset>
 
+
+
+
+            <!-- TIME AND HOUR -->
             <p-fieldset legend="Date et lieu" i18n-legend="Vue d'ensemble" styleClass="mt-4 hover:border-blue-400 border-3">
                 <div class="formgrid grid" >
                     <div class="field xl:col-12 lg:col-12 col-12">
@@ -99,24 +109,7 @@
                         </p-selectButton>
                     </div>
 
-                    @if (selectedEventType?.valueOf() === 'SINGLE_EVENT') {
-                        <!-- DATE -->
-                        <!--
-                            <div class="field xl:col-4 lg:col-4 col-12 mt-2">
-                                <label for="date" class="font-bold" i18n>Date et Heure de début</label>
-        
-                                <p-calendar id="date" formControlName="date" dateFormat="dd/mm/yy"  class="w-full" styleClass="w-full"/>
-                    
-                                <div *ngIf="date?.invalid && (date?.touched || date?.dirty)">
-                                    @if (date?.hasError('required')) {
-                                        <small id="date-required-help" [hidden]="date?.pristine || date?.valid" class="p-error font-bold" i18n="Une date est requise.">
-                                            Une date est requise.
-                                        </small>
-                                    }
-                                </div>
-                            </div>
-                        -->
-    
+                    @if (selectedEventType?.valueOf() === 'SINGLE_EVENT') {    
                         <!-- START TIME -->
                         <div class="field xl:col-6 lg:col-6 col-12 mt-2">
                             <label for="startTime" class="font-bold" i18n>Date et Heure de début</label>
@@ -261,8 +254,12 @@
                 
             </p-fieldset>
 
+
+
+
+            <!-- GOOD TO KNOW -->
             <p-fieldset legend="Bon à savoir" i18n-legend="Bon à savoir" styleClass="mt-4 hover:border-blue-400 border-3">
-                <div >
+                <div>
                     <p class="text-800" i18n>
                         Utilisez cette section pour fournir plus de détails sur votre événement. 
                         Vous pouvez inclure des éléments à savoir, des informations sur le lieu, le stationnement, les options d'accessibilité, 
@@ -272,6 +269,18 @@
                 </div>
             </p-fieldset>
 
+
+            <!-- AGENDA FORM SECTION -->
+            
+            <p-fieldset legend="Agenda" [hidden]="!displayAgenda" i18n-legend="Agenda" styleClass="mt-4 hover:border-blue-400 border-3">
+                <app-agenda></app-agenda>
+            </p-fieldset> 
+
+
+
+
+
+            <!-- AGENDA AND FAQ -->
             <p-fieldset legend="Ajouter plus de sections à votre évènement (facultatif)" i18n-legend="Bon à savoir" styleClass="mt-4 border-dashed border-3">
                 <div >
                     <p class="text-800" i18n>
@@ -279,20 +288,30 @@
                         et à répondre à leurs questions, ce qui signifie plus de ventes de billets et moins de temps pour répondre aux messages.
                     </p>
                     <div class="flex flex-wrap flex-row align-items-stretch gap-3">
-                        <p-card header="{{'agenda' | uppercase}}" class="w-25rem">
-                            <p i18n>
-                                Présenter le programme de votre événement, les activités et les intervenants afin de donner plus d'informations sur le déroulement.
-                            </p>
-                            <p-button label="Ajouter" size="small" severity="info" icon="pi pi-plus"/>
-                            <p-button label="Voir un exemple" size="small" severity="info" outlined="true" icon="pi pi-eye" class="ml-2"/>
-                        </p-card>
-                        <p-card header="{{'Foire aux questions'| uppercase}}" class="w-25rem">
-                            <p i18n>
-                                Lister les questions fréquement posées et leurs réponses afin que les participants n'aient à vous les poser toutes les fois.
-                            </p>
-                            <p-button label="Ajouter" size="small" severity="info" icon="pi pi-plus"/>
-                            <p-button label="Voir un exemple" size="small" severity="info" outlined="true" icon="pi pi-eye" class="ml-2"/>
-                        </p-card>
+                        @if(this.agenda?.value.length > 0){
+
+                        } @else {
+                            <p-card header="{{'agenda' | uppercase}}" class="w-25rem">
+                                <p i18n>
+                                    Présenter le programme de votre événement, les activités et les intervenants afin de donner plus d'informations sur le déroulement.
+                                </p>
+                                <p-button label="Ajouter" (onClick)="(!displayAgenda) ? displayAgenda = true : displayAgenda = false" size="small" severity="info" icon="pi pi-plus"/>
+                                <p-button label="Voir un exemple" size="small" severity="info" outlined="true" icon="pi pi-eye" class="ml-2"/>
+                            </p-card>
+                        }
+
+                        @if(this.agenda?.value.length > 0){
+
+                        } @else {
+                            <p-card header="{{'Foire aux questions'| uppercase}}" class="w-25rem">
+                                <p i18n>
+                                    Lister les questions fréquement posées et leurs réponses afin que les participants n'aient à vous les poser toutes les fois.
+                                </p>
+                                <p-button label="Ajouter" size="small" severity="info" icon="pi pi-plus"/>
+                                <p-button label="Voir un exemple" size="small" severity="info" outlined="true" icon="pi pi-eye" class="ml-2"/>
+                            </p-card>
+                        }
+                        
                     </div>
                 </div>
             </p-fieldset>
@@ -306,6 +325,13 @@
         </form>
     </div>
 </section>
+
+
+
+
+
+
+
 
 <p-dialog 
     header="Header" 
