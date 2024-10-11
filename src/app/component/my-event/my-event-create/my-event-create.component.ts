@@ -440,8 +440,6 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         this.selectedVenueType = event.value;
     }
 
-
-
     addTimeSlot(event : any){
         console.log(event);
         this.agenda?.value.push(event);

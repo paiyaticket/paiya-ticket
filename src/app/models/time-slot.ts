@@ -1,7 +1,7 @@
 export class TimeSlot{
     order : string | undefined;
-    startTime : string | undefined;
-    endTime : string | undefined;
+    startTime : Date | undefined;
+    endTime : Date | undefined;
     title : string | undefined;
     icon : string | undefined;
     description : string | undefined;

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { TimelineModule } from 'primeng/timeline';
 import { ButtonModule } from 'primeng/button';
 import { TimeSlot } from '../../../../../models/time-slot';
@@ -19,6 +19,8 @@ import { TimeSlot } from '../../../../../models/time-slot';
 export class AgendaListComponent {
 
     @Input() timeSlots : TimeSlot[] | undefined;
+    @Output() timeSlotRemoved = new EventEmitter<TimeSlot>();
+
 
 
     ngOnInit(){

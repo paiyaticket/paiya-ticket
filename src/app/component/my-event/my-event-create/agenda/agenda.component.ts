@@ -46,6 +46,8 @@ import { FileStorageService } from '../../../../service/file-storage.service';
 })
 export class AgendaComponent {
 
+    @Input() eventStartTime !: Date;
+    @Input() eventEndTime !: Date;
     @Output() timeSlotAdded = new EventEmitter<TimeSlot>();
     @Output() timeSlotRemoved = new EventEmitter<TimeSlot>();
     @ViewChild('speakerPhoto') speakerPhoto : FilePond | undefined;
@@ -72,8 +74,8 @@ export class AgendaComponent {
 
         this.timeSlotForm = new FormGroup({
             order : new FormControl<string | undefined>(undefined),
-            startTime : new FormControl<string | undefined>(undefined, [Validators.required]),
-            endTime : new FormControl<string | undefined>(undefined, [Validators.required]),
+            startTime : new FormControl<Date | undefined>(undefined, [Validators.required]),
+            endTime : new FormControl<Date | undefined>(undefined, [Validators.required]),
             title : new FormControl<string | undefined>(undefined, [Validators.required]),
             icon : new FormControl<string | undefined>(undefined),
             description : new FormControl<string | undefined>(undefined, [Validators.maxLength(200)]),
@@ -253,10 +255,18 @@ export class AgendaComponent {
 
     submit(){
         this.timeSlot = this.timeSlotForm.value as TimeSlot;
+        this.timeSlot.startTime = (this.timeSlot.startTime) ? this.mergeEventDateWithTimeSlotDate(this.eventStartTime, this.timeSlot.startTime) : this.timeSlot.startTime;
+        this.timeSlot.endTime = (this.timeSlot.endTime) ? this.mergeEventDateWithTimeSlotDate(this.eventStartTime, this.timeSlot.endTime) : this.timeSlot.endTime;
+
         this.timeSlot.speakers = this.speakers;
         this.timeSlotAdded.emit(this.timeSlot);
         this.timeSlotForm.reset();
     }
+
+    mergeEventDateWithTimeSlotDate(eventDate : Date, timeSlotDate : Date){
+        return new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate(), timeSlotDate.getHours(), timeSlotDate.getMinutes());
+    }
+
 
 
 
