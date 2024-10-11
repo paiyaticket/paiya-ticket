@@ -271,10 +271,20 @@
 
 
             <!-- AGENDA FORM SECTION -->
+            <p-fieldset [hidden]="agenda?.value.length === 0" legend="Agenda" i18n-legend="Agenda" 
+                styleClass="mt-4 hover:border-blue-400 border-3">
+
+                <div class="flex justify-content-end mt-0">
+                    <p-button label="Supprimer la section Agenda" [text]="true" severity="danger" icon="pi pi-minus" class="font-bold align-items-end"></p-button>
+                </div>
+                <app-agenda-list></app-agenda-list>
+
+            </p-fieldset>
             
-            <p-fieldset legend="Agenda" [hidden]="!displayAgenda" i18n-legend="Agenda" styleClass="mt-4 hover:border-blue-400 border-3">
+            <p-sidebar [(visible)]="displayAgenda" [style]="{'width': '50%'}" class="p-2" position="right">
+                <h3 i18n>AJOUTER UN CRÉNEAU A L'AGENDA</h3>
                 <app-agenda></app-agenda>
-            </p-fieldset> 
+            </p-sidebar>
 
 
 

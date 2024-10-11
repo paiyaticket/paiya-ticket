@@ -1,17 +1,25 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { TimeSlot } from '../../../../models/time-slot';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { Speaker, TimeSlot } from '../../../../models/time-slot';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CalendarModule } from 'primeng/calendar';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
+import { AvatarModule } from 'primeng/avatar';
+import { AvatarGroupModule } from 'primeng/avatargroup';
 import { FilePondModule, registerPlugin } from 'ngx-filepond';
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 import FilePondPluginImageResize from 'filepond-plugin-image-resize';
 import FilePondPluginImageTransform from 'filepond-plugin-image-transform';
 import FilePondPluginImageCrop from 'filepond-plugin-image-crop';
+import { FieldsetModule } from 'primeng/fieldset';
+import { TableModule } from 'primeng/table';
+import { getDownloadURL } from '@angular/fire/storage';
+import { ProcessServerConfigFunction, LoadServerConfigFunction, RevertServerConfigFunction, FetchServerConfigFunction, RemoveServerConfigFunction, FilePond } from 'filepond';
+import { Auth } from '@angular/fire/auth';
+import { FileStorageService } from '../../../../service/file-storage.service';
 
 
 
@@ -27,6 +35,10 @@ import FilePondPluginImageCrop from 'filepond-plugin-image-crop';
     ButtonModule, 
     CalendarModule,
     FilePondModule,
+    FieldsetModule,
+    TableModule,
+    AvatarModule,
+    AvatarGroupModule
   ],
   templateUrl: './agenda.component.html',
   styleUrl: './agenda.component.scss',
@@ -36,14 +48,20 @@ export class AgendaComponent {
 
     @Output() timeSlotAdded = new EventEmitter<TimeSlot>();
     @Output() timeSlotRemoved = new EventEmitter<TimeSlot>();
+    @ViewChild('speakerPhoto') speakerPhoto : FilePond | undefined;
 
     timeSlots : TimeSlot[] = [];
     timeSlotForm !: FormGroup;
     pondOptions : any;
+    speakers : Speaker[] = [];
+    currentUser : any;
+
+
+    constructor(private fileStorageService : FileStorageService, private auth : Auth){}
 
 
     ngOnInit(){
-
+        this.currentUser = this.auth.currentUser;
         registerPlugin(
             FilePondPluginFileValidateType,
             FilePondPluginImagePreview,
@@ -58,7 +76,7 @@ export class AgendaComponent {
             endTime : new FormControl<string | undefined>(undefined, [Validators.required]),
             title : new FormControl<string | undefined>(undefined, [Validators.required]),
             icon : new FormControl<string | undefined>(undefined),
-            description : new FormControl<string | undefined>(undefined),
+            description : new FormControl<string | undefined>(undefined, [Validators.maxLength(200)]),
             speaker : new FormGroup({
                 completeName : new FormControl<string | undefined>(undefined),
                 photo : new FormControl<string | undefined>(undefined),
@@ -73,10 +91,10 @@ export class AgendaComponent {
 
         this.pondOptions = {
             name: 'speakerImageCoverPond',
-            imagePreviewHeight: 220,
+            imagePreviewHeight: 180,
             imageCropAspectRatio: '1:1',
-            imageResizeTargetWidth: 240,
-            imageResizeTargetHeight: 240,
+            imageResizeTargetWidth: 200,
+            imageResizeTargetHeight: 200,
             stylePanelLayout: 'compact circle',
             styleLoadIndicatorPosition: 'center bottom',
             styleProgressIndicatorPosition: 'right bottom',
@@ -84,14 +102,158 @@ export class AgendaComponent {
             styleButtonProcessItemPosition: 'right bottom',
             acceptedFileTypes: ['image/jpeg', 'image/png'],
             labelInvalidField: $localize `Ce champ contient des fichiers invalides.`,
-            labelIdle: $localize `<span class="filepond--label-action"> Choisir une photo </span>.`,
-            credits : false
+            labelIdle: $localize `<span class="filepond--label-action"> Choisir une photo </span>`,
+            credits : false,
+            server : {
+                process : this.process(), 
+                load : this.load(),
+                fetch: this.fetch(),
+                revert: this.revert(),
+                remove: this.remove(),
+            }
         }
 
     }
 
+
+    /* *********************** */
+    // FILEPOND EVENT HANDLERS //
+    /* *********************** */
+    process() : ProcessServerConfigFunction {
+        return (fieldName, file, metadata, load, error, progress, abort, transfer, options) => {
+            console.log("PROCESS...");
+            let path = 'repos/'+this.auth?.currentUser?.uid+'/images/speakers';
+            const uploadTask = this.fileStorageService.uploadFile(file as File, path);
+
+            uploadTask.on('state_changed', 
+                (snapshot) => {
+                    const p = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    progress(true, snapshot.bytesTransferred, snapshot.totalBytes);
+                }, 
+                (storageError) => {
+                    error(storageError.message);
+                }, 
+                () => {
+                    getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                        this.timeSlotForm.get('speaker')?.get('photo')?.setValue(downloadURL);
+
+                        load(downloadURL);
+                    });
+                }
+            );
+
+            return {
+                abort: () => {
+                    uploadTask.cancel();
+                    abort();
+                },
+            };
+            
+        }
+    }
+
+    load() : LoadServerConfigFunction {
+        return (source, load, error, progress, abort, headers) => {
+            console.log("LOAD...");
+
+            this.fileStorageService.downloadFile(source).then((downloadURL) => {
+                const xhr = new XMLHttpRequest();
+                xhr.responseType = 'blob';
+                xhr.onload = (event) => {
+                    const blob = xhr.response;
+                    const file : File = new File(blob, source);
+                    load(file);
+                };
+                xhr.open('GET', downloadURL);
+                xhr.send();
+
+            }).catch((error) => {
+                error(error.message);
+            })
+            
+            return {
+                abort: () => {
+                    abort();
+                },
+            };
+        }
+    }
+
+    revert() : RevertServerConfigFunction {
+        return (source, load, error) => {
+            console.log("REVERT...");
+            this.fileStorageService.removeFile(source).then(() => {
+                load();
+            }).catch((e) => {
+                error(e.message);
+            });
+        }
+    }
+
+    fetch() : FetchServerConfigFunction {
+        return (url, load, error, progress, abort, headers) => {
+            console.log("FETCH...");
+            this.fileStorageService.downloadBlod(url).then((blob) => {
+                let urlParts = url.split("%2F");
+                blob.name = urlParts[urlParts.length - 1].split("?")[0];
+                load(blob);
+            }).catch((e) => {
+                error(e.message);
+            });
+            
+            return {
+                abort: () => {
+                    abort();
+                },
+            };
+        }
+    }
+
+    remove() : RemoveServerConfigFunction {
+        return (source, load, error) => {
+            console.log("REMOVE...");
+            // Should somehow send `source` to server so server can remove the file with this source
+            this.fileStorageService.removeFile(source).then(() => {
+                
+                // this.removeImage(source);
+                load();
+            }).catch((e) => {
+                error(e.message);
+            });
+        }
+    }
+
+
+    extractFileNameFromUrl(url : string){
+        let urlParts = url.split("%2F");
+        const filename = urlParts[urlParts.length - 1].split("?")[0];
+        return filename;
+    }
+
+
+    addSpeaker(){
+        let speaker = this.timeSlotForm.get('speaker')?.value as Speaker;
+        this.speakers.push(speaker);
+        this.speakerPhoto?.removeFiles();
+        this.timeSlotForm.get('speaker')?.reset();
+    }
+
+    removeSpeaker(index : number){
+        let speaker = this.speakers[index];
+        this.fileStorageService.removeFile(speaker.photo as string).then(()=>{
+            this.speakers.splice(index, 1);
+        });
+    }
+
+    onRemoveSpeaker(speaker : Speaker){
+        let index = this.speakers.indexOf(speaker);
+        this.speakers.splice(index, 1);
+    }
+
+
     submit(){
         let tineSlot = this.timeSlotForm.value as TimeSlot;
+        tineSlot.speakers = this.speakers;
         this.timeSlots.push(tineSlot);
         this.timeSlotAdded.emit(tineSlot);
         this.timeSlotForm.reset();

@@ -42,6 +42,8 @@ import { DialogModule } from 'primeng/dialog';
 import { TimeSlot } from '../../../models/time-slot';
 import { Question } from '../../../models/question';
 import { AgendaComponent } from './agenda/agenda.component';
+import { SidebarModule } from 'primeng/sidebar';
+import { AgendaListComponent } from './agenda/agenda-list/agenda-list.component';
 
 
 
@@ -71,7 +73,9 @@ import { AgendaComponent } from './agenda/agenda.component';
         ChipsModule,
         FilePondModule,
         DialogModule,
-        AgendaComponent
+        SidebarModule,
+        AgendaComponent,
+        AgendaListComponent,
     ],
     templateUrl: './my-event-create.component.html',
     styleUrl: './my-event-create.component.scss',

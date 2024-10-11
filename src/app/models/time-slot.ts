@@ -5,7 +5,7 @@ export class TimeSlot{
     title : string | undefined;
     icon : string | undefined;
     description : string | undefined;
-    spekers : Speaker | undefined;
+    speakers : Speaker[] | undefined;
 }
 
 export class Speaker{
