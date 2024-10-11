@@ -283,7 +283,7 @@
             
             <p-sidebar [(visible)]="displayAgenda" [style]="{'width': '50%'}" class="p-2" position="right">
                 <h3 i18n>AJOUTER UN CRÉNEAU A L'AGENDA</h3>
-                <app-agenda></app-agenda>
+                <app-agenda (timeSlotAdded)="addTimeSlot($event)"></app-agenda>
             </p-sidebar>
 
 

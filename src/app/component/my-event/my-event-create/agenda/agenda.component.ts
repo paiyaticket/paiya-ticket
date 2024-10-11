@@ -50,7 +50,7 @@ export class AgendaComponent {
     @Output() timeSlotRemoved = new EventEmitter<TimeSlot>();
     @ViewChild('speakerPhoto') speakerPhoto : FilePond | undefined;
 
-    timeSlots : TimeSlot[] = [];
+    timeSlot : TimeSlot | undefined;
     timeSlotForm !: FormGroup;
     pondOptions : any;
     speakers : Speaker[] = [];
@@ -252,17 +252,10 @@ export class AgendaComponent {
 
 
     submit(){
-        let tineSlot = this.timeSlotForm.value as TimeSlot;
-        tineSlot.speakers = this.speakers;
-        this.timeSlots.push(tineSlot);
-        this.timeSlotAdded.emit(tineSlot);
+        this.timeSlot = this.timeSlotForm.value as TimeSlot;
+        this.timeSlot.speakers = this.speakers;
+        this.timeSlotAdded.emit(this.timeSlot);
         this.timeSlotForm.reset();
-    }
-
-    onRemove(timeSlot : TimeSlot){
-        let index = this.timeSlots.indexOf(timeSlot);
-        this.timeSlots.splice(index, 1);
-        this.timeSlotRemoved.emit(timeSlot);
     }
 
 

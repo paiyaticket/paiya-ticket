@@ -123,7 +123,8 @@
     
 
     <div class="field xl:col-12 lg:col-12 col-12 mt-2">
-        <p-button label="Sauvegarder le créneau" i18n-label="Sauvegarder le créneau" severity="info" icon="pi pi-save" class="font-bold w-full" styleClass="w-full"></p-button>
+        <p-button label="Sauvegarder le créneau" i18n-label="Sauvegarder le créneau" severity="info" 
+            type="submit" [disabled]="timeSlotForm.invalid" icon="pi pi-save" class="font-bold w-full" styleClass="w-full"></p-button>
     </div>
         
 </form>

@@ -441,6 +441,19 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
     }
 
 
+
+    addTimeSlot(event : any){
+        console.log(event);
+        this.agenda?.value.push(event);
+        this.displayAgenda = false;
+    }
+
+    removeTimeSlot(event : any){
+        let index = this.agenda?.value.indexOf(event);
+        this.agenda?.value.splice(index, 1);
+    }
+
+
     
 
     
