@@ -44,6 +44,8 @@ import { Question } from '../../../models/question';
 import { AgendaComponent } from './agenda/agenda.component';
 import { SidebarModule } from 'primeng/sidebar';
 import { AgendaListComponent } from './agenda/agenda-list/agenda-list.component';
+import { AvatarModule } from 'primeng/avatar';
+import { AvatarGroupModule } from 'primeng/avatargroup';
 
 
 
@@ -76,6 +78,8 @@ import { AgendaListComponent } from './agenda/agenda-list/agenda-list.component'
         SidebarModule,
         AgendaComponent,
         AgendaListComponent,
+        AvatarModule,
+        AvatarGroupModule
     ],
     templateUrl: './my-event-create.component.html',
     styleUrl: './my-event-create.component.scss',
@@ -85,7 +89,7 @@ import { AgendaListComponent } from './agenda/agenda-list/agenda-list.component'
 export class MyEventCreateComponent implements OnInit, OnDestroy {
 
     visible: boolean = false;
-    displayAgenda : boolean = false;
+    displayAgendaForm : boolean = false;
     eventSubscription : Subscription | undefined;
     createEventSubscription : Subscription | undefined;
     updateEventSubscription : Subscription | undefined;
@@ -109,7 +113,9 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         {'label' : $localize `Lieu`, 'value' : VenueType.FACE_TO_FACE},
         {'label' : $localize `Évènement en ligne`, 'value' : VenueType.VIRTUAL}
     ];
+
     @Input() eventId : string | undefined;
+    @ViewChild("agendaList") agendaList : AgendaListComponent | undefined;
 
     
     constructor(private router : Router, 
@@ -441,14 +447,22 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
     }
 
     addTimeSlot(event : any){
-        console.log(event);
-        this.agenda?.value.push(event);
-        this.displayAgenda = false;
+        let tsTab = this.agenda?.value;
+        tsTab.push(event);
+        this.agenda?.setValue(tsTab);
+        if(this.agendaList){
+            this.agendaList.timeSlots = tsTab;
+        }
+        this.displayAgendaForm = false;
     }
 
     removeTimeSlot(event : any){
         let index = this.agenda?.value.indexOf(event);
         this.agenda?.value.splice(index, 1);
+    }
+
+    removeAgenda(){
+        return this.agenda?.setValue([]);
     }
 
 

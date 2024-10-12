@@ -271,19 +271,71 @@
 
 
             <!-- AGENDA FORM SECTION -->
-            <p-fieldset [hidden]="agenda?.value.length === 0" legend="Agenda" i18n-legend="Agenda" 
-                styleClass="mt-4 hover:border-blue-400 border-3">
+             @if (agenda?.value.length > 0) {
 
-                <div class="flex justify-content-end mt-0">
-                    <p-button label="Supprimer la section Agenda" [text]="true" severity="danger" icon="pi pi-minus" class="font-bold align-items-end"></p-button>
-                </div>
-                <app-agenda-list></app-agenda-list>
-
-            </p-fieldset>
+                 <p-fieldset legend="Agenda" i18n-legend="Agenda" 
+                     styleClass="mt-4 hover:border-blue-400 border-3">
+     
+                     <div class="flex justify-content-between mt-0">
+                        <p-button label="Ajouter un créneau" [text]="true" i18n-label="Ajouter un créneau" (onClick)="(!displayAgendaForm) ? displayAgendaForm = true : displayAgendaForm = false" 
+                            severity="info" icon="pi pi-plus"/>
+                        <p-button label="Supprimer la section Agenda" [text]="true" severity="danger" icon="pi pi-trash" 
+                            (onClick)="removeAgenda()" class="font-bold align-items-end"></p-button>
+                     </div>
+     
+                     <ul class="list-none p-0 m-0">
+                         @for (item of agenda?.value; track $index) {
+                             <li class="flex mb-3">
+                                 <div class="flex flex-column align-items-center">
+                                     <span
+                                         class="flex align-items-center justify-content-center border-circle p-2 timeline-icon bg-blue-100 text-blue-500">
+                                         <i class="pi pi-clock text-2xl"></i>
+                                     </span>
+                                     <div class="h-full bg-blue-100" style="width: 2px; min-height: 4rem"></div>
+                                 </div>
+                     
+                                 <div class="ml-3 flex-1">
+                                    <div class="flex align-items-center justify-content-between mb-3">
+                                        <span>
+                                            <strong>{{item.title}}</strong>
+                                        </span>
+                                        <div class="flex align-items-center">
+                                            <span class="mr-2 font-bold text-color-secondary">{{item.startTime?.getHours() + ':' + item.startTime?.getMinutes() + ' - ' + item.endTime?.getHours() + ':' + item.endTime?.getMinutes()}}</span>
+                                            <p-button icon="pi pi-trash" severity="secondary" size="small" (onClick)="removeTimeSlot($index)"></p-button>
+                                        </div>
+                                    </div>
+                                    <div class="p-3 border-round" [style]="{'background-color': 'rgba(227, 248, 255, 0.1)'}">
+                                        <p class="text-color-secondary mb-3">
+                                            {{item.description}}
+                                        </p>
+                                        @for (speaker of item.speakers; track $index) {
+                                        <div class="flex align-items-center">
+                                            <p-avatar 
+                                                [image]="speaker.photo"
+                                                styleClass="mr-2" 
+                                                size="large" 
+                                                shape="circle"/>
+                                            <p>
+                                                <b>{{ speaker.completeName }}</b> <br> 
+                                                <span class="font-italic text-color-secondary">{{ speaker.description }}</span>
+                                            </p>
+                                        </div>
+                                        }
+                                    </div>
+                                </div>
+                             </li>
+                         }
+                     </ul>
+                     <!--
+                        <app-agenda-list #agendaList [timeSlots]="this.agenda?.value"></app-agenda-list>
+                     -->
+                 </p-fieldset>
+             }
+             
             
-            <p-sidebar [(visible)]="displayAgenda" [style]="{'width': '50%'}" class="p-2" position="right">
+            <p-sidebar [(visible)]="displayAgendaForm" [style]="{'width': '50%'}" class="p-2" position="right">
                 <h3 i18n>AJOUTER UN CRÉNEAU A L'AGENDA</h3>
-                <app-agenda (timeSlotAdded)="addTimeSlot($event)"></app-agenda>
+                <app-agenda (timeSlotAdded)="addTimeSlot($event)" [eventStartTime]="startTime?.value" [eventEndTime]="endTime?.value"></app-agenda>
             </p-sidebar>
 
 
@@ -298,30 +350,26 @@
                         et à répondre à leurs questions, ce qui signifie plus de ventes de billets et moins de temps pour répondre aux messages.
                     </p>
                     <div class="flex flex-wrap flex-row align-items-stretch gap-3">
-                        @if(this.agenda?.value.length > 0){
-
-                        } @else {
+                        @if(agenda?.value.length === 0){
                             <p-card header="{{'agenda' | uppercase}}" class="w-25rem">
                                 <p i18n>
                                     Présenter le programme de votre événement, les activités et les intervenants afin de donner plus d'informations sur le déroulement.
                                 </p>
-                                <p-button label="Ajouter" (onClick)="(!displayAgenda) ? displayAgenda = true : displayAgenda = false" size="small" severity="info" icon="pi pi-plus"/>
-                                <p-button label="Voir un exemple" size="small" severity="info" outlined="true" icon="pi pi-eye" class="ml-2"/>
-                            </p-card>
-                        }
-
-                        @if(this.agenda?.value.length > 0){
-
-                        } @else {
-                            <p-card header="{{'Foire aux questions'| uppercase}}" class="w-25rem">
-                                <p i18n>
-                                    Lister les questions fréquement posées et leurs réponses afin que les participants n'aient à vous les poser toutes les fois.
-                                </p>
-                                <p-button label="Ajouter" size="small" severity="info" icon="pi pi-plus"/>
+                                <p-button label="Ajouter" (onClick)="(!displayAgendaForm) ? displayAgendaForm = true : displayAgendaForm = false" 
+                                    [disabled]="startTime?.value === undefined || endTime?.value === undefined || startTime?.value === null || endTime?.value === null"
+                                    size="small" severity="info" icon="pi pi-plus"/>
                                 <p-button label="Voir un exemple" size="small" severity="info" outlined="true" icon="pi pi-eye" class="ml-2"/>
                             </p-card>
                         }
                         
+
+                        <p-card header="{{'Foire aux questions'| uppercase}}" class="w-25rem">
+                            <p i18n>
+                                Lister les questions fréquement posées et leurs réponses afin que les participants n'aient à vous les poser toutes les fois.
+                            </p>
+                            <p-button label="Ajouter" size="small" severity="info" icon="pi pi-plus"/>
+                            <p-button label="Voir un exemple" size="small" severity="info" outlined="true" icon="pi pi-eye" class="ml-2"/>
+                        </p-card> 
                     </div>
                 </div>
             </p-fieldset>

@@ -78,11 +78,11 @@ export class AgendaComponent {
             endTime : new FormControl<Date | undefined>(undefined, [Validators.required]),
             title : new FormControl<string | undefined>(undefined, [Validators.required]),
             icon : new FormControl<string | undefined>(undefined),
-            description : new FormControl<string | undefined>(undefined, [Validators.maxLength(200)]),
+            description : new FormControl<string | undefined>(undefined, [Validators.maxLength(400)]),
             speaker : new FormGroup({
                 completeName : new FormControl<string | undefined>(undefined),
                 photo : new FormControl<string | undefined>(undefined),
-                description : new FormControl<string | undefined>(undefined),
+                description : new FormControl<string | undefined>(undefined, [Validators.maxLength(400)]),
                 xlink : new FormControl<string | undefined>(undefined),
                 linkedin : new FormControl<string | undefined>(undefined),
                 instagram : new FormControl<string | undefined>(undefined),
@@ -252,7 +252,6 @@ export class AgendaComponent {
         this.speakers.splice(index, 1);
     }
 
-
     submit(){
         this.timeSlot = this.timeSlotForm.value as TimeSlot;
         this.timeSlot.startTime = (this.timeSlot.startTime) ? this.mergeEventDateWithTimeSlotDate(this.eventStartTime, this.timeSlot.startTime) : this.timeSlot.startTime;
@@ -261,6 +260,7 @@ export class AgendaComponent {
         this.timeSlot.speakers = this.speakers;
         this.timeSlotAdded.emit(this.timeSlot);
         this.timeSlotForm.reset();
+        this.speakers = [];
     }
 
     mergeEventDateWithTimeSlotDate(eventDate : Date, timeSlotDate : Date){
