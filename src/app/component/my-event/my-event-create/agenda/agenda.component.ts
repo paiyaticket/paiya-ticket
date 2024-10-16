@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { Speaker, TimeSlot } from '../../../../models/time-slot';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CalendarModule } from 'primeng/calendar';
@@ -20,6 +20,9 @@ import { getDownloadURL } from '@angular/fire/storage';
 import { ProcessServerConfigFunction, LoadServerConfigFunction, RevertServerConfigFunction, FetchServerConfigFunction, RemoveServerConfigFunction, FilePond } from 'filepond';
 import { Auth } from '@angular/fire/auth';
 import { FileStorageService } from '../../../../service/file-storage.service';
+import { dateEarlyThanStartTimeValidator } from '../../../../validators/dateEarlyThanStartTimeValidator';
+import { dateLaterThanEndTimeValidator } from '../../../../validators/dateLaterThanEndTimeValidator';
+import { laterDateValidator } from '../../../../validators/laterDateValidator';
 
 
 
@@ -59,11 +62,12 @@ export class AgendaComponent {
     currentUser : any;
 
 
-    constructor(private fileStorageService : FileStorageService, private auth : Auth){}
+    constructor(private fileStorageService : FileStorageService, private auth : Auth, private cdr : ChangeDetectorRef){}
 
 
     ngOnInit(){
         this.currentUser = this.auth.currentUser;
+        
         registerPlugin(
             FilePondPluginFileValidateType,
             FilePondPluginImagePreview,
@@ -89,7 +93,7 @@ export class AgendaComponent {
                 facebook : new FormControl<string | undefined>(undefined),
                 twitter : new FormControl<string | undefined>(undefined),
             }),
-        });
+        }, {validators : [laterDateValidator]});
 
         this.pondOptions = {
             name: 'speakerImageCoverPond',
@@ -115,6 +119,24 @@ export class AgendaComponent {
             }
         }
 
+        
+    }
+
+    ngOnChanges(changes : any){
+        if(changes.eventStartTime.currentValue !== null && changes.eventEndTime.currentValue !== null){
+            this.startTime?.setValidators([
+                Validators.required,
+                dateEarlyThanStartTimeValidator(changes.eventStartTime.currentValue), 
+                dateLaterThanEndTimeValidator(changes.eventEndTime.currentValue)
+            ]);
+
+            this.endTime?.setValidators([
+                Validators.required,
+                dateEarlyThanStartTimeValidator(changes.eventStartTime.currentValue), 
+                dateLaterThanEndTimeValidator(changes.eventEndTime.currentValue)
+            ]);
+        }
+        
     }
 
 
@@ -265,6 +287,10 @@ export class AgendaComponent {
 
     mergeEventDateWithTimeSlotDate(eventDate : Date, timeSlotDate : Date){
         return new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate(), timeSlotDate.getHours(), timeSlotDate.getMinutes());
+    }
+
+    displayHourAndMinute(date : Date){
+        return date.getHours().toString().padEnd(2, '0') + ":" + date.getMinutes().toString().padStart(2, '0');
     }
 
 

@@ -275,13 +275,13 @@
 
                  <p-fieldset legend="Agenda" i18n-legend="Agenda" styleClass="mt-4 hover:border-blue-400 border-3">
     
-                    <div class="flex justify-content-between mt-0">
-                    <p-button label="Ajouter un créneau" [text]="true" i18n-label="Ajouter un créneau" (onClick)="(!displayAgendaForm) ? displayAgendaForm = true : displayAgendaForm = false" 
-                        severity="info" icon="pi pi-plus"/>
-                    <p-button label="Supprimer la section Agenda" [text]="true" severity="danger" icon="pi pi-trash" 
-                        (onClick)="removeAgenda()" class="font-bold align-items-end"></p-button>
+                    <div class="flex justify-content-between mb-2">
+                        <p-button label="Ajouter un créneau" [text]="true" i18n-label="Ajouter un créneau" (onClick)="(!displayAgendaForm) ? displayAgendaForm = true : displayAgendaForm = false" 
+                            severity="info" icon="pi pi-plus"/>
+                        <p-button label="Supprimer la section Agenda" [text]="true" severity="danger" icon="pi pi-trash" 
+                            (onClick)="removeAgenda()" class="font-bold align-items-end"></p-button>
                     </div>
-                    
+
                     <app-agenda-list [timeSlots]="this.agenda?.value" (timeSlotRemoved)="removeTimeSlot($event)"></app-agenda-list>
                     
                  </p-fieldset>

@@ -8,30 +8,66 @@
             <div class="field xl:col-6 lg:col-6 col-12 mt-2">
                 <label for="startTime" class="font-bold" i18n>Heure de début</label>
         
-                <p-calendar id="startTime" formControlName="startTime" [timeOnly]="true" hourFormat="24" class="w-full" styleClass="w-full"/>
+                <p-calendar id="startTime" formControlName="startTime" [timeOnly]="true" hourFormat="24" 
+                class="w-full" styleClass="w-full"/>
         
                 <div *ngIf="startTime?.invalid && (startTime?.touched || startTime?.dirty)">
                     @if (startTime?.hasError('required')) {
-                        <small id="startTime-required-help" [hidden]="startTime?.pristine || startTime?.valid" class="p-error font-bold" i18n="Une heure est requise.">
+                        <small id="startTime-required-help" class="p-error font-bold" i18n="Une heure est requise.">
                             Une heure est requise.
                         </small>
                     }
+                    @if (startTime?.hasError('dateEarlyThanStartTime')) {
+                        <small id="startTime-dateEarlyThanStartTime-help" class="p-error font-bold"
+                            i18n="Heure antérieure à l'heure de début de l'évènement. Entrer une heure postérieure ou égale à {{displayHourAndMinute(eventStartTime)}}.">
+                        Heure antérieure à l'heure de début de l'évènement. Entrer une heure postérieure ou égale à {{displayHourAndMinute(eventStartTime)}}.
+                        </small>
+                    }
+                    @if (startTime?.hasError('dateLaterThanEndTime')) {
+                        <small id="startTime-dateLaterThanEndTimeValidator-help" class="p-error font-bold"
+                            i18n="Heure postérieure à l'heure de fin de l'évènement. Entrer une heure antérieure ou égale à {{displayHourAndMinute(eventEndTime)}}.">
+                        Heure postérieure à l'heure de fin de l'évènement. Entrer une heure antérieure ou égale à {{displayHourAndMinute(eventEndTime)}}.
+                        </small>
+                    }
                 </div>
+                @if (timeSlotForm.hasError('laterDate')) {
+                    <small id="startTime-required-help" class="p-error font-bold" i18n="L'heure de début doit être inférieure à la l'heure de fin.">
+                        L'heure de début doit être inférieure à la l'heure de fin.
+                    </small>
+                }
             </div>
         
             <!-- END TIME -->
             <div class="field xl:col-6 lg:col-6 col-12 mt-2">
                 <label for="endTime" class="font-bold" i18n>Heure de fin</label>
         
-                <p-calendar id="startTime" formControlName="endTime" [timeOnly]="true" hourFormat="24" class="w-full" styleClass="w-full"/>
+                <p-calendar id="endTime" formControlName="endTime" [timeOnly]="true" hourFormat="24" 
+                    class="w-full" styleClass="w-full"/>
         
                 <div *ngIf="endTime?.invalid && (endTime?.touched || endTime?.dirty)">
                     @if (endTime?.hasError('required')) {
-                        <small id="endTime-required-help" [hidden]="endTime?.pristine || endTime?.valid" class="p-error font-bold" i18n="Une heure est requise.">
+                        <small id="endTime-required-help" class="p-error font-bold" i18n="Une heure est requise.">
                             Une heure est requise.
                         </small>
                     }
+                    @if (endTime?.hasError('dateEarlyThanStartTime')) {
+                        <small id="endTime-dateEarlyThanStartTime-help" class="p-error font-bold"
+                            i18n="Heure antérieure à l'heure de début de l'évènement. Entrer une heure postérieure ou égale à {{displayHourAndMinute(eventStartTime)}}.">
+                        Heure antérieure à l'heure de début de l'évènement. Entrer une heure postérieure ou égale à {{displayHourAndMinute(eventStartTime)}}.
+                        </small>
+                    }
+                    @if (endTime?.hasError('dateLaterThanEndTime')) {
+                        <small id="endTime-dateLaterThanEndTimeValidator-help" class="p-error font-bold"
+                            i18n="Heure postérieure à l'heure de fin de l'évènement. Entrer une heure antérieure ou égale à {{displayHourAndMinute(eventEndTime)}}.">
+                        Heure postérieure à l'heure de fin de l'évènement. Entrer une heure antérieure ou égale à {{displayHourAndMinute(eventEndTime)}}.
+                        </small>
+                    }
                 </div>
+                @if (timeSlotForm.hasError('laterDate')) {
+                    <small id="endTime-required-help" class="p-error font-bold" i18n="L'heure de début doit être inférieure à la l'heure de fin.">
+                        L'heure de début doit être inférieure à la l'heure de fin.
+                    </small>
+                }
             </div>
         
             <!-- TITRE -->
@@ -53,7 +89,7 @@
             <div class="field xl:col-12 lg:col-12 col-12 p-fluid">
                 <label for="description" class="font-bold" i18n>Description</label>
         
-                <textarea id="description" pInputTextarea formControlName="description" autoResize="true"></textarea>
+                <textarea id="description"  pInputTextarea formControlName="description"></textarea>
         
                 @if (description?.invalid && (description?.touched || description?.dirty)) {
                     <div>
