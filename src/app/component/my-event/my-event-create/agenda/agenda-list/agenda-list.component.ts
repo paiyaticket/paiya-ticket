@@ -20,26 +20,28 @@ import { TimeSlot } from '../../../../../models/time-slot';
   ],
   templateUrl: './agenda-list.component.html',
   styleUrl: './agenda-list.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.Default
 })
 export class AgendaListComponent implements OnChanges {
 
     @Input() timeSlots : TimeSlot[] = [];
-    @Output() timeSlotRemoved = new EventEmitter<TimeSlot>();
+    @Output() timeSlotRemoved = new EventEmitter<number>();
 
-
-
-    ngOnInit() : void{
-        // console.log(this.timeSlots);
-    }
 
     ngOnChanges(changes : SimpleChanges){
-        console.log(changes['timeSlots'].currentValue);
-        this.timeSlots = changes['timeSlots'].currentValue;
+        this.timeSlots = Object.assign(this.timeSlots, changes['timeSlots'].currentValue);
     }
 
     removeTimeSlot(timeSlot : TimeSlot){
-        this.timeSlotRemoved.emit(timeSlot);
+        let index = this.timeSlots.indexOf(timeSlot);
+        this.timeSlotRemoved.emit(index);
+    }
+
+    displayTimeslotInterval(timeSlot : TimeSlot){
+        let startTime = new Date(timeSlot.startTime as string);
+        let endTime = new Date(timeSlot.endTime as string);
+        return startTime?.getHours() + ':' + startTime?.getUTCMinutes().toString().padStart(2, '0') + 
+                ' - ' + endTime?.getHours() + ':' + endTime?.getUTCMinutes().toString().padStart(2, '0');
     }
 
 }

@@ -1,6 +1,5 @@
-
 <ul class="list-none p-0 m-0">
-    @for (item of timeSlots; track $index) {
+    @for (item of timeSlots; track item) {
         <li class="flex mb-3">
             <div class="flex flex-column align-items-center">
                 <span
@@ -11,31 +10,36 @@
             </div>
 
             <div class="ml-3 flex-1">
-                <div class="flex align-items-center justify-content-between mb-3">
-                    <span>
-                        <strong>{{item.title}}</strong>
+            <div class="flex align-items-center justify-content-between mb-3">
+                <span>
+                    <strong>{{item.title}}</strong>
+                </span>
+                <div class="flex align-items-center">
+                    <span class="mr-2 font-bold text-color-secondary">
+                        {{displayTimeslotInterval(item)}}
                     </span>
-                    <span class="font-bold text-color-secondary">{{item.startTime?.getHours() + ':' + item.startTime?.getMinutes() + ' - ' + item.endTime?.getHours() + ':' + item.endTime?.getMinutes()}}</span>
-                </div>
-                <div class="p-3 border-round" [style]="{'background-color': 'rgba(227, 248, 255, 0.1)'}">
-                    <p class="text-color-secondary mb-3">
-                        {{item.description}}
-                    </p>
-                    @for (speaker of item.speakers; track $index) {
-                        <div class="flex align-items-center">
-                            <p-avatar 
-                                [image]="speaker.photo"
-                                styleClass="mr-2" 
-                                size="large" 
-                                shape="circle"/>
-                            <p>
-                                <b>{{ speaker.completeName }}</b> <br> 
-                                <span class="font-italic text-color-secondary">{{ speaker.description }}</span>
-                            </p>
-                        </div>
-                    }
+                    <p-button icon="pi pi-trash" severity="secondary" size="small" (onClick)="removeTimeSlot(item)"></p-button>
                 </div>
             </div>
+            <div class="p-3 border-round" [style]="{'background-color': 'rgba(227, 248, 255, 0.1)'}">
+                <p class="text-color-secondary mb-3">
+                    {{item.description}}
+                </p>
+                @for (speaker of item.speakers; track $index) {
+                <div class="flex align-items-center">
+                    <p-avatar 
+                        [image]="speaker.photo"
+                        styleClass="mr-2" 
+                        size="large" 
+                        shape="circle"/>
+                    <p>
+                        <b>{{ speaker.completeName }}</b> <br> 
+                        <span class="font-italic text-color-secondary">{{ speaker.description }}</span>
+                    </p>
+                </div>
+                }
+            </div>
+        </div>
         </li>
     }
 </ul>

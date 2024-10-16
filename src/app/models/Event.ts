@@ -31,12 +31,12 @@ export class Event {
     physicalAddress : PhysicalAddress | undefined;
     onlineAdresse : OnlineAddress | undefined;
     eventOrganizer : EventOrganizer | undefined;
-    cashAccounts : CashAccount[] = [];
+    cashAccounts : CashAccount[] = new Array<CashAccount>();
 
     publishSettings : PublishSettings | undefined;
 
-    agenda : TimeSlot[] = [];
-    faq : Question[] = [];
+    agenda : TimeSlot[] = new Array<TimeSlot>();
+    faq : Question[] = new Array<Question>();
 
     owner : string | undefined;
     createdDate : string | undefined;

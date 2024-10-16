@@ -15,7 +15,7 @@ import { AppMenuitemComponent } from './app.menuitem.component';
 })
 export class AppMenuComponent implements OnInit {
 
-    model: any[] = [];
+    model: MenuItem[] = [];
 
     constructor(public layoutService: LayoutService) { }
 

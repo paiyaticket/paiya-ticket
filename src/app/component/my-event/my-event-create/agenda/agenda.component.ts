@@ -254,8 +254,8 @@ export class AgendaComponent {
 
     submit(){
         this.timeSlot = this.timeSlotForm.value as TimeSlot;
-        this.timeSlot.startTime = (this.timeSlot.startTime) ? this.mergeEventDateWithTimeSlotDate(this.eventStartTime, this.timeSlot.startTime) : this.timeSlot.startTime;
-        this.timeSlot.endTime = (this.timeSlot.endTime) ? this.mergeEventDateWithTimeSlotDate(this.eventStartTime, this.timeSlot.endTime) : this.timeSlot.endTime;
+        this.timeSlot.startTime = (this.timeSlot.startTime) ? this.mergeEventDateWithTimeSlotDate(this.eventStartTime, this.timeSlot.startTime as Date) : this.timeSlot.startTime;
+        this.timeSlot.endTime = (this.timeSlot.endTime) ? this.mergeEventDateWithTimeSlotDate(this.eventStartTime, this.timeSlot.endTime as Date) : this.timeSlot.endTime;
 
         this.timeSlot.speakers = this.speakers;
         this.timeSlotAdded.emit(this.timeSlot);

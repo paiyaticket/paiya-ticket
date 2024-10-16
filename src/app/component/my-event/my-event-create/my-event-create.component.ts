@@ -168,9 +168,9 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
                 link : new FormControl<string | undefined>(undefined),
             }),
             eventOrganizer : new FormControl<EventOrganizer | undefined>(undefined),
-            cashAccounts : new FormControl<CashAccount[] | undefined>([]),
-            agenda : new FormControl<TimeSlot[]>([]),
-            faq : new FormControl<Question[]>([]),
+            cashAccounts : new FormControl<CashAccount[]>(new Array<CashAccount>()),
+            agenda : new FormControl<TimeSlot[]>(new Array<TimeSlot>()),
+            faq : new FormControl<Question[]>(new Array<Question>()),
         }, {validators : [laterDateValidator]});
 
         this.pondOptions = {
@@ -201,13 +201,15 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
 
         // init event informations if the eventId is passed. 
         this.initEventIfIdIsPassed();
-        
     }
 
     initEventIfIdIsPassed(){
         if(this.eventId){
             this.eventSubscription = this.eventService.findById(this.eventId).subscribe((event) => {
+                event.agenda = this.transformAgendaTimeSlotsIntoZonedDateTime(event.agenda as TimeSlot[], event.timeZone);
                 this.eventForm.patchValue(event);
+                // ce bout de code pourrait être amélioré en donnant a startTime et endTime le type "string | Date" au lieu 
+                // de string uniquement.
                 if(event.startTime && event.endTime && event.timeZone){
                     this.eventForm.patchValue({
                         startTime : this.utcDateToZonedDateTime(event.startTime, event.timeZone),
@@ -446,18 +448,17 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         this.selectedVenueType = event.value;
     }
 
-    addTimeSlot(event : any){
-        let tsTab = this.agenda?.value;
+    handleTimeSlotAdded(event : any){
+        let tsTab : TimeSlot[] = this.agenda?.value || [];
         tsTab.push(event);
-        this.agenda?.setValue(tsTab);
+        this.agenda?.setValue(tsTab); 
         if(this.agendaList){
             this.agendaList.timeSlots = tsTab;
         }
         this.displayAgendaForm = false;
     }
 
-    removeTimeSlot(event : any){
-        let index = this.agenda?.value.indexOf(event);
+    removeTimeSlot(index : number){
         this.agenda?.value.splice(index, 1);
     }
 
@@ -476,18 +477,46 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
     //        FORM DATA PROCESS      //
     /* ***************************** */
     submit(){
-        let event : Event = this.eventForm.value as Event;
-        event.startTime = this.startTime?.value.toISOString();
-        event.endTime = this.endTime?.value.toISOString();
-        event.timeZone = (this.timeZone?.value) ? this.timeZone?.value : Intl.DateTimeFormat().resolvedOptions().timeZone;
-        event.timeZoneOffset = this.startTime?.value.getTimezoneOffset();
-        event.owner = (this.currentUser?.email) ? this.currentUser?.email : undefined;
-
+        let event : Event = this.preSubmit();
         if(this.eventId){
             this.updateEvent(event);
         } else {
             this.createEvent(event);
         }
+    }
+
+    preSubmit() : Event {
+        let event : Event = this.eventForm.value as Event;
+        event.agenda = this.transformAgendaTimeSlotsIntoUtcDate(event);
+        event.startTime = this.startTime?.value.toISOString();
+        event.endTime = this.endTime?.value.toISOString();
+        event.timeZone = (this.timeZone?.value) ? this.timeZone?.value : Intl.DateTimeFormat().resolvedOptions().timeZone;
+        event.timeZoneOffset = this.startTime?.value.getTimezoneOffset();
+        event.owner = (this.currentUser?.email) ? this.currentUser?.email : undefined;
+        return event;
+    }
+
+
+    transformAgendaTimeSlotsIntoUtcDate(event : Event) : TimeSlot[]{
+        return this.agenda?.value.map((timeSlot : TimeSlot) => {
+            if(timeSlot.startTime instanceof Date)
+                timeSlot.startTime = timeSlot.startTime.toISOString();
+            if(timeSlot.endTime instanceof Date)
+                timeSlot.endTime = timeSlot.endTime.toISOString();
+            return timeSlot;
+        });
+    }
+
+    transformAgendaTimeSlotsIntoZonedDateTime(agenda : TimeSlot[], timeZone : string | undefined) : TimeSlot[]{
+        if(!timeZone)
+            timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        return agenda.map((timeSlot : TimeSlot) => {
+            if(timeSlot.startTime)
+                timeSlot.startTime = this.utcDateToZonedDateTime(timeSlot.startTime as string, timeZone);
+            if(timeSlot.endTime)
+                timeSlot.endTime = this.utcDateToZonedDateTime(timeSlot.endTime as string, timeZone);
+            return timeSlot;
+        });
     }
 
     partialUpdateEvent(event : Event){
@@ -501,7 +530,7 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         this.updateEventSubscription = this.eventService.update(event).subscribe({
             next : (event) => {
                 this.messageService.add({ severity: 'success', key: "global", summary: $localize`Succès`, detail: $localize`Mise a jour réussie.` });
-                this.reloadPageWithEventId(event.id);
+                // this.reloadPageWithEventId(event.id);
             },
             error : (error) => {
                 this.messageService.add({ severity: 'error', key: "global", summary: $localize`Erreur`, detail: $localize`Un problème est survenu lors de la mise a jour de l'événement.` });
@@ -525,7 +554,7 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
     }
 
 
-    utcDateToZonedDateTime(utcDate : string, timeZone : string) : Date | null{
+    utcDateToZonedDateTime(utcDate : string, timeZone : string) : Date {
         const zonedDateTime = new Date(utcDate).toLocaleString("en-US" , {timeZone: timeZone});
         return new Date(zonedDateTime);
     }
