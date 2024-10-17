@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
-import { Speaker, TimeSlot } from '../../../../models/time-slot';
+import { Speaker, TimeSlot } from '../../../../../models/time-slot';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CalendarModule } from 'primeng/calendar';
 import { CommonModule } from '@angular/common';
@@ -19,15 +19,15 @@ import { TableModule } from 'primeng/table';
 import { getDownloadURL } from '@angular/fire/storage';
 import { ProcessServerConfigFunction, LoadServerConfigFunction, RevertServerConfigFunction, FetchServerConfigFunction, RemoveServerConfigFunction, FilePond } from 'filepond';
 import { Auth } from '@angular/fire/auth';
-import { FileStorageService } from '../../../../service/file-storage.service';
-import { dateEarlyThanStartTimeValidator } from '../../../../validators/dateEarlyThanStartTimeValidator';
-import { dateLaterThanEndTimeValidator } from '../../../../validators/dateLaterThanEndTimeValidator';
-import { laterDateValidator } from '../../../../validators/laterDateValidator';
+import { FileStorageService } from '../../../../../service/file-storage.service';
+import { dateEarlyThanStartTimeValidator } from '../../../../../validators/dateEarlyThanStartTimeValidator';
+import { dateLaterThanEndTimeValidator } from '../../../../../validators/dateLaterThanEndTimeValidator';
+import { laterDateValidator } from '../../../../../validators/laterDateValidator';
 
 
 
 @Component({
-  selector: 'app-agenda',
+  selector: 'app-agenda-create',
   standalone: true,
   imports: [
     CommonModule,
@@ -43,11 +43,11 @@ import { laterDateValidator } from '../../../../validators/laterDateValidator';
     AvatarModule,
     AvatarGroupModule
   ],
-  templateUrl: './agenda.component.html',
-  styleUrl: './agenda.component.scss',
+  templateUrl: './agenda-create.component.html',
+  styleUrl: './agenda-create.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AgendaComponent {
+export class AgendaCreateComponent {
 
     @Input() eventStartTime !: Date;
     @Input() eventEndTime !: Date;

@@ -41,11 +41,13 @@ import { FetchServerConfigFunction, FilePond, FilePondOptions, LoadServerConfigF
 import { DialogModule } from 'primeng/dialog';
 import { TimeSlot } from '../../../models/time-slot';
 import { Question } from '../../../models/question';
-import { AgendaComponent } from './agenda/agenda.component';
+import { AgendaCreateComponent } from './agenda/agenda-create/agenda-create.component';
 import { SidebarModule } from 'primeng/sidebar';
 import { AgendaListComponent } from './agenda/agenda-list/agenda-list.component';
 import { AvatarModule } from 'primeng/avatar';
 import { AvatarGroupModule } from 'primeng/avatargroup';
+import { FaqCreateComponent } from './faq/faq-create/faq-create.component';
+import { FaqListComponent } from './faq/faq-list/faq-list.component';
 
 
 
@@ -76,8 +78,10 @@ import { AvatarGroupModule } from 'primeng/avatargroup';
         FilePondModule,
         DialogModule,
         SidebarModule,
-        AgendaComponent,
+        AgendaCreateComponent,
         AgendaListComponent,
+        FaqCreateComponent,
+        FaqListComponent,
         AvatarModule,
         AvatarGroupModule
     ],
@@ -90,6 +94,7 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
 
     visible: boolean = false;
     displayAgendaForm : boolean = false;
+    displayFaqForm : boolean = false;
     eventSubscription : Subscription | undefined;
     createEventSubscription : Subscription | undefined;
     updateEventSubscription : Subscription | undefined;
@@ -458,13 +463,42 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         this.displayAgendaForm = false;
     }
 
+    handleTimeSlotRemoved(event : any){
+        let tsTab : TimeSlot[] = this.agenda?.value || [];
+        let index = tsTab.indexOf(event);
+        tsTab.splice(index, 1);
+        this.agenda?.setValue(tsTab)
+    }
+
+
     removeTimeSlot(index : number){
         this.agenda?.value.splice(index, 1);
     }
 
-    removeAgenda(){
+    removeAgendaSection(){
         return this.agenda?.setValue([]);
     }
+
+    handleQuestionAdded(event : Question){
+        let faqTab : Question[] = this.faq?.value || [];
+        faqTab.push(event);
+        this.faq?.setValue(faqTab);
+        this.displayFaqForm = false;
+    }
+
+
+    handleQuestionRemoved(event : Question){
+        let faqTab : Question[] = this.faq?.value || [];
+        let index = faqTab.indexOf(event);
+        faqTab.splice(index, 1);
+        this.faq?.setValue(faqTab);
+    }
+
+    removeFaqSection(){
+        return this.faq?.setValue([]);
+    }
+
+
 
 
     

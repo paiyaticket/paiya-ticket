@@ -270,30 +270,43 @@
             </p-fieldset>
 
 
-            <!-- AGENDA FORM SECTION -->
-             @if (agenda?.value.length > 0) {
+            <!-- AGENDA SECTION -->
+            @if (agenda?.value.length > 0) {
+                <p-fieldset legend="Agenda" i18n-legend="Agenda" styleClass="mt-4 hover:border-blue-400 border-3">
 
-                 <p-fieldset legend="Agenda" i18n-legend="Agenda" styleClass="mt-4 hover:border-blue-400 border-3">
-    
                     <div class="flex justify-content-between mb-2">
                         <p-button label="Ajouter un créneau" [text]="true" i18n-label="Ajouter un créneau" (onClick)="(!displayAgendaForm) ? displayAgendaForm = true : displayAgendaForm = false" 
                             severity="info" icon="pi pi-plus"/>
                         <p-button label="Supprimer la section Agenda" [text]="true" severity="danger" icon="pi pi-trash" 
-                            (onClick)="removeAgenda()" class="font-bold align-items-end"></p-button>
+                            (onClick)="removeAgendaSection()" class="font-bold align-items-end"></p-button>
                     </div>
 
                     <app-agenda-list [timeSlots]="this.agenda?.value" (timeSlotRemoved)="removeTimeSlot($event)"></app-agenda-list>
-                    
-                 </p-fieldset>
-             }
-             
-            
+                </p-fieldset>
+            }
             <p-sidebar [(visible)]="displayAgendaForm" [style]="{'width': '50%'}" class="p-2" position="right">
                 <h3 i18n>AJOUTER UN CRÉNEAU A L'AGENDA</h3>
-                <app-agenda (timeSlotAdded)="handleTimeSlotAdded($event)" [eventStartTime]="startTime?.value" [eventEndTime]="endTime?.value"></app-agenda>
+                <app-agenda-create (timeSlotAdded)="handleTimeSlotAdded($event)" [eventStartTime]="startTime?.value" [eventEndTime]="endTime?.value"></app-agenda-create>
             </p-sidebar>
 
 
+            <!-- FAQ SECTION -->
+            @if (faq?.value.length > 0) {
+                <p-fieldset legend="Agenda" i18n-legend="Agenda" styleClass="mt-4 hover:border-blue-400 border-3">
+                    <div class="flex justify-content-between mb-2">
+                        <p-button label="Ajouter une question" [text]="true" i18n-label="Ajouter une question" (onClick)="(!displayFaqForm) ? displayFaqForm = true : displayFaqForm = false" 
+                            severity="info" icon="pi pi-plus"/>
+                        <p-button label="Supprimer la section FAQ" [text]="true" severity="danger" icon="pi pi-trash" 
+                            (onClick)="removeFaqSection()" class="font-bold align-items-end"></p-button>
+                    </div>
+
+                    <app-faq-list [questions]="this.faq?.value" (questionRemoved)="handleQuestionRemoved($event)"></app-faq-list>
+                </p-fieldset>
+            }
+            <p-sidebar [(visible)]="displayFaqForm" [style]="{'width': '50%'}" class="p-2" position="right">
+                <h3 i18n>AJOUTER UNE QUESTION A LA FOIRE AUX QUESTIONS</h3>
+                <app-faq-create (questionAdded)="handleQuestionAdded($event)" ></app-faq-create>
+            </p-sidebar>
 
 
 
@@ -317,14 +330,16 @@
                             </p-card>
                         }
                         
-
-                        <p-card header="{{'Foire aux questions'| uppercase}}" class="w-25rem">
-                            <p i18n>
-                                Lister les questions fréquement posées et leurs réponses afin que les participants n'aient à vous les poser toutes les fois.
-                            </p>
-                            <p-button label="Ajouter" size="small" severity="info" icon="pi pi-plus"/>
-                            <p-button label="Voir un exemple" size="small" severity="info" outlined="true" icon="pi pi-eye" class="ml-2"/>
-                        </p-card> 
+                        @if (faq?.value.length === 0) {
+                            <p-card header="{{'Foire aux questions'| uppercase}}" class="w-25rem">
+                                <p i18n>
+                                    Lister les questions fréquement posées et leurs réponses afin que les participants n'aient à vous les poser toutes les fois.
+                                </p>
+                                <p-button label="Ajouter" (onClick)="(!displayFaqForm) ? displayFaqForm = true : displayFaqForm = false"
+                                    size="small" severity="info" icon="pi pi-plus"/>
+                                <p-button label="Voir un exemple" size="small" severity="info" outlined="true" icon="pi pi-eye" class="ml-2"/>
+                            </p-card> 
+                        }
                     </div>
                 </div>
             </p-fieldset>
