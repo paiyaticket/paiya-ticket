@@ -62,7 +62,7 @@ export class AgendaCreateComponent {
     currentUser : any;
 
 
-    constructor(private fileStorageService : FileStorageService, private auth : Auth, private cdr : ChangeDetectorRef){}
+    constructor(private fileStorageService : FileStorageService, private auth : Auth){}
 
 
     ngOnInit(){
@@ -129,12 +129,14 @@ export class AgendaCreateComponent {
                 dateEarlyThanStartTimeValidator(changes.eventStartTime.currentValue), 
                 dateLaterThanEndTimeValidator(changes.eventEndTime.currentValue)
             ]);
-
+            
             this.endTime?.setValidators([
                 Validators.required,
                 dateEarlyThanStartTimeValidator(changes.eventStartTime.currentValue), 
                 dateLaterThanEndTimeValidator(changes.eventEndTime.currentValue)
             ]);
+            this.startTime?.setValue(changes.eventStartTime.currentValue);
+            this.endTime?.setValue(changes.eventEndTime.currentValue);
         }
         
     }
@@ -282,6 +284,10 @@ export class AgendaCreateComponent {
         this.timeSlot.speakers = this.speakers;
         this.timeSlotAdded.emit(this.timeSlot);
         this.timeSlotForm.reset();
+        
+        this.startTime?.setValue(this.eventStartTime);
+        this.endTime?.setValue(this.eventEndTime);
+        this.timeSlot = undefined;
         this.speakers = [];
     }
 

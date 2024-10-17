@@ -206,6 +206,7 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
 
         // init event informations if the eventId is passed. 
         this.initEventIfIdIsPassed();
+
     }
 
     initEventIfIdIsPassed(){

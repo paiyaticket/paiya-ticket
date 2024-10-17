@@ -292,7 +292,7 @@
 
             <!-- FAQ SECTION -->
             @if (faq?.value.length > 0) {
-                <p-fieldset legend="Agenda" i18n-legend="Agenda" styleClass="mt-4 hover:border-blue-400 border-3">
+                <p-fieldset legend="Foire aux question (FAQ)" i18n-legend="Foire aux question (FAQ)" styleClass="mt-4 hover:border-blue-400 border-3">
                     <div class="flex justify-content-between mb-2">
                         <p-button label="Ajouter une question" [text]="true" i18n-label="Ajouter une question" (onClick)="(!displayFaqForm) ? displayFaqForm = true : displayFaqForm = false" 
                             severity="info" icon="pi pi-plus"/>
@@ -311,38 +311,41 @@
 
 
             <!-- AGENDA AND FAQ -->
-            <p-fieldset legend="Ajouter plus de sections à votre évènement (facultatif)" i18n-legend="Bon à savoir" styleClass="mt-4 border-dashed border-3">
-                <div >
-                    <p class="text-800" i18n>
-                        Faites ressortir encore plus votre événement. Ces sections aident les participants à trouver des informations 
-                        et à répondre à leurs questions, ce qui signifie plus de ventes de billets et moins de temps pour répondre aux messages.
-                    </p>
-                    <div class="flex flex-wrap flex-row align-items-stretch gap-3">
-                        @if(agenda?.value.length === 0){
-                            <p-card header="{{'agenda' | uppercase}}" class="w-25rem">
-                                <p i18n>
-                                    Présenter le programme de votre événement, les activités et les intervenants afin de donner plus d'informations sur le déroulement.
-                                </p>
-                                <p-button label="Ajouter" (onClick)="(!displayAgendaForm) ? displayAgendaForm = true : displayAgendaForm = false" 
-                                    [disabled]="startTime?.value === undefined || endTime?.value === undefined || startTime?.value === null || endTime?.value === null"
-                                    size="small" severity="info" icon="pi pi-plus"/>
-                                <p-button label="Voir un exemple" size="small" severity="info" outlined="true" icon="pi pi-eye" class="ml-2"/>
-                            </p-card>
-                        }
-                        
-                        @if (faq?.value.length === 0) {
-                            <p-card header="{{'Foire aux questions'| uppercase}}" class="w-25rem">
-                                <p i18n>
-                                    Lister les questions fréquement posées et leurs réponses afin que les participants n'aient à vous les poser toutes les fois.
-                                </p>
-                                <p-button label="Ajouter" (onClick)="(!displayFaqForm) ? displayFaqForm = true : displayFaqForm = false"
-                                    size="small" severity="info" icon="pi pi-plus"/>
-                                <p-button label="Voir un exemple" size="small" severity="info" outlined="true" icon="pi pi-eye" class="ml-2"/>
-                            </p-card> 
-                        }
+            @if (faq?.value.length === 0 || agenda?.value.length === 0) {
+                <p-fieldset legend="Ajouter plus de sections à votre évènement (facultatif)" i18n-legend="Bon à savoir" styleClass="mt-4 border-dashed border-3">
+                    <div >
+                        <p class="text-800" i18n>
+                            Faites ressortir encore plus votre événement. Ces sections aident les participants à trouver des informations 
+                            et à répondre à leurs questions, ce qui signifie plus de ventes de billets et moins de temps pour répondre aux messages.
+                        </p>
+                        <div class="flex flex-wrap flex-row align-items-stretch gap-3">
+                            @if(agenda?.value.length === 0){
+                                <p-card header="{{'agenda' | uppercase}}" class="w-25rem">
+                                    <p i18n>
+                                        Présenter le programme de votre événement, les activités et les intervenants afin de donner plus d'informations sur le déroulement.
+                                    </p>
+                                    <p-button label="Ajouter" (onClick)="(!displayAgendaForm) ? displayAgendaForm = true : displayAgendaForm = false" 
+                                        [disabled]="startTime?.value === undefined || endTime?.value === undefined || startTime?.value === null || endTime?.value === null"
+                                        size="small" severity="info" icon="pi pi-plus"/>
+                                    <p-button label="Voir un exemple" size="small" severity="info" outlined="true" icon="pi pi-eye" class="ml-2"/>
+                                </p-card>
+                            }
+                            
+                            @if (faq?.value.length === 0) {
+                                <p-card header="{{'Foire aux questions'| uppercase}}" class="w-25rem">
+                                    <p i18n>
+                                        Lister les questions fréquement posées et leurs réponses afin que les participants n'aient à vous les poser toutes les fois.
+                                    </p>
+                                    <p-button label="Ajouter" (onClick)="(!displayFaqForm) ? displayFaqForm = true : displayFaqForm = false"
+                                        size="small" severity="info" icon="pi pi-plus"/>
+                                    <p-button label="Voir un exemple" size="small" severity="info" outlined="true" icon="pi pi-eye" class="ml-2"/>
+                                </p-card> 
+                            }
+                        </div>
                     </div>
-                </div>
-            </p-fieldset>
+                </p-fieldset>
+            
+            }
 
             <div class="mt-4 flex justify-content-end flex-wrap">
                 <p-button type="button" label="Annuler" i18n-label="Annuler" styleClass="bg-primary-reverse mr-2" 
