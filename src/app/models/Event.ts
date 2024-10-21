@@ -16,6 +16,7 @@ export class Event {
     eventCategory : string | undefined;
     tags : string[] = [];
     imageCovers : ImageCover[] = [];
+    videoLink : string | undefined;
     summary : string | undefined;
     description : string | undefined;
     publicationDate : string | undefined;

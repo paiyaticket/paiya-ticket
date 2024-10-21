@@ -46,6 +46,8 @@ import { SidebarModule } from 'primeng/sidebar';
 import { AgendaListComponent } from './agenda/agenda-list/agenda-list.component';
 import { AvatarModule } from 'primeng/avatar';
 import { AvatarGroupModule } from 'primeng/avatargroup';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { FaqCreateComponent } from './faq/faq-create/faq-create.component';
 import { FaqListComponent } from './faq/faq-list/faq-list.component';
 
@@ -83,7 +85,9 @@ import { FaqListComponent } from './faq/faq-list/faq-list.component';
         FaqCreateComponent,
         FaqListComponent,
         AvatarModule,
-        AvatarGroupModule
+        AvatarGroupModule,
+        InputGroupModule,
+        InputGroupAddonModule
     ],
     templateUrl: './my-event-create.component.html',
     styleUrl: './my-event-create.component.scss',
@@ -148,6 +152,7 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
             eventCategory : new FormControl<string | undefined>(undefined),
             tags : new FormControl<string[]>([]),
             imageCovers : new FormControl<ImageCover[]>([]),
+            videoLink : new FormControl<string | undefined>(undefined),
             summary : new FormControl<string | undefined>('', [Validators.maxLength(150)]),
             description : new FormControl<string | undefined>(undefined),
             publicationDate : new FormControl<string | undefined>(undefined),
