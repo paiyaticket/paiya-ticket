@@ -15,7 +15,9 @@ import { DataViewModule } from 'primeng/dataview';
 import { SplitButtonModule } from 'primeng/splitbutton';
 import { Event } from "../../../models/event";
 import { SidebarModule } from "primeng/sidebar";
+import { DialogModule } from 'primeng/dialog';
 import { MyEventItemComponent } from "../my-event-item/my-event-item.component";
+import { ChooseOrganizerComponent } from "../choose-organizer/choose-organizer.component";
 
 
 @Component({
@@ -33,7 +35,9 @@ import { MyEventItemComponent } from "../my-event-item/my-event-item.component";
         DataViewModule,
         SplitButtonModule,
         SidebarModule,
-        MyEventItemComponent
+        DialogModule,
+        MyEventItemComponent,
+        ChooseOrganizerComponent
     ],
     templateUrl: './my-event-list.component.html',
     styleUrl: './my-event-list.component.scss',
@@ -47,6 +51,7 @@ export class MyEventListComponent implements OnInit {
     eventList$ !: Observable<Event[]>;
     layout: string = 'list';
 
+    organisationDialogVisible : boolean = false;
     createSidebarVisible : boolean = false;
     updateSidebarVisible : boolean = false;
     updateSidebarParam : string | undefined;
@@ -68,6 +73,10 @@ export class MyEventListComponent implements OnInit {
 
     initEventList(email : string){
         this.eventList$ = this.eventService.findByOwner(email);
+    }
+
+    showDialog() {
+        this.organisationDialogVisible = true;
     }
 
     openCreateSidebar(){
@@ -114,6 +123,10 @@ export class MyEventListComponent implements OnInit {
 
     goToCreationPage(){
         this.router.navigate(['/my-events/create']);
+    }
+
+    chooseOrganizer(){
+        this.showDialog()
     }
 
 

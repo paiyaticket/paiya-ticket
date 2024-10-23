@@ -3,22 +3,11 @@
 <section class="mb-6">
     <div class="flex justify-content-end flex-wrap">
 
-        <p-sidebar [(visible)]="createSidebarVisible" styleClass="w-8 my-closeicon" position="right" (onHide)="handleHideSidebar()">
-            Create 
-            <!-- <app-event-organisation-create (onSave)="closeCreateSidebar($event)" (onCancel)="closeCreateSidebar()"></app-event-organisation-create> -->
-        </p-sidebar>
-
-        @if (updateSidebarParam !== undefined) {
-            <p-sidebar [(visible)]="updateSidebarVisible" styleClass="w-8" position="right" (onHide)="handleHideSidebar()">
-                Update
-                <!-- <app-event-organisation [id]="updateSidebarParam" (onSave)="closeUpdateSidebar($event)" (onCancel)="closeUpdateSidebar()"></app-event-organisation> -->
-            </p-sidebar>
-        }
-
-        <p-button (onClick)="goToCreationPage()" styleClass="font-bold" i18n>
+        <p-button (onClick)="chooseOrganizer()" styleClass="font-bold" i18n>
             <i class="pi pi-plus mr-2"></i>
             Créer un nouvel évènement
         </p-button>
+
     </div>
 </section>
 
@@ -73,6 +62,27 @@
     </p-confirmDialog>
         
 </section>
+
+
+<p-dialog 
+    header="Header" 
+    [(visible)]="organisationDialogVisible" 
+    [modal]="true" 
+    [style]="{ width: '30%' }">
+        <ng-template pTemplate="header">
+            <div class="flex align-items-center justify-content-center">
+                <span class="flex font-bold text-2xl">
+                    Qui est l'organisateur de l'évènement ?
+                </span>
+            </div>
+        </ng-template>
+
+        <div class="flex align-items-center justify-content-center">
+            <app-choose-organizer style="width: 70%;"></app-choose-organizer>
+        </div>
+
+</p-dialog>
+
 
 
 

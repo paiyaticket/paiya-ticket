@@ -2,7 +2,7 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Inject, Input, OnDestroy, OnInit, PLATFORM_ID, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Auth, getAuth, User } from '@angular/fire/auth';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
 import { FieldsetModule } from 'primeng/fieldset';
@@ -50,6 +50,7 @@ import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { FaqCreateComponent } from './faq/faq-create/faq-create.component';
 import { FaqListComponent } from './faq/faq-list/faq-list.component';
+import { EventOrganizerService } from '../../../service/event-organizer.service';
 
 
 
@@ -127,8 +128,10 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
     @ViewChild("agendaList") agendaList : AgendaListComponent | undefined;
 
     
-    constructor(private router : Router, 
+    constructor(private route : ActivatedRoute,
+                private router : Router, 
                 private eventService : EventService,
+                private eventOrganizerService : EventOrganizerService,
                 private fileStorageService : FileStorageService,
                 private messageService: MessageService,
                 @Inject(PLATFORM_ID) private platformId: any){
@@ -140,7 +143,6 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
                 }
     
     ngOnInit(): void {
-
         this.auth = getAuth();
         this.currentUser = this.auth?.currentUser;
         this.messages = [{ severity: 'info', detail: this.multipleEventsMessage }];
@@ -212,6 +214,9 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         // init event informations if the eventId is passed. 
         this.initEventIfIdIsPassed();
 
+        // init eventOrganizer if organizerId is passed by queryParams.
+        this.initOrganizerIfIdIsPassed();
+
     }
 
     initEventIfIdIsPassed(){
@@ -231,6 +236,17 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         }
     }
 
+    initOrganizerIfIdIsPassed(){
+        let organizerId = this.route.snapshot.queryParamMap.get('organizerId');
+        if(organizerId !== null && organizerId !== this.currentUser?.email){
+            this.eventOrganizerService.findById(organizerId).subscribe((organizer) => {
+                this.eventForm.patchValue({eventOrganizer : organizer});
+            });
+        } else {
+            this.eventOrganizer?.setValue({id : this.currentUser?.email, name : this.currentUser?.displayName});
+        }
+        console.log(this.eventForm);
+    }
 
 
 

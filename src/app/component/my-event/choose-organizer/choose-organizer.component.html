@@ -1,0 +1,20 @@
+<div class="flex flex-column gap-2">
+    <p-button label="Vous-même en tant que personne" size="large" severity="info" icon="pi pi-user" 
+        (onClick)="selectOrganizer(currentUser.email)" styleClass="w-full"/>
+
+
+    <p-divider align="center" type="solid" >
+        <b>Ou un organisateur existant</b>
+    </p-divider>
+
+    @if (organizerList$ | async; as organizerList) {
+        @for (org of organizerList; track $index) {
+            @if (org.id) {
+                <p-button label="{{ org.name }}" size="large" severity="info" icon="pi pi-sitemap"
+                    (onClick)="selectOrganizer(org.id)" styleClass="w-full"/>
+            }
+        }
+    }
+
+    
+</div>
