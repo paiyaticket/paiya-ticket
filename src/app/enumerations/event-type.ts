@@ -1,0 +1,4 @@
+export enum EventType {
+    SINGLE_EVENT = "SINGLE_EVENT",
+    RECURRING_EVENT = "RECURRING_EVENT",
+}

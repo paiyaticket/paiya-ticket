@@ -11,6 +11,9 @@ import { HttpClient, provideHttpClient, withFetch, withInterceptors, withNoXsrfP
 import { MessageService } from 'primeng/api';
 import { HttpErrorInterceptor } from './interceptors/http-error-interceptor';
 import { loggingInterceptor } from './interceptors/log-interceptor';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import {TranslateHttpLoader} from '@ngx-translate/http-loader';
+import { getStorage, provideStorage } from '@angular/fire/storage';
 
 export const appConfig: ApplicationConfig = {
     providers: [
@@ -19,11 +22,26 @@ export const appConfig: ApplicationConfig = {
         provideAnimations(), 
         provideFirebaseApp(() => initializeApp(environment.firebaseConfig)), 
         provideAuth(() => getAuth()),
+        provideStorage(() => getStorage()),
         provideHttpClient(
             withNoXsrfProtection(),
             withFetch(),
-            withInterceptors([HttpErrorInterceptor, loggingInterceptor])
+            withInterceptors([HttpErrorInterceptor])
         ),
-        MessageService
+        // primeng features providers
+        MessageService,
+        TranslateModule.forRoot({
+            defaultLanguage: 'fr',
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient]
+            }
+        }).providers!
+        
     ]
 };
+
+export function HttpLoaderFactory(http: HttpClient) {
+    return new TranslateHttpLoader(http);
+}

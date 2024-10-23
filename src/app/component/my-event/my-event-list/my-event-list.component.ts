@@ -1,8 +1,8 @@
 import { CommonModule } from "@angular/common";
 import { Component, ChangeDetectionStrategy, OnInit } from "@angular/core";
 import { Auth, getAuth, User } from "@angular/fire/auth";
-import { RouterLink } from "@angular/router";
-import { ConfirmationService, Message, MessageService } from "primeng/api";
+import { Router, RouterLink } from "@angular/router";
+import { ConfirmationService, MenuItem, Message, MessageService } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ChipModule } from "primeng/chip";
@@ -13,8 +13,11 @@ import { Observable } from "rxjs";
 import { EventService } from "../../../service/event.service";
 import { DataViewModule } from 'primeng/dataview';
 import { SplitButtonModule } from 'primeng/splitbutton';
-import { Event } from "../../../models/Event";
+import { Event } from "../../../models/event";
 import { SidebarModule } from "primeng/sidebar";
+import { DialogModule } from 'primeng/dialog';
+import { MyEventItemComponent } from "../my-event-item/my-event-item.component";
+import { ChooseOrganizerComponent } from "../choose-organizer/choose-organizer.component";
 
 
 @Component({
@@ -32,6 +35,9 @@ import { SidebarModule } from "primeng/sidebar";
         DataViewModule,
         SplitButtonModule,
         SidebarModule,
+        DialogModule,
+        MyEventItemComponent,
+        ChooseOrganizerComponent
     ],
     templateUrl: './my-event-list.component.html',
     styleUrl: './my-event-list.component.scss',
@@ -45,6 +51,7 @@ export class MyEventListComponent implements OnInit {
     eventList$ !: Observable<Event[]>;
     layout: string = 'list';
 
+    organisationDialogVisible : boolean = false;
     createSidebarVisible : boolean = false;
     updateSidebarVisible : boolean = false;
     updateSidebarParam : string | undefined;
@@ -52,7 +59,8 @@ export class MyEventListComponent implements OnInit {
     constructor(
         private eventService : EventService,
         private confirmationService: ConfirmationService,
-        private messageService : MessageService
+        private messageService : MessageService,
+        private router : Router
     ) { }
 
     ngOnInit() {
@@ -60,10 +68,15 @@ export class MyEventListComponent implements OnInit {
         this.owner = this.auth.currentUser; 
         if(this.owner && this.owner.email)
             this.initEventList(this.owner.email);
+        
     }
 
     initEventList(email : string){
         this.eventList$ = this.eventService.findByOwner(email);
+    }
+
+    showDialog() {
+        this.organisationDialogVisible = true;
     }
 
     openCreateSidebar(){
@@ -107,33 +120,15 @@ export class MyEventListComponent implements OnInit {
         window.location.reload();
     }
 
-    confirmDelete(event : Event) {
-        this.confirmationService.confirm({
-            header: $localize `Etes-vous sur(e)?`,
-            message: $localize `Je confirme que je veux suprimer "${event.title}"`,
-            icon: "pi-trash",
-            accept: () => {
-                if(event.id){
-                    // deletion logic
-                }
-            },
-            reject: () => {}
-        });
+
+    goToCreationPage(){
+        this.router.navigate(['/my-events/create']);
     }
 
-    confirmPublish(event : Event) {
-        this.confirmationService.confirm({
-            header: $localize `Etes-vous prêt(e)?`,
-            message: $localize `Je confirme que je veux publier cet evènement "${event.title}"`,
-            icon: "pi-megaphone",
-            accept: () => {
-                if(event.id){
-                    // publish logic
-                }
-            },
-            reject: () => {}
-        });
+    chooseOrganizer(){
+        this.showDialog()
     }
+
 
     modifier(event : Event){
 

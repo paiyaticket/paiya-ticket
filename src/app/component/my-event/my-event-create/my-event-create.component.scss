@@ -1,0 +1,27 @@
+.details {
+    &.p-panel{
+        .p-panel-header{
+            background-color: rgba(255,255,255,.87);
+            padding: 0px;
+            border-radius: 0px;
+            border: none;
+            // border-bottom: 1px solid #dee2e6;
+        }
+    }
+}
+
+.imageCover{
+    .filepond--item {
+        width: calc(20% - 0.5em);
+    }
+    
+    .filepond--drop-label{
+        border-bottom: solid 3px #fff;
+        margin-bottom: 2px !important;
+        font-weight: bolder;
+    }
+
+}
+
+
+

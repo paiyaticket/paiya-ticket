@@ -1,25 +1,45 @@
+import { EventType } from "../enumerations/event-type";
+import { TimeSlot } from "./time-slot";
 import { CashAccount } from "./cash-account";
 import { EventOrganizer } from "./event-organizer";
+import { ImageCover } from "./image-cover";
 import { OnlineAddress } from "./online-address";
 import { PhysicalAddress } from "./physical-address";
+import { PublishSettings } from "./publishSettings";
+import { Question } from "./question";
+import { Scheduling } from "./scheduling";
 
 export class Event {
     id : string | undefined;
     title : string | undefined;
-    eventType : string | undefined;
+    eventType : EventType | undefined;
     eventCategory : string | undefined;
     tags : string[] = [];
-    imageCover : string | undefined;
-    resume : string | undefined;
+    imageCovers : ImageCover[] = [];
+    videoLink : string | undefined;
+    summary : string | undefined;
     description : string | undefined;
     publicationDate : string | undefined;
-    visibility : boolean = false;
-    eventPageLanguage : string | undefined;
-    startingDateTime : string | undefined;
-    endingDateTime : string | undefined;
+    published : boolean = false;
+
+    startTime : string | undefined;
+    endTime : string | undefined;
+    scheduling : Scheduling | undefined;
     timeZone : string | undefined;
+    timeZoneOffset : number | undefined;
+
+    eventPageLanguage : string | undefined;
     physicalAddress : PhysicalAddress | undefined;
     onlineAdresse : OnlineAddress | undefined;
     eventOrganizer : EventOrganizer | undefined;
-    cashAccounts : CashAccount[] = [];
+    cashAccounts : CashAccount[] = new Array<CashAccount>();
+
+    publishSettings : PublishSettings | undefined;
+
+    agenda : TimeSlot[] = new Array<TimeSlot>();
+    faq : Question[] = new Array<Question>();
+
+    owner : string | undefined;
+    createdDate : string | undefined;
+    lastModifiedDate : string | undefined;
 }

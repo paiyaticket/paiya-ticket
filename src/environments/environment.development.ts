@@ -7,6 +7,7 @@ export const environment = {
         "authDomain":"paiya-413605.firebaseapp.com",
         "messagingSenderId":"1025378920331"
     },
+    googleMapApiKey : "AIzaSyDlnVlM51HoAxVHpPyrlkipTu81mPDdeQM",
     appName: "PaiyaTicket",
     backendApi: {
         accountManager: {

@@ -1,0 +1,166 @@
+
+<form [formGroup]="timeSlotForm" (ngSubmit)="submit()">
+
+    <!--- CRENEAU -->
+    <p-fieldset legend="Créneau" i18n-legend="Créneau" styleClass="mt-4 hover:border-blue-400 border-3">
+        <div class="formgrid grid">
+            <!-- START TIME -->
+            <div class="field xl:col-6 lg:col-6 col-12 mt-2">
+                <label for="startTime" class="font-bold" i18n>Heure de début</label>
+        
+                <p-calendar id="startTime" formControlName="startTime" [timeOnly]="true" hourFormat="24" 
+                class="w-full" styleClass="w-full"/>
+        
+                <div *ngIf="startTime?.invalid && (startTime?.touched || startTime?.dirty)">
+                    @if (startTime?.hasError('required')) {
+                        <small id="startTime-required-help" class="p-error font-bold" i18n="Une heure est requise.">
+                            Une heure est requise.
+                        </small>
+                    }
+                    @if (startTime?.hasError('dateEarlyThanStartTime')) {
+                        <small id="startTime-dateEarlyThanStartTime-help" class="p-error font-bold"
+                            i18n="Heure antérieure à l'heure de début de l'évènement. Entrer une heure postérieure ou égale à {{displayHourAndMinute(eventStartTime)}}.">
+                        Heure antérieure à l'heure de début de l'évènement. Entrer une heure postérieure ou égale à {{displayHourAndMinute(eventStartTime)}}.
+                        </small>
+                    }
+                    @if (startTime?.hasError('dateLaterThanEndTime')) {
+                        <small id="startTime-dateLaterThanEndTimeValidator-help" class="p-error font-bold"
+                            i18n="Heure postérieure à l'heure de fin de l'évènement. Entrer une heure antérieure ou égale à {{displayHourAndMinute(eventEndTime)}}.">
+                        Heure postérieure à l'heure de fin de l'évènement. Entrer une heure antérieure ou égale à {{displayHourAndMinute(eventEndTime)}}.
+                        </small>
+                    }
+                </div>
+                @if (timeSlotForm.hasError('laterDate')) {
+                    <small id="startTime-required-help" class="p-error font-bold" i18n="L'heure de début doit être inférieure à la l'heure de fin.">
+                        L'heure de début doit être inférieure à la l'heure de fin.
+                    </small>
+                }
+            </div>
+        
+            <!-- END TIME -->
+            <div class="field xl:col-6 lg:col-6 col-12 mt-2">
+                <label for="endTime" class="font-bold" i18n>Heure de fin</label>
+        
+                <p-calendar id="endTime" formControlName="endTime" [timeOnly]="true" hourFormat="24" 
+                    class="w-full" styleClass="w-full"/>
+        
+                <div *ngIf="endTime?.invalid && (endTime?.touched || endTime?.dirty)">
+                    @if (endTime?.hasError('required')) {
+                        <small id="endTime-required-help" class="p-error font-bold" i18n="Une heure est requise.">
+                            Une heure est requise.
+                        </small>
+                    }
+                    @if (endTime?.hasError('dateEarlyThanStartTime')) {
+                        <small id="endTime-dateEarlyThanStartTime-help" class="p-error font-bold"
+                            i18n="Heure antérieure à l'heure de début de l'évènement. Entrer une heure postérieure ou égale à {{displayHourAndMinute(eventStartTime)}}.">
+                        Heure antérieure à l'heure de début de l'évènement. Entrer une heure postérieure ou égale à {{displayHourAndMinute(eventStartTime)}}.
+                        </small>
+                    }
+                    @if (endTime?.hasError('dateLaterThanEndTime')) {
+                        <small id="endTime-dateLaterThanEndTimeValidator-help" class="p-error font-bold"
+                            i18n="Heure postérieure à l'heure de fin de l'évènement. Entrer une heure antérieure ou égale à {{displayHourAndMinute(eventEndTime)}}.">
+                        Heure postérieure à l'heure de fin de l'évènement. Entrer une heure antérieure ou égale à {{displayHourAndMinute(eventEndTime)}}.
+                        </small>
+                    }
+                </div>
+                @if (timeSlotForm.hasError('laterDate')) {
+                    <small id="endTime-required-help" class="p-error font-bold" i18n="L'heure de début doit être inférieure à la l'heure de fin.">
+                        L'heure de début doit être inférieure à la l'heure de fin.
+                    </small>
+                }
+            </div>
+        
+            <!-- TITRE -->
+            <div class="field xl:col-12 lg:col-12 col-12 p-fluid">
+                <label for="title" class="font-bold" i18n>Titre</label>
+        
+                <input id="title" type="text" pInputText formControlName="title">
+        
+                <div *ngIf="title?.invalid && (title?.touched || title?.dirty)">
+                    @if (title?.hasError('required')) {
+                        <small id="title-required-help" [hidden]="title?.pristine || title?.valid" class="p-error font-bold" i18n="Un titre est requis.">
+                            Un titre est requis.
+                        </small>
+                    }
+                </div>
+            </div>
+    
+            <!-- DESCRIPTION -->
+            <div class="field xl:col-12 lg:col-12 col-12 p-fluid">
+                <label for="description" class="font-bold" i18n>Description</label>
+        
+                <textarea id="description"  pInputTextarea formControlName="description"></textarea>
+        
+                @if (description?.invalid && (description?.touched || description?.dirty)) {
+                    <div>
+                        @if (description?.invalid  && (description?.touched || description?.dirty)) {
+                            @if (description?.hasError('maxlength')) {
+                                <small id="summary-required-help" class="p-error font-bold" i18n="Nombre maximum de caratère atteint.">
+                                    Le nombre maximum de caratère ({{ timeSlotForm.get('summary')?.getError('maxlength').requiredLength}}) est atteint. 
+                                    Nombre actuel de caratère saisi: {{ timeSlotForm.get('summary')?.getError('maxlength').actualLength}}.
+                                </small>
+                            }
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </p-fieldset>
+
+
+    <!--- SPEAKER -->
+    <p-fieldset legend="intervenants" i18n-legend="intervenants" styleClass="mt-4 hover:border-blue-400 border-3">
+        <div class="formgrid grid" formGroupName="speaker">
+            <div class="xl:col-3 lg:col-3 col-12 mt-2 p-fluid">
+                <file-pond [options]="pondOptions" class="align-items-center" #speakerPhoto></file-pond>
+            </div>
+            <div class="xl:col-7 lg:col-7 col-12 mt-2">
+                <div class="field xl:col-12 lg:col-12 col-12 mt-2 p-fluid">
+                    <label for="completeName" class="font-bold" i18n>Nom complet du speaker</label>
+                    <input id="completeName" type="text" pInputText formControlName="completeName" class="w-full">
+                </div>
+                <div class="field xl:col-12 lg:col-12 col-12 mt-2  p-fluid">
+                    <label for="description" class="font-bold" i18n>Description du speaker</label>
+                    <input id="description" type="text" pInputText formControlName="description" class="w-full">
+                </div>
+            </div>
+            <div class="xl:col-2 lg:col-2 col-12 mt-2">
+                <p-button label="Ajouter un speaker" i18n-label="Ajouter un speaker" (onClick)="addSpeaker()" severity="secondary" icon="pi pi-user-plus" class="font-bold w-full" styleClass="w-full"></p-button>
+            </div>
+        </div>
+
+        <p-table [value]="speakers" [styleClass]="'p-datatable-sm'">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th i18n>Nom complet</th>
+                    <th i18n>Description</th>
+                    <th></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-speaker let-i="index">
+                <tr>
+                    <td>
+                        <div class="flex align-items-center">
+                            <p-avatar 
+                                [image]="speaker.photo"
+                                styleClass="mr-2" 
+                                size="large" 
+                                shape="circle"/>
+                            {{ speaker.completeName }}
+                        </div>
+                    </td>
+                    <td>{{ speaker.description }}</td>
+                    <td><p-button icon="pi pi-trash" (onClick)="removeSpeaker(i)"></p-button></td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </p-fieldset>
+
+    
+
+    <div class="field xl:col-12 lg:col-12 col-12 mt-2">
+        <p-button label="Sauvegarder le créneau" i18n-label="Sauvegarder le créneau" severity="info" 
+            type="submit" [disabled]="timeSlotForm.invalid" icon="pi pi-save" class="font-bold w-full" styleClass="w-full"></p-button>
+    </div>
+        
+</form>

@@ -1,0 +1,45 @@
+<form [formGroup]="questionForm" (ngSubmit)="submit()">
+    <p-fieldset legend="Question - Reponse" i18n-legend="Question - Reponse" styleClass="mt-4 hover:border-blue-400 border-3">
+        <div class="formgrid grid">
+            <!-- TITRE -->
+            <div class="field xl:col-12 lg:col-12 col-12 p-fluid">
+                <label for="question" class="font-bold" i18n>Question</label>
+        
+                <input id="question" type="text" pInputText formControlName="question">
+        
+                <div *ngIf="question?.invalid && (question?.touched || question?.dirty)">
+                    @if (question?.hasError('required')) {
+                        <small id="question-required-help" [hidden]="question?.pristine || question?.valid" class="p-error font-bold" i18n="Une question est requise.">
+                            Une question est requise.
+                        </small>
+                    }
+                </div>
+            </div>
+    
+            <!-- DESCRIPTION -->
+            <div class="field xl:col-12 lg:col-12 col-12 p-fluid">
+                <label for="answer" class="font-bold" i18n>Réponse</label>
+        
+                <textarea id="answer"  pInputTextarea formControlName="answer"></textarea>
+        
+                @if (answer?.invalid && (answer?.touched || answer?.dirty)) {
+                    <div>
+                        @if (answer?.invalid  && (answer?.touched || answer?.dirty)) {
+                            @if (answer?.hasError('maxlength')) {
+                                <small id="summary-required-help" class="p-error font-bold" i18n="Nombre maximum de caratère atteint.">
+                                    Le nombre maximum de caratère ({{ questionForm.get('answer')?.getError('maxlength').requiredLength}}) est atteint. 
+                                    Nombre actuel de caratère saisi: {{ questionForm.get('answer')?.getError('maxlength').actualLength}}.
+                                </small>
+                            }
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </p-fieldset>
+
+    <div class="field xl:col-12 lg:col-12 col-12 mt-2">
+        <p-button label="Ajouter la question" i18n-label="Ajouter la question" severity="info" 
+            type="submit" [disabled]="questionForm.invalid" icon="pi pi-save" class="font-bold w-full" styleClass="w-full"></p-button>
+    </div>
+</form>
