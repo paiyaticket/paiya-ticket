@@ -113,7 +113,7 @@ export class MyEventItemComponent implements OnDestroy {
     }
 
     goToDetailsPage(event : Event){
-        this.router.navigate([`/my-events/${event.id}/details`])
+        this.router.navigate([`/my-events/my-event-configuration/${event.id}`])
     }
 
     reloadComponent(){

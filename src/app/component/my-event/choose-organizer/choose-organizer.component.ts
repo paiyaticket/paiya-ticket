@@ -36,7 +36,7 @@ export class ChooseOrganizerComponent {
     }
 
     selectOrganizer(id : string){
-        this.router.navigate(['/my-events/create'], { queryParams: { organizerId: id } });
+        this.router.navigate(['/my-events/my-event-configuration'], { queryParams: { organizerId: id } });
     }
 
 }

@@ -1,0 +1,20 @@
+<ul class="flex flex-column md:flex-column gap-1 md:gap-2 m-0 p-0 overflow-auto">
+    @for (item of items; track $index){
+        <li pRipple
+            [routerLinkActive]="'bg-primary-100'"
+            [routerLink]="item.routerLink"
+            class="cursor-pointer select-none p-3 transition-duration-150 border-round 
+                    flex align-items-center justify-content-start gap-3 hover:border-primary hover:border-b-2">
+            
+            <div class="flex align-items-center justify-content-center">
+                <i [class]="item.icon" class="text-3xl"></i>
+            </div>
+            <div>
+                <span class="text-900 font-medium">{{item.label}}</span>
+                <br>
+                <small class="text-600" i18n>{{item.tooltip}}</small>
+            </div>
+        </li>
+    }
+    
+</ul>

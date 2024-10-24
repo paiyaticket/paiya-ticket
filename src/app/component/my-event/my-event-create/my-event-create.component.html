@@ -1,374 +1,356 @@
-<section class="grid">
-    <div class="col-12 sm:col-12 md:col-12 lg:col-3 xl:col-3">
-        <span class="text-4xl text-blue-500 font-bold">Création d'un évènement</span>
-        <p class="text-800" i18n>
-            L'évènement est au coeur de votre activité. Ça peut être un concert, un salon, un festival, une simple réunion. 
-            Ça peut être un rassemblement physique ou virtuel! Pour vue que des gens se rassemble, au une date précise ou une cause commune.
-            Donnez le plus de détail possible.
-        </p>
-    </div>
-    <div class="col-12 sm:col-12 md:col-12 lg:col-9 xl:col-9">
-        <form [formGroup]="eventForm" (ngSubmit)="submit()">
 
-            <!-- IMAGES AND VIDEO -->
-            <p-fieldset legend="Images et vidéos" i18n-legend="Images et vidéos" styleClass="mt-4 hover:border-blue-400 border-3">
-                <div class="formgrid grid">
-                    <div class="field xl:col-12 lg:col-12 col-12 imageCover">
-                        <file-pond
-                            [files]="initImagesIfEventIdIsPassed()"
-                            [options]="pondOptions"
-                            class="my-2">
-                        </file-pond>
+<form [formGroup]="eventForm" (ngSubmit)="submit()">
 
-                        @if(imageCovers?.value.length > 0){
-                            <p-button label="Slectionner l'Image de couverture" icon="pi pi-star" severity="info"  (onClick)="showDialog()"/>
-                        }
-                        
-                    </div>
-                    <div class="field xl:col-12 lg:col-12 col-12 ">
-                        <p-inputGroup>
-                            <p-inputGroupAddon>Lien vidéo</p-inputGroupAddon>
-                            <input type="text" pInputText placeholder="https://youtu.be/5zaeAcjTito?si=76KM-btaSvC4V9Pz" formControlName="videoLink" />
-                        </p-inputGroup>
-                    </div>
+    <!-- IMAGES AND VIDEO -->
+    <p-fieldset legend="Images et vidéos" i18n-legend="Images et vidéos" styleClass="mt-4 hover:border-blue-400 border-3">
+        <div class="formgrid grid">
+            <div class="field xl:col-12 lg:col-12 col-12 imageCover">
+                <file-pond
+                    [files]="initImagesIfEventIdIsPassed()"
+                    [options]="pondOptions"
+                    class="my-2">
+                </file-pond>
+
+                @if(imageCovers?.value.length > 0){
+                    <p-button label="Slectionner l'Image de couverture" icon="pi pi-star" severity="info"  (onClick)="showDialog()"/>
+                }
+                
+            </div>
+            <div class="field xl:col-12 lg:col-12 col-12 ">
+                <p-inputGroup>
+                    <p-inputGroupAddon>Lien vidéo</p-inputGroupAddon>
+                    <input type="text" pInputText placeholder="https://youtu.be/5zaeAcjTito?si=76KM-btaSvC4V9Pz" formControlName="videoLink" />
+                </p-inputGroup>
+            </div>
+        </div>
+    </p-fieldset>
+
+
+
+
+    <!-- OVERVIEW -->
+    <p-fieldset legend="Vue d'ensemble" i18n-legend="Vue d'ensemble" styleClass="mt-4 hover:border-blue-400 border-3">
+        <div class="formgrid grid" >
+            <div class="field xl:col-12 lg:col-12 col-12 p-fluid">
+                <label for="title" class="font-bold" i18n>Titre</label>
+                <p class="text-800" i18n>
+                    Soyez clair et descriptif avec un titre qui indique aux gens en quoi consiste votre événement.
+                </p>
+
+                <input id="title" type="text" pInputText formControlName="title">
+    
+                <div *ngIf="title?.invalid && (title?.touched || title?.dirty)">
+                    @if (title?.hasError('required')) {
+                        <small id="title-required-help" [hidden]="title?.pristine || title?.valid" class="p-error font-bold" i18n="Un titre est requis.">
+                            Un titre est requis.
+                        </small>
+                    }
                 </div>
-            </p-fieldset>
+            </div>
 
+            <div class="field xl:col-12 lg:col-12 col-12 mt-4 p-fluid">
+                <label for="summary" class="font-bold" i18n>Resumé</label>
+                <p class="text-800" i18n>
+                    Attirez l'attention des gens avec une brève description de votre événement. 
+                    Les participants le verront en haut de la page de votre événement. (150 caractères maximum)
+                </p>
 
-
-
-            <!-- OVERVIEW -->
-            <p-fieldset legend="Vue d'ensemble" i18n-legend="Vue d'ensemble" styleClass="mt-4 hover:border-blue-400 border-3">
-                <div class="formgrid grid" >
-                    <div class="field xl:col-12 lg:col-12 col-12 p-fluid">
-                        <label for="title" class="font-bold" i18n>Titre</label>
-                        <p class="text-800" i18n>
-                            Soyez clair et descriptif avec un titre qui indique aux gens en quoi consiste votre événement.
-                        </p>
-
-                        <input id="title" type="text" pInputText formControlName="title">
-            
-                        <div *ngIf="title?.invalid && (title?.touched || title?.dirty)">
-                            @if (title?.hasError('required')) {
-                                <small id="title-required-help" [hidden]="title?.pristine || title?.valid" class="p-error font-bold" i18n="Un titre est requis.">
-                                    Un titre est requis.
+                <textarea id="summary" pInputTextarea formControlName="summary" autoResize="true"></textarea>
+    
+                @if (summary?.invalid && (summary?.touched || summary?.dirty)) {
+                    <div>
+                        @if (summary?.invalid  && (summary?.touched || summary?.dirty)) {
+                            @if (summary?.hasError('maxlength')) {
+                                <small id="summary-required-help" class="p-error font-bold" i18n="Nombre maximum de caratère atteint.">
+                                    Le nombre maximum de caratère ({{ eventForm.get('summary')?.getError('maxlength').requiredLength}}) est atteint. 
+                                    Nombre actuel de caratère saisi: {{ eventForm.get('summary')?.getError('maxlength').actualLength}}.
                                 </small>
                             }
-                        </div>
+                        }
                     </div>
+                }
+            </div>
 
-                    <div class="field xl:col-12 lg:col-12 col-12 mt-4 p-fluid">
-                        <label for="summary" class="font-bold" i18n>Resumé</label>
-                        <p class="text-800" i18n>
-                            Attirez l'attention des gens avec une brève description de votre événement. 
-                            Les participants le verront en haut de la page de votre événement. (150 caractères maximum)
-                        </p>
+            <div class="field xl:col-12 lg:col-12 col-12  p-fluid">
+                <label for="tags"class="font-bold" i18n>Mots clés</label>
+                <p class="text-800" i18n>
+                    Quelques mots clés pour faciliter la recherche de votre événement.
+                </p>
+                <p-chips formControlName="tags"/>
+            </div>
 
-                        <textarea id="summary" pInputTextarea formControlName="summary" autoResize="true"></textarea>
-            
-                        @if (summary?.invalid && (summary?.touched || summary?.dirty)) {
+        </div>
+    </p-fieldset>
+
+
+
+
+    <!-- TIME AND HOUR -->
+    <p-fieldset legend="Date et lieu" i18n-legend="Vue d'ensemble" styleClass="mt-4 hover:border-blue-400 border-3">
+        <div class="formgrid grid" >
+            <div class="field xl:col-12 lg:col-12 col-12">
+                <p-selectButton 
+                    [options]="eventTypeOptions" 
+                    formControlName="eventType" 
+                    optionValue="value" 
+                    optionLabel="label"
+                    (onChange)="onEventTypeChange($event)"
+                    styleClass="w-full">
+                        <ng-template let-item pTemplate>
                             <div>
-                                @if (summary?.invalid  && (summary?.touched || summary?.dirty)) {
-                                    @if (summary?.hasError('maxlength')) {
-                                        <small id="summary-required-help" class="p-error font-bold" i18n="Nombre maximum de caratère atteint.">
-                                            Le nombre maximum de caratère ({{ eventForm.get('summary')?.getError('maxlength').requiredLength}}) est atteint. 
-                                            Nombre actuel de caratère saisi: {{ eventForm.get('summary')?.getError('maxlength').actualLength}}.
-                                        </small>
-                                    }
-                                }
+                                <div class="font-bold text-2xl" i18n>{{ item.label }}</div> 
+                                
+                                <span class="text-800" i18n>{{ item.description }}</span>
                             </div>
+                        </ng-template>
+                </p-selectButton>
+            </div>
+
+            @if (selectedEventType?.valueOf() === 'SINGLE_EVENT') {    
+                <!-- START TIME -->
+                <div class="field xl:col-6 lg:col-6 col-12 mt-2">
+                    <label for="startTime" class="font-bold" i18n>Date et Heure de début</label>
+
+                    <p-calendar id="startTime" formControlName="startTime" [showTime]="true" dateFormat="dd/mm/yy" hourFormat="24" class="w-full" styleClass="w-full"/>
+        
+                    <div *ngIf="startTime?.invalid && (startTime?.touched || startTime?.dirty)">
+                        @if (startTime?.hasError('required')) {
+                            <small id="startTime-required-help" [hidden]="startTime?.pristine || startTime?.valid" class="p-error font-bold" i18n="Une heure est requise.">
+                                Une heure est requise.
+                            </small>
                         }
                     </div>
-
-                    <div class="field xl:col-12 lg:col-12 col-12  p-fluid">
-                        <label for="tags"class="font-bold" i18n>Mots clés</label>
-                        <p class="text-800" i18n>
-                            Quelques mots clés pour faciliter la recherche de votre événement.
-                        </p>
-                        <p-chips formControlName="tags"/>
-                    </div>
-
+                    @if (eventForm.hasError('laterDate')) {
+                        <small id="startTime-required-help" class="p-error font-bold" i18n="La date de début doit être inférieure à la date de fin.">
+                            La date de début doit être inférieure à la date de fin.
+                        </small>
+                    }
                 </div>
-            </p-fieldset>
 
+                <!-- END TIME -->
+                <div class="field xl:col-6 lg:col-6 col-12 mt-2">
+                    <label for="endTime" class="font-bold" i18n>Date et Heure de fin</label>
 
-
-
-            <!-- TIME AND HOUR -->
-            <p-fieldset legend="Date et lieu" i18n-legend="Vue d'ensemble" styleClass="mt-4 hover:border-blue-400 border-3">
-                <div class="formgrid grid" >
-                    <div class="field xl:col-12 lg:col-12 col-12">
-                        <p-selectButton 
-                            [options]="eventTypeOptions" 
-                            formControlName="eventType" 
-                            optionValue="value" 
-                            optionLabel="label"
-                            (onChange)="onEventTypeChange($event)"
-                            styleClass="w-full">
-                                <ng-template let-item pTemplate>
-                                    <div>
-                                        <div class="font-bold text-2xl" i18n>{{ item.label }}</div> 
-                                        
-                                        <span class="text-800" i18n>{{ item.description }}</span>
-                                    </div>
-                                </ng-template>
-                        </p-selectButton>
+                    <p-calendar id="endTime" formControlName="endTime"  [showTime]="true" dateFormat="dd/mm/yy" hourFormat="24" class="w-full" styleClass="w-full"/>
+        
+                    <div *ngIf="endTime?.invalid && (endTime?.touched || endTime?.dirty)">
+                        @if (endTime?.hasError('required')) {
+                            <small id="endTime-required-help" [hidden]="endTime?.pristine || endTime?.valid" class="p-error font-bold" i18n="Une heure est requise.">
+                                Une heure est requise.
+                            </small>
+                        }
                     </div>
+                    @if (eventForm.hasError('laterDate')) {
+                        <small id="endTime-required-help" class="p-error font-bold" i18n="La date de fin doit être supérieure à la date de début.">
+                            La date de fin doit être supérieure à la date de début.
+                        </small>
+                    }
+                </div>
 
-                    @if (selectedEventType?.valueOf() === 'SINGLE_EVENT') {    
-                        <!-- START TIME -->
-                        <div class="field xl:col-6 lg:col-6 col-12 mt-2">
-                            <label for="startTime" class="font-bold" i18n>Date et Heure de début</label>
-    
-                            <p-calendar id="startTime" formControlName="startTime" [showTime]="true" dateFormat="dd/mm/yy" hourFormat="24" class="w-full" styleClass="w-full"/>
+                <div class="field xl:col-12 lg:col-12 col-12" styleClass="w-full">
+                    <p-panel header="Plus de détails sur la date" [toggleable]="true" [collapsed]="true" [iconPos]="'start'" styleClass="details w-full">
+                        <!-- TIME ZONE -->
+                        <div class="field xl:col-4 lg:col-4 col-12">
+                            <label for="country" class="font-bold" i18n>Fuseau Horaire</label><br>
+                            <p-dropdown id="country" [options]="countries" formControlName="timeZone" optionValue="timezone" optionLabel="timezone" [filter]="true"
+                                filterBy="name" styleClass="w-full" placeholder="Choisir un pays" i18n-placeholder="Choisir un pays" 
+                                i18n-placeholder="Select a country"/>
+                        </div>
+                    </p-panel>
+                </div>
+
                 
-                            <div *ngIf="startTime?.invalid && (startTime?.touched || startTime?.dirty)">
-                                @if (startTime?.hasError('required')) {
-                                    <small id="startTime-required-help" [hidden]="startTime?.pristine || startTime?.valid" class="p-error font-bold" i18n="Une heure est requise.">
-                                        Une heure est requise.
-                                    </small>
-                                }
-                            </div>
-                            @if (eventForm.hasError('laterDate')) {
-                                <small id="startTime-required-help" class="p-error font-bold" i18n="La date de début doit être inférieure à la date de fin.">
-                                    La date de début doit être inférieure à la date de fin.
+
+                
+
+                <!-- LOCATION -->
+                <div class="field xl:col-12 lg:col-12 col-12 mt-2">
+                    <p-selectButton 
+                        [options]="venueTypeOptions" 
+                        formControlName="venueType" 
+                        optionValue="value" 
+                        optionLabel="label"
+                        (onChange)="onVenueTypeChange($event)"
+                        styleClass="w-full">
+                            <ng-template let-item pTemplate>
+                                <div>
+                                    <div class="font-bold" i18n>{{ item.label }}</div> 
+                                </div>
+                            </ng-template>
+                    </p-selectButton>
+                </div>
+
+                @if (selectedVenueType?.valueOf() === 'FACE_TO_FACE') {
+
+                    <div class="field xl:col-12 lg:col-12 col-12 mt-2" formGroupName="physicalAddress">
+                        <label for="location" class="font-bold" i18n>Lieu</label>
+                        
+                        <input id="location" type="text" pInputText class="w-full" formControlName="location">
+        
+                        <div *ngIf="location?.invalid && (location?.touched || location?.dirty)">
+                            @if (location?.hasError('required')) {
+                                <small id="location-required-help" [hidden]="location?.pristine || location?.valid" class="p-error font-bold" i18n="Une adresse est requise.">
+                                    Une adresse est requise.
                                 </small>
                             }
                         </div>
-    
-                        <!-- END TIME -->
-                        <div class="field xl:col-6 lg:col-6 col-12 mt-2">
-                            <label for="endTime" class="font-bold" i18n>Date et Heure de fin</label>
-    
-                            <p-calendar id="endTime" formControlName="endTime"  [showTime]="true" dateFormat="dd/mm/yy" hourFormat="24" class="w-full" styleClass="w-full"/>
-                
-                            <div *ngIf="endTime?.invalid && (endTime?.touched || endTime?.dirty)">
-                                @if (endTime?.hasError('required')) {
-                                    <small id="endTime-required-help" [hidden]="endTime?.pristine || endTime?.valid" class="p-error font-bold" i18n="Une heure est requise.">
-                                        Une heure est requise.
-                                    </small>
-                                }
-                            </div>
-                            @if (eventForm.hasError('laterDate')) {
-                                <small id="endTime-required-help" class="p-error font-bold" i18n="La date de fin doit être supérieure à la date de début.">
-                                    La date de fin doit être supérieure à la date de début.
-                                </small>
-                            }
-                        </div>
 
-                        <div class="field xl:col-12 lg:col-12 col-12" styleClass="w-full">
-                            <p-panel header="Plus de détails sur la date" [toggleable]="true" [collapsed]="true" [iconPos]="'start'" styleClass="details w-full">
-                                <!-- TIME ZONE -->
-                                <div class="field xl:col-4 lg:col-4 col-12">
-                                    <label for="country" class="font-bold" i18n>Fuseau Horaire</label><br>
-                                    <p-dropdown id="country" [options]="countries" formControlName="timeZone" optionValue="timezone" optionLabel="timezone" [filter]="true"
+                        <p-panel header="Plus de détails sur le lieu" [toggleable]="true" [collapsed]="true" [iconPos]="'start'" class="mt-2" styleClass="details w-full">
+                            
+                            <div class="formgrid grid">
+                                <div class="field xl:col-12 lg:col-12 col-12 mt-2">
+                                    <label for="locationIndication" class="font-bold" i18n>Indication supplémentaire</label>
+                                    <textarea id="locationIndication" rows="2" pInputTextarea formControlName="locationIndication" class="w-full" autoResize="true"></textarea>
+                                </div>
+                                <div class="field xl:col-3 lg:col-3 col-12 mt-2">
+                                    <label for="streetNumber" class="font-bold" i18n>Numéro de rue</label>
+                                    <input id="streetNumber" type="text" pInputText class="w-full" formControlName="streetNumber">
+                                </div>
+                                <div class="field xl:col-3 lg:col-3 col-12 mt-2">
+                                    <label for="street" class="font-bold" i18n>Nom de rue</label>
+                                    <input id="street" type="text" pInputText class="w-full" formControlName="street">
+                                </div>
+                                <div class="field xl:col-3 lg:col-3 col-12 mt-2">
+                                    <label for="town" class="font-bold" i18n>Ville</label>
+                                    <input id="town" type="text" pInputText class="w-full" formControlName="town">
+                                </div>
+                                <div class="field xl:col-3 lg:col-3 col-12 mt-2">
+                                    <label for="postalCode" class="font-bold" i18n>Code postal</label>
+                                    <input id="postalCode" type="text" pInputText class="w-full" formControlName="postalCode">
+                                </div>
+                                <div class="field xl:col-4 lg:col-4 col-12 mt-2">
+                                    <label for="state" class="font-bold" i18n>Province ou Région ou État</label>
+                                    <input id="state" type="text" pInputText class="w-full" formControlName="state">
+                                </div>
+                                <div class="field xl:col-4 lg:col-4 col-12 mt-2">
+                                    <label for="country" class="font-bold" i18n>Pays</label><br>
+                                    <p-dropdown id="country" [options]="countries" formControlName="country" optionValue="name" optionLabel="name" [filter]="true"
                                         filterBy="name" styleClass="w-full" placeholder="Choisir un pays" i18n-placeholder="Choisir un pays" 
                                         i18n-placeholder="Select a country"/>
                                 </div>
-                            </p-panel>
-                        </div>
 
-                        
+                            </div>
+                            
+                        </p-panel>
+                    </div>
 
-                        
+                } @else {
+                    <div class="field xl:col-12 lg:col-12 col-12 mt-2 p-fluid" formGroupName="onlineAdresse">
+                        <label for="link" class="font-bold" i18n>Lien</label>
+                        <input id="link" type="text" pInputText formControlName="link">
+                    </div>
+                }
 
-                        <!-- LOCATION -->
-                        <div class="field xl:col-12 lg:col-12 col-12 mt-2">
-                            <p-selectButton 
-                                [options]="venueTypeOptions" 
-                                formControlName="venueType" 
-                                optionValue="value" 
-                                optionLabel="label"
-                                (onChange)="onVenueTypeChange($event)"
-                                styleClass="w-full">
-                                    <ng-template let-item pTemplate>
-                                        <div>
-                                            <div class="font-bold" i18n>{{ item.label }}</div> 
-                                        </div>
-                                    </ng-template>
-                            </p-selectButton>
-                        </div>
-
-                        @if (selectedVenueType?.valueOf() === 'FACE_TO_FACE') {
-
-                            <div class="field xl:col-12 lg:col-12 col-12 mt-2" formGroupName="physicalAddress">
-                                <label for="location" class="font-bold" i18n>Lieu</label>
-                                
-                                <input id="location" type="text" pInputText class="w-full" formControlName="location">
                 
-                                <div *ngIf="location?.invalid && (location?.touched || location?.dirty)">
-                                    @if (location?.hasError('required')) {
-                                        <small id="location-required-help" [hidden]="location?.pristine || location?.valid" class="p-error font-bold" i18n="Une adresse est requise.">
-                                            Une adresse est requise.
-                                        </small>
-                                    }
-                                </div>
-    
-                                <p-panel header="Plus de détails sur le lieu" [toggleable]="true" [collapsed]="true" [iconPos]="'start'" class="mt-2" styleClass="details w-full">
-                                    
-                                    <div class="formgrid grid">
-                                        <div class="field xl:col-12 lg:col-12 col-12 mt-2">
-                                            <label for="locationIndication" class="font-bold" i18n>Indication supplémentaire</label>
-                                            <textarea id="locationIndication" rows="2" pInputTextarea formControlName="locationIndication" class="w-full" autoResize="true"></textarea>
-                                        </div>
-                                        <div class="field xl:col-3 lg:col-3 col-12 mt-2">
-                                            <label for="streetNumber" class="font-bold" i18n>Numéro de rue</label>
-                                            <input id="streetNumber" type="text" pInputText class="w-full" formControlName="streetNumber">
-                                        </div>
-                                        <div class="field xl:col-3 lg:col-3 col-12 mt-2">
-                                            <label for="street" class="font-bold" i18n>Nom de rue</label>
-                                            <input id="street" type="text" pInputText class="w-full" formControlName="street">
-                                        </div>
-                                        <div class="field xl:col-3 lg:col-3 col-12 mt-2">
-                                            <label for="town" class="font-bold" i18n>Ville</label>
-                                            <input id="town" type="text" pInputText class="w-full" formControlName="town">
-                                        </div>
-                                        <div class="field xl:col-3 lg:col-3 col-12 mt-2">
-                                            <label for="postalCode" class="font-bold" i18n>Code postal</label>
-                                            <input id="postalCode" type="text" pInputText class="w-full" formControlName="postalCode">
-                                        </div>
-                                        <div class="field xl:col-4 lg:col-4 col-12 mt-2">
-                                            <label for="state" class="font-bold" i18n>Province ou Région ou État</label>
-                                            <input id="state" type="text" pInputText class="w-full" formControlName="state">
-                                        </div>
-                                        <div class="field xl:col-4 lg:col-4 col-12 mt-2">
-                                            <label for="country" class="font-bold" i18n>Pays</label><br>
-                                            <p-dropdown id="country" [options]="countries" formControlName="country" optionValue="name" optionLabel="name" [filter]="true"
-                                                filterBy="name" styleClass="w-full" placeholder="Choisir un pays" i18n-placeholder="Choisir un pays" 
-                                                i18n-placeholder="Select a country"/>
-                                        </div>
-    
-                                    </div>
-                                    
-                                </p-panel>
-                            </div>
+            } @else {
+                <div class="field xl:col-12 lg:col-12 col-12">
+                    <p-messages [(value)]="messages" [enableService]="false" [closable]="false" />
+                </div>
+            }
+        </div>
+        
+    </p-fieldset>
 
-                        } @else {
-                            <div class="field xl:col-12 lg:col-12 col-12 mt-2 p-fluid" formGroupName="onlineAdresse">
-                                <label for="link" class="font-bold" i18n>Lien</label>
-                                <input id="link" type="text" pInputText formControlName="link">
-                            </div>
-                        }
 
-                        
-                    } @else {
-                        <div class="field xl:col-12 lg:col-12 col-12">
-                            <p-messages [(value)]="messages" [enableService]="false" [closable]="false" />
-                        </div>
+
+
+    <!-- GOOD TO KNOW -->
+    <p-fieldset legend="Bon à savoir" i18n-legend="Bon à savoir" styleClass="mt-4 hover:border-blue-400 border-3">
+        <div>
+            <p class="text-800" i18n>
+                Utilisez cette section pour fournir plus de détails sur votre événement. 
+                Vous pouvez inclure des éléments à savoir, des informations sur le lieu, le stationnement, les options d'accessibilité, 
+                tout ce qui aidera les gens à savoir à quoi s'attendre.
+            </p>
+            <p-editor formControlName="description" styleClass="w-full" />
+        </div>
+    </p-fieldset>
+
+
+    <!-- AGENDA SECTION -->
+    @if (agenda?.value.length > 0) {
+        <p-fieldset legend="Agenda" i18n-legend="Agenda" styleClass="mt-4 hover:border-blue-400 border-3">
+
+            <div class="flex justify-content-between mb-2">
+                <p-button label="Ajouter un créneau" [text]="true" i18n-label="Ajouter un créneau" (onClick)="(!displayAgendaForm) ? displayAgendaForm = true : displayAgendaForm = false" 
+                    severity="info" icon="pi pi-plus"/>
+                <p-button label="Supprimer la section Agenda" [text]="true" severity="danger" icon="pi pi-trash" 
+                    (onClick)="removeAgendaSection()" class="font-bold align-items-end"></p-button>
+            </div>
+
+            <app-agenda-list [timeSlots]="this.agenda?.value" (timeSlotRemoved)="removeTimeSlot($event)"></app-agenda-list>
+        </p-fieldset>
+    }
+    <p-sidebar [(visible)]="displayAgendaForm" [style]="{'width': '50%'}" class="p-2" position="right">
+        <h3 i18n>AJOUTER UN CRÉNEAU A L'AGENDA</h3>
+        <app-agenda-create (timeSlotAdded)="handleTimeSlotAdded($event)" [eventStartTime]="startTime?.value" [eventEndTime]="endTime?.value"></app-agenda-create>
+    </p-sidebar>
+
+
+    <!-- FAQ SECTION -->
+    @if (faq?.value.length > 0) {
+        <p-fieldset legend="Foire aux question (FAQ)" i18n-legend="Foire aux question (FAQ)" styleClass="mt-4 hover:border-blue-400 border-3">
+            <div class="flex justify-content-between mb-2">
+                <p-button label="Ajouter une question" [text]="true" i18n-label="Ajouter une question" (onClick)="(!displayFaqForm) ? displayFaqForm = true : displayFaqForm = false" 
+                    severity="info" icon="pi pi-plus"/>
+                <p-button label="Supprimer la section FAQ" [text]="true" severity="danger" icon="pi pi-trash" 
+                    (onClick)="removeFaqSection()" class="font-bold align-items-end"></p-button>
+            </div>
+
+            <app-faq-list [questions]="this.faq?.value" (questionRemoved)="handleQuestionRemoved($event)"></app-faq-list>
+        </p-fieldset>
+    }
+    <p-sidebar [(visible)]="displayFaqForm" [style]="{'width': '50%'}" class="p-2" position="right">
+        <h3 i18n>AJOUTER UNE QUESTION A LA FOIRE AUX QUESTIONS</h3>
+        <app-faq-create (questionAdded)="handleQuestionAdded($event)" ></app-faq-create>
+    </p-sidebar>
+
+
+
+    <!-- AGENDA AND FAQ -->
+    @if (faq?.value.length === 0 || agenda?.value.length === 0) {
+        <p-fieldset legend="Ajouter plus de sections à votre évènement (facultatif)" i18n-legend="Bon à savoir" styleClass="mt-4 border-dashed border-3">
+            <div >
+                <p class="text-800" i18n>
+                    Faites ressortir encore plus votre événement. Ces sections aident les participants à trouver des informations 
+                    et à répondre à leurs questions, ce qui signifie plus de ventes de billets et moins de temps pour répondre aux messages.
+                </p>
+                <div class="flex flex-wrap flex-row align-items-stretch gap-3">
+                    @if(agenda?.value.length === 0){
+                        <p-card header="{{'agenda' | uppercase}}" class="w-25rem">
+                            <p i18n>
+                                Présenter le programme de votre événement, les activités et les intervenants afin de donner plus d'informations sur le déroulement.
+                            </p>
+                            <p-button label="Ajouter" (onClick)="(!displayAgendaForm) ? displayAgendaForm = true : displayAgendaForm = false" 
+                                [disabled]="startTime?.value === undefined || endTime?.value === undefined || startTime?.value === null || endTime?.value === null"
+                                size="small" severity="info" icon="pi pi-plus"/>
+                            <p-button label="Voir un exemple" size="small" severity="info" outlined="true" icon="pi pi-eye" class="ml-2"/>
+                        </p-card>
+                    }
+                    
+                    @if (faq?.value.length === 0) {
+                        <p-card header="{{'Foire aux questions'| uppercase}}" class="w-25rem">
+                            <p i18n>
+                                Lister les questions fréquement posées et leurs réponses afin que les participants n'aient à vous les poser toutes les fois.
+                            </p>
+                            <p-button label="Ajouter" (onClick)="(!displayFaqForm) ? displayFaqForm = true : displayFaqForm = false"
+                                size="small" severity="info" icon="pi pi-plus"/>
+                            <p-button label="Voir un exemple" size="small" severity="info" outlined="true" icon="pi pi-eye" class="ml-2"/>
+                        </p-card> 
                     }
                 </div>
-                
-            </p-fieldset>
-
-
-
-
-            <!-- GOOD TO KNOW -->
-            <p-fieldset legend="Bon à savoir" i18n-legend="Bon à savoir" styleClass="mt-4 hover:border-blue-400 border-3">
-                <div>
-                    <p class="text-800" i18n>
-                        Utilisez cette section pour fournir plus de détails sur votre événement. 
-                        Vous pouvez inclure des éléments à savoir, des informations sur le lieu, le stationnement, les options d'accessibilité, 
-                        tout ce qui aidera les gens à savoir à quoi s'attendre.
-                    </p>
-                    <p-editor formControlName="description" styleClass="w-full" />
-                </div>
-            </p-fieldset>
-
-
-            <!-- AGENDA SECTION -->
-            @if (agenda?.value.length > 0) {
-                <p-fieldset legend="Agenda" i18n-legend="Agenda" styleClass="mt-4 hover:border-blue-400 border-3">
-
-                    <div class="flex justify-content-between mb-2">
-                        <p-button label="Ajouter un créneau" [text]="true" i18n-label="Ajouter un créneau" (onClick)="(!displayAgendaForm) ? displayAgendaForm = true : displayAgendaForm = false" 
-                            severity="info" icon="pi pi-plus"/>
-                        <p-button label="Supprimer la section Agenda" [text]="true" severity="danger" icon="pi pi-trash" 
-                            (onClick)="removeAgendaSection()" class="font-bold align-items-end"></p-button>
-                    </div>
-
-                    <app-agenda-list [timeSlots]="this.agenda?.value" (timeSlotRemoved)="removeTimeSlot($event)"></app-agenda-list>
-                </p-fieldset>
-            }
-            <p-sidebar [(visible)]="displayAgendaForm" [style]="{'width': '50%'}" class="p-2" position="right">
-                <h3 i18n>AJOUTER UN CRÉNEAU A L'AGENDA</h3>
-                <app-agenda-create (timeSlotAdded)="handleTimeSlotAdded($event)" [eventStartTime]="startTime?.value" [eventEndTime]="endTime?.value"></app-agenda-create>
-            </p-sidebar>
-
-
-            <!-- FAQ SECTION -->
-            @if (faq?.value.length > 0) {
-                <p-fieldset legend="Foire aux question (FAQ)" i18n-legend="Foire aux question (FAQ)" styleClass="mt-4 hover:border-blue-400 border-3">
-                    <div class="flex justify-content-between mb-2">
-                        <p-button label="Ajouter une question" [text]="true" i18n-label="Ajouter une question" (onClick)="(!displayFaqForm) ? displayFaqForm = true : displayFaqForm = false" 
-                            severity="info" icon="pi pi-plus"/>
-                        <p-button label="Supprimer la section FAQ" [text]="true" severity="danger" icon="pi pi-trash" 
-                            (onClick)="removeFaqSection()" class="font-bold align-items-end"></p-button>
-                    </div>
-
-                    <app-faq-list [questions]="this.faq?.value" (questionRemoved)="handleQuestionRemoved($event)"></app-faq-list>
-                </p-fieldset>
-            }
-            <p-sidebar [(visible)]="displayFaqForm" [style]="{'width': '50%'}" class="p-2" position="right">
-                <h3 i18n>AJOUTER UNE QUESTION A LA FOIRE AUX QUESTIONS</h3>
-                <app-faq-create (questionAdded)="handleQuestionAdded($event)" ></app-faq-create>
-            </p-sidebar>
-
-
-
-            <!-- AGENDA AND FAQ -->
-            @if (faq?.value.length === 0 || agenda?.value.length === 0) {
-                <p-fieldset legend="Ajouter plus de sections à votre évènement (facultatif)" i18n-legend="Bon à savoir" styleClass="mt-4 border-dashed border-3">
-                    <div >
-                        <p class="text-800" i18n>
-                            Faites ressortir encore plus votre événement. Ces sections aident les participants à trouver des informations 
-                            et à répondre à leurs questions, ce qui signifie plus de ventes de billets et moins de temps pour répondre aux messages.
-                        </p>
-                        <div class="flex flex-wrap flex-row align-items-stretch gap-3">
-                            @if(agenda?.value.length === 0){
-                                <p-card header="{{'agenda' | uppercase}}" class="w-25rem">
-                                    <p i18n>
-                                        Présenter le programme de votre événement, les activités et les intervenants afin de donner plus d'informations sur le déroulement.
-                                    </p>
-                                    <p-button label="Ajouter" (onClick)="(!displayAgendaForm) ? displayAgendaForm = true : displayAgendaForm = false" 
-                                        [disabled]="startTime?.value === undefined || endTime?.value === undefined || startTime?.value === null || endTime?.value === null"
-                                        size="small" severity="info" icon="pi pi-plus"/>
-                                    <p-button label="Voir un exemple" size="small" severity="info" outlined="true" icon="pi pi-eye" class="ml-2"/>
-                                </p-card>
-                            }
-                            
-                            @if (faq?.value.length === 0) {
-                                <p-card header="{{'Foire aux questions'| uppercase}}" class="w-25rem">
-                                    <p i18n>
-                                        Lister les questions fréquement posées et leurs réponses afin que les participants n'aient à vous les poser toutes les fois.
-                                    </p>
-                                    <p-button label="Ajouter" (onClick)="(!displayFaqForm) ? displayFaqForm = true : displayFaqForm = false"
-                                        size="small" severity="info" icon="pi pi-plus"/>
-                                    <p-button label="Voir un exemple" size="small" severity="info" outlined="true" icon="pi pi-eye" class="ml-2"/>
-                                </p-card> 
-                            }
-                        </div>
-                    </div>
-                </p-fieldset>
-            
-            }
-
-            <div class="mt-4 flex justify-content-end flex-wrap">
-                <p-button type="button" label="Annuler" i18n-label="Annuler" styleClass="bg-primary-reverse mr-2" 
-                    (onClick)="goToEventListPage()" icon="pi pi-times"></p-button>
-                <p-button type="submit" label="Sauvegarder et continuer" i18n-label="Sauvegarder et continuer" styleClass="m-auto"
-                    icon="pi pi-save" [disabled]="eventForm.invalid"></p-button>
             </div>
-        </form>
+        </p-fieldset>
+    
+    }
+
+    <div class="mt-4 flex justify-content-end flex-wrap">
+        <p-button type="button" label="Annuler" i18n-label="Annuler" styleClass="bg-primary-reverse mr-2" 
+            (onClick)="goToEventListPage()" icon="pi pi-times"></p-button>
+        <p-button type="submit" label="Sauvegarder et continuer" i18n-label="Sauvegarder et continuer" styleClass="m-auto"
+            icon="pi pi-save" [disabled]="eventForm.invalid"></p-button>
     </div>
-</section>
-
-
-
-
-
-
-
+</form>
 
 <p-dialog 
     header="Header" 
@@ -396,3 +378,12 @@
             }
         </div>
 </p-dialog>
+
+
+
+
+
+
+
+
+

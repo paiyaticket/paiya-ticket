@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Inject, Input, OnDestroy, OnInit, PLATFORM_ID, ViewChild, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, Inject, Input, OnDestroy, OnInit, PLATFORM_ID, Signal, ViewChild, ViewEncapsulation, WritableSignal } from '@angular/core';
 import { Auth, getAuth, User } from '@angular/fire/auth';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -245,7 +245,6 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         } else {
             this.eventOrganizer?.setValue({id : this.currentUser?.email, name : this.currentUser?.displayName});
         }
-        console.log(this.eventForm);
     }
 
 
@@ -258,7 +257,6 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
     /* *********************** */
     process() : ProcessServerConfigFunction {
         return (fieldName, file, metadata, load, error, progress, abort, transfer, options) => {
-            console.log("PROCESS...");
             let path = 'repos/'+this.auth?.currentUser?.uid+'/images';
             const uploadTask = this.fileStorageService.uploadFile(file as File, path);
 
@@ -329,7 +327,6 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
 
     fetch() : FetchServerConfigFunction {
         return (url, load, error, progress, abort, headers) => {
-            console.log("FETCH...");
             this.fileStorageService.downloadBlod(url).then((blob) => {
                 let urlParts = url.split("%2F");
                 blob.name = urlParts[urlParts.length - 1].split("?")[0];

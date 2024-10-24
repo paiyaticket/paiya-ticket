@@ -1,6 +1,6 @@
 
 <div class="p-4 border-1 surface-border surface-card border-round flex flex-column">
-        <a [routerLink]="['/my-events', event.id, 'details']">
+        <a [routerLink]="['/my-events', 'my-event-configuration', event.id]">
             <div class="relative mx-auto">
                 <img class="border-round w-full" [src]="imageCover" [alt]="event.title" style="max-height: 200px; object-fit: cover;"/>
             </div>

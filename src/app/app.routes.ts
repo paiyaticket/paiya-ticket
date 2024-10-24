@@ -15,6 +15,7 @@ import { OrganisationComponent } from './component/organisation/organisation.com
 import { MyEventListComponent } from './component/my-event/my-event-list/my-event-list.component';
 import { MyEventCreateComponent } from './component/my-event/my-event-create/my-event-create.component';
 import { MyEventComponent } from './component/my-event/my-event.component';
+import { MyEventConfigurationComponent } from './component/my-event/my-event-configuration/my-event-configuration.component';
 
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['auth/login']);
@@ -51,8 +52,17 @@ export const routes: Routes = [
                 children: [
                     {path: "", redirectTo: "my-event-list", pathMatch: "full"},
                     {path: "my-event-list", title: $localize `Liste de vos évènements`, component: MyEventListComponent, data: { breadcrumb: $localize `Liste de vos évènements`}, canActivate: [AuthGuard]},
-                    {path: "create", title: $localize `Création d'un évènement`, component: MyEventCreateComponent, data: { breadcrumb: $localize `Création d'un évènement`}, canActivate: [AuthGuard]},
-                    {path: ":eventId/details", title: $localize `Configuration de évènement`, component: MyEventCreateComponent, data: { breadcrumb: $localize `Configuration de évènement`}, canActivate: [AuthGuard]},
+                    {path: "my-event-configuration", 
+                        title: $localize `Création d'un évènement`, 
+                        component: MyEventConfigurationComponent, 
+                        data: { breadcrumb: $localize `Création d'un évènement`}, 
+                        canActivate: [AuthGuard],
+                        children: [
+                            {path: "", redirectTo: "create", pathMatch: "full"},
+                            {path: "create", title: $localize `Création d'un évènement`, component: MyEventCreateComponent, data: { breadcrumb: $localize `Création d'un évènement`}, canActivate: [AuthGuard]},
+                            {path: ":eventId", title: $localize `Configuration d'unévènement`, component: MyEventCreateComponent, data: { breadcrumb: $localize `Configuration de évènement`}, canActivate: [AuthGuard]},
+                        ]
+                    },
                 ]
             },
             
