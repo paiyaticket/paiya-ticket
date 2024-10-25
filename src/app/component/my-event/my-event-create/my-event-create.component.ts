@@ -612,8 +612,20 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         return new Date(zonedDateTime);
     }
 
+    /**
+     * Reload the page depending on if "eventId" is already presente in he URL.
+     * If not, the reload goes to "my-event" URI before going to "my-events/my-event-configuration/eventId"
+     * in order to pass "eventId" property to the parent component (myEventConfigurationComponent) input.
+     * @param eventId 
+     */
     reloadPageWithEventId(eventId : string | undefined){
-        this.router.navigate([`/my-events/${eventId}/details`]);
+        if(this.route.snapshot.paramMap.get('eventId') === null){
+            this.router.navigate(['my-events']).then(() => {
+                this.router.navigate(['my-events','my-event-configuration',eventId]);
+            });
+        } else{
+            this.router.navigate(['my-events','my-event-configuration',eventId]);
+        }
     }
 
     goToEventListPage(){

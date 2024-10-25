@@ -37,8 +37,7 @@ export class MyEventSidebarMenuComponent {
 				tooltip: 'Toute les informations de base de l\'évenement',
                 icon: 'pi pi-info-circle',
 				escape: false,
-				routerLink : this.eventId ? `${this.eventId}` : `create`, 
-                queryParams: this.eventId === undefined ? {organizerId : this.currentUser?.email} : {},
+				routerLink : `${this.eventId}`, 
                 preserveFragment: true
             },
             {
@@ -55,16 +54,12 @@ export class MyEventSidebarMenuComponent {
                 icon: 'pi pi-megaphone',
 				escape: false,
 				routerLink : `${this.eventId}/publish`, 
-                preserveFragment: true,
-                disabled: true
+                preserveFragment: true
 			},
         ];
-        console.log(this.eventId);
     } 
 
     ngOnChanges(changes : SimpleChanges){
         this.eventId = changes['eventId'].currentValue;
-
-        console.log(this.eventId);
     }
 }

@@ -15,7 +15,7 @@ import { MyEventSidebarMenuComponent } from '../my-event-sidebar-menu/my-event-s
   ],
   templateUrl: './my-event-configuration.component.html',
   styleUrl: './my-event-configuration.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.Default
 })
 export class MyEventConfigurationComponent {
 
@@ -26,6 +26,11 @@ export class MyEventConfigurationComponent {
 
     ngOnInit(){
         this.eventId = this.route.snapshot.children[0].params['eventId'] || undefined;
+    }
+
+    ngOnChanges(changes : SimpleChanges){
+        this.eventId = this.route.snapshot.children[0].params['eventId'] || undefined;
+        console.log(this.eventId);
     }
 
     
