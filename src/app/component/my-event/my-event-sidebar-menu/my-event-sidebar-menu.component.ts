@@ -37,7 +37,7 @@ export class MyEventSidebarMenuComponent {
 				tooltip: 'Toute les informations de base de l\'évenement',
                 icon: 'pi pi-info-circle',
 				escape: false,
-				routerLink : `${this.eventId}`, 
+				routerLink : `${this.eventId}/details`, 
                 preserveFragment: true
             },
             {

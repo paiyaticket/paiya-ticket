@@ -2,8 +2,7 @@
     @for (item of items; track $index){
         <li [routerLinkActive]="'bg-primary-100'"
             [routerLink]="item.routerLink"
-            class="cursor-pointer select-none p-3 transition-duration-150 border-round 
-                    flex align-items-center justify-content-start gap-3"
+            class="cursor-pointer select-none p-3 transition-duration-150 border-round flex align-items-center justify-content-start gap-3"
             [class.isDisabled] = "!eventId">
             
             <div class="flex align-items-center justify-content-center">
@@ -14,6 +13,7 @@
                 <br>
                 <small class="text-600" i18n>{{item.tooltip}}</small>
             </div>
+            
         </li>
     }
     

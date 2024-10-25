@@ -16,6 +16,9 @@ import { MyEventListComponent } from './component/my-event/my-event-list/my-even
 import { MyEventCreateComponent } from './component/my-event/my-event-create/my-event-create.component';
 import { MyEventComponent } from './component/my-event/my-event.component';
 import { MyEventConfigurationComponent } from './component/my-event/my-event-configuration/my-event-configuration.component';
+import { TicketListComponent } from './component/my-event/ticket/ticket-list/ticket-list.component';
+import { TicketComponent } from './component/my-event/ticket/ticket.component';
+import { PublishComponent } from './component/my-event/publish/publish.component';
 
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['auth/login']);
@@ -60,7 +63,10 @@ export const routes: Routes = [
                         children: [
                             {path: "", redirectTo: "create", pathMatch: "full"},
                             {path: "create", title: $localize `Création d'un évènement`, component: MyEventCreateComponent, data: { breadcrumb: $localize `Création d'un évènement`}, canActivate: [AuthGuard]},
-                            {path: ":eventId", title: $localize `Configuration d'unévènement`, component: MyEventCreateComponent, data: { breadcrumb: $localize `Configuration de évènement`}, canActivate: [AuthGuard]},
+                            {path: ":eventId/details", title: $localize `Configuration d'un évènement`, component: MyEventCreateComponent, data: { breadcrumb: $localize `Configuration de évènement`}, canActivate: [AuthGuard]},
+                            {path: ":eventId/tickets", title: $localize `Configuration de la billeterie`, component: TicketComponent, data: { breadcrumb: $localize `Configuration de la billeterie`}, canActivate: [AuthGuard]},
+                            {path: ":eventId/publish", title: $localize `Configuration de la billeterie`, component: PublishComponent, data: { breadcrumb: $localize `Configuration de la billeterie`}, canActivate: [AuthGuard]},
+                        
                         ]
                     },
                 ]
