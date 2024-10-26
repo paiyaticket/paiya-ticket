@@ -10,8 +10,8 @@
         </div>
     </p-card>
 
-    <p-sidebar [(visible)]="createTicketSidebarVisible" position="right" [style]="{width: '40%'}">
-        <app-ticket-create></app-ticket-create>
+    <p-sidebar [(visible)]="createTicketSidebarVisible" position="right" [style]="{width: '50%'}">
+        <app-ticket-create [eventId]="event.id"></app-ticket-create>
     </p-sidebar>
 </section>
 

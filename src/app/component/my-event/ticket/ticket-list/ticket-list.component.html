@@ -1,6 +1,6 @@
 <p-table [value]="tickets" [paginator]="true" [rows]="10" [tableStyle]="{ 'min-width': '50rem' }"
     emptymessage="Aucun ticket disponible">
-    <ng-template pTemplate="header">
+    <ng-template pTemplate="header" styleClass="surface-900">
         <tr>
             <th i18n>Code</th>
             <th i18n>Libellé</th>
@@ -15,7 +15,7 @@
     <ng-template pTemplate="body" let-ticket>
         <tr>
             <td>{{ ticket.code }}</td>
-            <td>{{ ticket.name }}</td>
+            <td>{{ ticket.label }}</td>
             <td>{{ ticket.price }}</td>
             <td>{{ ticket.quantity }}</td>
             <td>{{ ticket.minimumTicketQuantityPerOrder }} - {{ ticket.maximumTicketQuantityPerOrder }}</td>

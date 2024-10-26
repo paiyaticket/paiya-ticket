@@ -1,1 +1,171 @@
-<p>ticket-create works!</p>
+<h2>Création d'un ticket</h2>
+<form [formGroup]="ticketForm" (ngSubmit)="submit()">
+    <p-fieldset legend="Informations du ticket" i18n-legend="Informations du ticket" styleClass="hover:border-blue-400 border-3">
+        <div class="formgrid grid" >
+            <div class="field xl:col-3 lg:col-3 col-12 p-fluid">
+                <label for="code" class="font-bold" i18n>Code</label>
+    
+                <input id="code" type="text" pInputText formControlName="code" placeholder="STAND ou VIP">
+    
+                <div *ngIf="code?.invalid && (code?.touched || code?.dirty)">
+                    @if (code?.hasError('required')) {
+                        <small id="code-required-help" [hidden]="code?.pristine || code?.valid" class="p-error font-bold" i18n="Un code est requis.">
+                            Un code est requis.
+                        </small>
+                    }
+    
+                    @if (code?.hasError('maxlength')) {
+                        <small id="code-maxlength-help" [hidden]="code?.pristine || code?.valid" class="p-error font-bold" 
+                                i18n="Le code doit comprendre au maximum {{ ticketForm.get('code')?.getError('maxlength').requiredLength }} caractères.">
+                            Le code doit comprendre au maximum {{ ticketForm.get('code')?.getError('maxlength').requiredLength }} caractères.
+                        </small>
+                    }
+                </div>
+            </div>
+    
+            <div class="field xl:col-9 lg:col-9 col-12 p-fluid">
+                <label for="label" class="font-bold" i18n>Libellé</label>
+    
+                <input id="label" type="text" pInputText formControlName="label" placeholder="Ticket Standard">
+    
+                <div *ngIf="label?.invalid && (label?.touched || label?.dirty)">
+                    @if (label?.hasError('required')) {
+                        <small id="label-required-help" [hidden]="label?.pristine || label?.valid" class="p-error font-bold" i18n="Un libellé est requis.">
+                            Un libellé est requis.
+                        </small>
+                    }
+    
+                    @if (label?.hasError('maxlength')) {
+                        <small id="label-maxlength-help" [hidden]="label?.pristine || label?.valid" class="p-error font-bold" 
+                                i18n="Le code doit comprendre au maximum {{ ticketForm.get('label')?.getError('maxlength').requiredLength }} caractères.">
+                            Le code doit comprendre au maximum {{ ticketForm.get('label')?.getError('maxlength').requiredLength }} caractères.
+                        </small>
+                    }
+                </div>
+            </div>
+    
+    
+            <div class="field xl:col-3 lg:col-3 col-12 p-fluid">
+                <label for="quantity" class="font-bold" i18n>Quantité en vente</label>
+    
+                <p-inputNumber id="quantity" formControlName="quantity" min="1" max="100000" step="1"/>
+    
+                <div *ngIf="quantity?.invalid && (quantity?.touched || quantity?.dirty)">
+                    @if (label?.hasError('required')) {
+                        <small id="quantity-required-help" [hidden]="quantity?.pristine || quantity?.valid" class="p-error font-bold" 
+                            i18n="Une quantité est requise.">
+                            Une quantité est requise.
+                        </small>
+                    }
+                </div>
+            </div>
+    
+    
+            <div class="field xl:col-9 lg:col-9 col-12 p-fluid">
+                <label for="price" class="font-bold" i18n>Prix de vente</label>
+    
+                <p-inputNumber id="price" formControlName="price" locale="fr-FR" mode="currency" [currency]="'XOF'" [currencyDisplay]="'code'"/>
+    
+                <div *ngIf="price?.invalid && (price?.touched || price?.dirty)">
+                    @if (label?.hasError('required')) {
+                        <small id="price-required-help" [hidden]="price?.pristine || price?.valid" class="p-error font-bold" 
+                            i18n="Un prix de vente est requis.">
+                            Un prix de vente est requis.
+                        </small>
+                    }
+                </div>
+            </div>
+    
+            <div class="field xl:col-9 lg:col-9 col-12 p-fluid">
+                <label class="font-bold" i18n>Nombre de ticket par personne</label>
+                <div class="flex gap-2 justify-content-between">
+                    <p-inputNumber id="minimumTicketQuantityPerOrder" prefix="Minimum : " formControlName="minimumTicketQuantityPerOrder" 
+                        [showButtons]="true" [decrementButtonClass]="'p-button-outlined'" [incrementButtonClass]="'p-button-outlined'" class="mr-2"/>
+                    <p-inputNumber id="maximumTicketQuantityPerOrder" prefix="Maximum : " formControlName="maximumTicketQuantityPerOrder" 
+                        [showButtons]="true" [decrementButtonClass]="'p-button-outlined'" [incrementButtonClass]="'p-button-outlined'" />
+                </div>
+            </div>
+    
+    
+            <div class="field xl:col-6 lg:col-6 col-12 mt-2">
+                <label for="startDateOfSales" class="font-bold" i18n>Date et Heure de début des ventes</label>
+    
+                <p-calendar id="startDateOfSales" formControlName="startDateOfSales" [showTime]="true" dateFormat="dd/mm/yy" hourFormat="24" class="w-full" styleClass="w-full"/>
+    
+                <div *ngIf="startDateOfSales?.invalid && (startDateOfSales?.touched || startDateOfSales?.dirty)">
+                    @if (startDateOfSales?.hasError('required')) {
+                        <small id="startDateOfSales-required-help" [hidden]="startDateOfSales?.pristine || startDateOfSales?.valid" class="p-error font-bold" i18n="Une heure est requise.">
+                            Une heure est requise.
+                        </small>
+                    }
+                </div>
+                @if (ticketForm.hasError('laterDate')) {
+                    <small id="startDateOfSales-required-help" class="p-error font-bold" i18n="La date de début doit être inférieure à la date de fin.">
+                        La date de début doit être inférieure à la date de fin.
+                    </small>
+                }
+            </div>
+    
+            <!-- END TIME -->
+            <div class="field xl:col-6 lg:col-6 col-12 mt-2">
+                <label for="endDateOfSales" class="font-bold" i18n>Date et Heure de fin des ventes</label>
+    
+                <p-calendar id="endDateOfSales" formControlName="endDateOfSales"  [showTime]="true" dateFormat="dd/mm/yy" hourFormat="24" class="w-full" styleClass="w-full"/>
+    
+                <div *ngIf="endDateOfSales?.invalid && (endDateOfSales?.touched || endDateOfSales?.dirty)">
+                    @if (endDateOfSales?.hasError('required')) {
+                        <small id="endTime-required-help" [hidden]="endDateOfSales?.pristine || endDateOfSales?.valid" class="p-error font-bold" i18n="Une heure est requise.">
+                            Une heure est requise.
+                        </small>
+                    }
+                </div>
+                @if (ticketForm.hasError('laterDate')) {
+                    <small id="endTime-required-help" class="p-error font-bold" i18n="La date de fin doit être supérieure à la date de début.">
+                        La date de fin doit être supérieure à la date de début.
+                    </small>
+                }
+            </div>
+    
+            <!-- DETAILS -->
+            <div class="field xl:col-12 lg:col-12 col-12 mt-2 p-fluid">
+                <label for="details" class="font-bold" i18n>Informations complémentaires</label>
+                <textarea id="details" pInputTextarea formControlName="details" rows="3" class="w-full"></textarea>
+
+                @if (label?.hasError('maxlength')) {
+                    <small id="details-maxlength-help" [hidden]="label?.pristine || label?.valid" class="p-error font-bold" 
+                            i18n="Ce champ doit comprendre au maximum {{ ticketForm.get('label')?.getError('maxlength').requiredLength }} caractères.">
+                            Ce champ doit comprendre au maximum {{ ticketForm.get('label')?.getError('maxlength').requiredLength }} caractères.
+                    </small>
+                }
+            </div>
+    
+    
+        </div>
+    </p-fieldset>
+
+    <p-fieldset legend="Politiques de vente" i18n-legend="Politiques de vente" styleClass="mt-4 hover:border-blue-400 border-3">
+        
+        <div class="formgrid grid">
+            <div class="field xl:col-10 lg:col-10 col-10 mb-2 align-content-center">
+                <b>Les frais de transaction sont supportés par vous.</b>
+            </div>
+            <div class="field xl:col-2 lg:col-2 col-2 mb-2">
+                <p-toggleButton [(ngModel)]="transactionFeesSupported" onLabel="Oui" offLabel="Non" (onChange)="onTransactionFeesSupportedChange($event)" />
+            </div>
+
+            <div class="field xl:col-10 lg:col-10 col-10 mt-2 align-content-center">
+                <b>Les tickets achété sont remboursés sous certaines conditions.</b>
+            </div>
+            <div class="field xl:col-2 lg:col-2 col-2 mt-2">
+                <p-toggleButton [(ngModel)]="refundable" onLabel="Oui" offLabel="Non" (onChange)="onRefundableChange($event)" />
+            </div>
+
+            @if(refundable?.value === true){
+                <div class="field xl:col-12 lg:col-12 col-12 mt-2 p-fluid">
+                    <label for="details" class="font-bold" i18n>Péciser les conditions de remboursement</label>
+                    <p-editor formControlName="refundPolicy" />
+                </div>
+            }
+        </div>
+    </p-fieldset>
+</form>
