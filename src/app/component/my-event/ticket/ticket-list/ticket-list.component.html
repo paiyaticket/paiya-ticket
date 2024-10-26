@@ -1,1 +1,26 @@
-<p>ticket-list works!</p>
+<p-table [value]="tickets" [paginator]="true" [rows]="10" [tableStyle]="{ 'min-width': '50rem' }"
+    emptymessage="Aucun ticket disponible">
+    <ng-template pTemplate="header">
+        <tr>
+            <th i18n>Code</th>
+            <th i18n>Libellé</th>
+            <th i18n>Prix Unitaire</th>
+            <th i18n>Quantité Disponible</th>
+            <th i18n>Tickets/Personne</th>
+            <th i18n>Début des ventes</th>
+            <th i18n>Fin des ventes</th>
+            <th i18n>Actions</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-ticket>
+        <tr>
+            <td>{{ ticket.code }}</td>
+            <td>{{ ticket.name }}</td>
+            <td>{{ ticket.price }}</td>
+            <td>{{ ticket.quantity }}</td>
+            <td>{{ ticket.minimumTicketQuantityPerOrder }} - {{ ticket.maximumTicketQuantityPerOrder }}</td>
+            <td>{{ ticket.startDateOfSales }}</td>
+            <td>{{ ticket.endDateOfSales }}</td>
+        </tr>
+    </ng-template>
+</p-table>

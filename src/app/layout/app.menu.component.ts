@@ -38,7 +38,7 @@ export class AppMenuComponent implements OnInit {
             {
                 label: 'Organisation', icon: 'pi pi-sliders-v', routerLink: ['/dashboard'],
                 items: [
-                    { label: 'Organisateur', icon: 'pi pi-sitemap', routerLink: ['./organisations'] },
+                    { label: 'Organisateur', icon: 'pi pi-sitemap', routerLink: ['./organisations'], routerLinkActiveOptions: {exact: false} },
                     { label: 'Mes Évènements', icon: 'pi pi-star', routerLink: ['./my-events'], routerLinkActiveOptions: {exact: false} },
                     { label: 'Contrôl de ticket', icon: 'pi pi-verified', routerLink: ['./ticket-checking'], routerLinkActiveOptions: {exact: false} },
                     { label: 'Point de ventes', icon: 'pi pi-chart-bar', routerLink: ['./ticket-checking'], routerLinkActiveOptions: {exact: false} },

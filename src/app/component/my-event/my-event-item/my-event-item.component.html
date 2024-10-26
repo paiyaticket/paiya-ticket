@@ -1,6 +1,6 @@
 
 <div class="p-4 border-1 surface-border surface-card border-round flex flex-column">
-        <a [routerLink]="['/my-events', 'my-event-configuration', event.id]">
+        <a [routerLink]="['..','my-event-configuration',event.id,'details']">
             <div class="relative mx-auto">
                 <img class="border-round w-full" [src]="imageCover" [alt]="event.title" style="max-height: 200px; object-fit: cover;"/>
             </div>
@@ -12,7 +12,7 @@
                 </div>
             </div>
             <div class="flex flex-wrap justify-content-end mt-3">
-                <p-splitButton label="Voir détails" i18n-label="Détails" (onClick)="goToDetailsPage(event)" [model]="items" 
+                <p-splitButton label="Voir détails" i18n-label="Détails" (onClick)="goToDetailsPage(event.id)" [model]="items" 
                     icon="pi pi-eye" size="small" styleClass="p-button-info" severity="info" outlined/>
             </div>
         </div>

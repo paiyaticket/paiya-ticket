@@ -1,1 +1,26 @@
-<p>ticket works!</p>
+<h2>Configuration des tickets</h2>
+<section class="mb-6">
+    
+    <p-card header="{{event.title}}">
+        <div>
+            {{event.startTime | date:'dd/MM/yyyy, HH:mm'}} - {{event.endTime | date:'dd/MM/yyyy, HH:mm'}}
+        </div>
+        <div>
+            {{event.physicalAddress?.location}}
+        </div>
+    </p-card>
+
+    <p-sidebar [(visible)]="createTicketSidebarVisible" position="right" [style]="{width: '40%'}">
+        <app-ticket-create></app-ticket-create>
+    </p-sidebar>
+</section>
+
+<section>
+    <p-card header="Liste des tickets">
+        <div class="flex justify-content-end flex-wrap mb-2">
+            <p-button label="Créer un ticket" icon="pi pi-plus" (onClick)="showCreateTicketSidebar()"></p-button>
+        </div>
+        <app-ticket-list [eventId]="event.id"></app-ticket-list>
+    </p-card>
+</section>
+

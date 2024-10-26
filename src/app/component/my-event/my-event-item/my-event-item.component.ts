@@ -112,8 +112,8 @@ export class MyEventItemComponent implements OnDestroy {
         });
     }
 
-    goToDetailsPage(event : Event){
-        this.router.navigate([`/my-events/my-event-configuration/${event.id}`])
+    goToDetailsPage(eventId : string | undefined){
+        this.router.navigate(['my-events','my-event-configuration',eventId,'details'])
     }
 
     reloadComponent(){
