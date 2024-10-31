@@ -10,7 +10,7 @@ import { Question } from "./question";
 import { Scheduling } from "./scheduling";
 
 export class Event {
-    id : string | undefined;
+    id !: string;
     title : string | undefined;
     eventType : EventType | undefined;
     eventCategory : string | undefined;

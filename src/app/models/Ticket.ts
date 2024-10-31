@@ -1,5 +1,6 @@
 export class Ticket {
-    id : string | undefined;
+    id !: string;
+    eventId : string | undefined;
     code : string | undefined;
     label : string | undefined;
     quantity : number | undefined;

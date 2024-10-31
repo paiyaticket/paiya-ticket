@@ -26,7 +26,10 @@ export const appConfig: ApplicationConfig = {
         provideHttpClient(
             withNoXsrfProtection(),
             withFetch(),
-            withInterceptors([HttpErrorInterceptor])
+            withInterceptors([
+                HttpErrorInterceptor, 
+                loggingInterceptor
+            ])
         ),
         // primeng features providers
         MessageService,

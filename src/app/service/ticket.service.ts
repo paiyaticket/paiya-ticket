@@ -31,7 +31,7 @@ export class TicketService {
     }
 
     update(ticket : Ticket) : Observable<Ticket> {
-        return this.httpClient.patch<Ticket>(`${this.resourcePath}/${ticket.id}`, event);
+        return this.httpClient.patch<Ticket>(`${this.resourcePath}/${ticket.id}`, ticket);
     }
 
     delete(id : string) : Observable<void> {

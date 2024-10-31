@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
@@ -15,6 +15,11 @@ import { laterDateValidator } from '../../../../validators/laterDateValidator';
 import { EditorModule } from 'primeng/editor';
 import { ToggleButtonChangeEvent, ToggleButtonModule } from 'primeng/togglebutton';
 import { TableModule } from 'primeng/table';
+import { Ticket } from '../../../../models/ticket';
+import { TicketService } from '../../../../service/ticket.service';
+import { Router } from '@angular/router';
+import { MessageService } from 'primeng/api';
+import { Observable, Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-ticket-create',
@@ -39,7 +44,8 @@ import { TableModule } from 'primeng/table';
     ],
     templateUrl: './ticket-create.component.html',
     styleUrl: './ticket-create.component.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [MessageService]
 })
 export class TicketCreateComponent {
 
@@ -47,21 +53,28 @@ export class TicketCreateComponent {
 
 
     @Input({required: true})
-    eventId : string | undefined;
-    ticketForm !: FormGroup;
-    refundableOptions : any[] = [
-        {'label' : $localize `Oui`, 'value' : true},
-        {'label' : $localize `Non`, 'value' : false}
-    ];
+    eventId !: string;
 
-    constructor() { }
+    @Input({required: false})
+    ticket : Ticket | undefined;
+
+    @Output()
+    closeSidebar = new EventEmitter<Ticket>();
+
+    ticketForm !: FormGroup;
+    saveSubscription : Subscription | undefined;
+
+
+    constructor(
+        private ticketService : TicketService,
+    ) { }
 
     ngOnInit(): void {
         this.ticketForm = new FormGroup({
             code : new FormControl<string | undefined>(undefined, [Validators.required, Validators.maxLength(10)]),
             label : new FormControl<string | undefined>(undefined, [Validators.required, Validators.maxLength(100)]),
             quantity : new FormControl<number | undefined>(1, [Validators.required]),
-            price : new FormControl<number | undefined>(undefined),
+            price : new FormControl<number | undefined>(undefined, [Validators.required]),
             transactionFeesSupported : new FormControl<boolean>(false),
             startDateOfSales : new FormControl<Date | undefined>(undefined, [Validators.required]),
             endDateOfSales : new FormControl<Date | undefined>(undefined, [Validators.required]),
@@ -73,6 +86,35 @@ export class TicketCreateComponent {
         }, {validators : [laterDateValidator]});
     }
 
+    ngOnDestroy(): void {
+        if(this.saveSubscription)
+        this.saveSubscription.unsubscribe();
+    }
+
+    ngOnChanges(changes : SimpleChanges) {
+        if(changes['ticket']){
+            this.initTicketFormIfPassedAsInput();
+        }
+    }
+
+    initTicketFormDefaultValues(){
+        this.transactionFeesSupported?.setValue(false);
+        this.refundable?.setValue(false);
+        this.minimumTicketQuantityPerOrder?.setValue(1);
+        this.maximumTicketQuantityPerOrder?.setValue(3);
+    }
+
+    initTicketFormIfPassedAsInput(){
+        console.log(this.ticket)
+        if(this.ticket){
+            this.ticketForm.patchValue(this.ticket);
+            this.startDateOfSales?.setValue(new Date(this.ticket.startDateOfSales!));
+            this.endDateOfSales?.setValue(new Date(this.ticket.endDateOfSales!));
+            this.transactionFeesSupported?.setValue(this.ticket.transactionFeesSupported);
+            this.refundable?.setValue(this.ticket.refundable);
+        }
+    }
+
     onRefundableChange(event : ToggleButtonChangeEvent){
         this.refundable?.setValue(event.checked);
     }
@@ -82,8 +124,38 @@ export class TicketCreateComponent {
     }
 
     submit(){
-        console.log(this.ticketForm.value);
+        let ticket : Ticket = this.prepareObjectToSubmit();
+        (this.ticket) ? this.update(ticket) : this.save(ticket);
+
+        this.ticketForm.reset();
+        this.initTicketFormDefaultValues();
+        this.closeSidebar.emit(ticket);
     }
+
+    prepareObjectToSubmit() : Ticket{
+        let ticket : Ticket = this.ticketForm.value;
+        ticket.startDateOfSales = this.ticketForm.get('startDateOfSales')?.value?.toISOString();
+        ticket.endDateOfSales = this.ticketForm.get('endDateOfSales')?.value?.toISOString();
+        ticket.eventId = this.eventId;
+        ticket.id = this.ticket?.id as string;
+        return ticket;
+    }
+
+    save(ticket : Ticket){
+        this.ticketService.save(ticket).subscribe();
+    }
+
+    update(ticket : Ticket){
+        console.log(ticket);
+        this.ticketService.update(ticket).subscribe();
+    }
+
+    cancel(){
+        this.ticketForm.reset();
+        this.initTicketFormDefaultValues();
+        this.closeSidebar.emit();
+    }
+
 
 
 

@@ -1,10 +1,11 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
 import { Ticket } from '../../../../models/ticket';
 import { TicketService } from '../../../../service/ticket.service';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { CardModule } from 'primeng/card';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-ticket-list',
@@ -17,22 +18,38 @@ import { CardModule } from 'primeng/card';
   ],
   templateUrl: './ticket-list.component.html',
   styleUrl: './ticket-list.component.scss',
-  changeDetection: ChangeDetectionStrategy.Default
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TicketListComponent {
 
-    @Input({required: true})
-    eventId : string | undefined;
+    @Input() tickets : Ticket[] = [];
 
-    tickets : Ticket[] = [];
+    @Output()
+    ticketEdited = new EventEmitter<Ticket>();
+
+    @Output()
+    ticketDeleted = new EventEmitter<Ticket>();
+
+    currency : string = environment.instanceParams.currency;
+
 
     constructor(private ticketService : TicketService) { }
 
     ngOnInit(): void {
-        if(this.eventId)
-        this.ticketService.findByEventId(this.eventId).subscribe(tickets => {
-            this.tickets = tickets;
-        });
     }
 
+    ngOnChanges(changes : SimpleChanges){
+        console.log(changes);
+    }
+
+    ngOnDestroy(): void {
+    }
+
+    editTicket(ticket : Ticket){
+        this.ticketEdited.emit(ticket);
+    }
+
+    deleteTicket(ticket : Ticket){
+        this.ticketDeleted.emit(ticket);
+    }
 }

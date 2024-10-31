@@ -579,7 +579,7 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
     }
 
     updateEvent(event : Event){
-        event.id = this.eventId;
+        event.id = this.eventId as string;
         this.updateEventSubscription = this.eventService.update(event).subscribe({
             next : (event) => {
                 this.messageService.add({ severity: 'success', key: "global", summary: $localize`Succès`, detail: $localize`Mise a jour réussie.` });
@@ -621,10 +621,10 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
     reloadPageWithEventId(eventId : string | undefined){
         if(this.route.snapshot.paramMap.get('eventId') === null){
             this.router.navigate(['my-events']).then(() => {
-                this.router.navigate(['my-events','my-event-configuration',eventId]);
+                this.router.navigate(['my-events','my-event-configuration',eventId,'details']);
             });
         } else{
-            this.router.navigate(['my-events','my-event-configuration',eventId]);
+            this.router.navigate(['my-events','my-event-configuration',eventId,'details']);
         }
     }
 
