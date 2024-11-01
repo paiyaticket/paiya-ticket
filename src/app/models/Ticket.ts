@@ -1,5 +1,8 @@
+import { TicketType } from "../enumerations/ticket-type";
+
 export class Ticket {
     id !: string;
+    type !: TicketType;
     eventId : string | undefined;
     code : string | undefined;
     label : string | undefined;

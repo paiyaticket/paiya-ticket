@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
@@ -17,9 +17,11 @@ import { ToggleButtonChangeEvent, ToggleButtonModule } from 'primeng/togglebutto
 import { TableModule } from 'primeng/table';
 import { Ticket } from '../../../../models/ticket';
 import { TicketService } from '../../../../service/ticket.service';
-import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { Observable, Subscription } from 'rxjs';
+import { SelectButtonModule } from 'primeng/selectbutton';
+import { TicketType } from '../../../../enumerations/ticket-type';
+import { MessagesModule } from 'primeng/messages';
 
 @Component({
     selector: 'app-ticket-create',
@@ -40,7 +42,9 @@ import { Observable, Subscription } from 'rxjs';
         InputTextareaModule,
         EditorModule,
         ToggleButtonModule,
-        TableModule
+        TableModule,
+        SelectButtonModule,
+        MessagesModule
     ],
     templateUrl: './ticket-create.component.html',
     styleUrl: './ticket-create.component.scss',
@@ -63,10 +67,16 @@ export class TicketCreateComponent {
 
     ticketForm !: FormGroup;
     saveSubscription : Subscription | undefined;
+    ticketTypeOptions : any[] = [
+        {'label' : $localize `Ticket Payant`, 'value' : TicketType.PAID, 'description' : $localize `Créer un ticket pour lequel les gens doivent payer.`},
+        {'label' : $localize `Ticket Gratuit`, 'value' : TicketType.FREE, 'description' : $localize `Créer un ticket pour lequel personne n'a à payer.`},
+        {'label' : $localize `Ticket à Prix libre (Don)`, 'value' : TicketType.GIFT, 'description' : $localize `Laisser les gens payer le montant qu'ils souhaitent pour leur ticket.`}
+    ];
 
 
     constructor(
         private ticketService : TicketService,
+        private cdRef : ChangeDetectorRef,
     ) { }
 
     ngOnInit(): void {
@@ -74,7 +84,8 @@ export class TicketCreateComponent {
             code : new FormControl<string | undefined>(undefined, [Validators.required, Validators.maxLength(10)]),
             label : new FormControl<string | undefined>(undefined, [Validators.required, Validators.maxLength(100)]),
             quantity : new FormControl<number | undefined>(1, [Validators.required]),
-            price : new FormControl<number | undefined>(undefined, [Validators.required]),
+            ticketType : new FormControl<TicketType>(TicketType.PAID),
+            price : new FormControl<number | undefined>(0, [Validators.required]),
             transactionFeesSupported : new FormControl<boolean>(false),
             startDateOfSales : new FormControl<Date | undefined>(undefined, [Validators.required]),
             endDateOfSales : new FormControl<Date | undefined>(undefined, [Validators.required]),
@@ -84,6 +95,7 @@ export class TicketCreateComponent {
             refundable : new FormControl<boolean>(false),
             refundPolicy : new FormControl<string | undefined>(undefined, Validators.maxLength(5000)),
         }, {validators : [laterDateValidator]});
+        
     }
 
     ngOnDestroy(): void {
@@ -98,6 +110,9 @@ export class TicketCreateComponent {
     }
 
     initTicketFormDefaultValues(){
+        this.ticketType?.setValue(TicketType.PAID);
+        this.quantity?.setValue(1);
+        this.price?.setValue(0)
         this.transactionFeesSupported?.setValue(false);
         this.refundable?.setValue(false);
         this.minimumTicketQuantityPerOrder?.setValue(1);
@@ -105,7 +120,6 @@ export class TicketCreateComponent {
     }
 
     initTicketFormIfPassedAsInput(){
-        console.log(this.ticket)
         if(this.ticket){
             this.ticketForm.patchValue(this.ticket);
             this.startDateOfSales?.setValue(new Date(this.ticket.startDateOfSales!));
@@ -114,6 +128,24 @@ export class TicketCreateComponent {
             this.refundable?.setValue(this.ticket.refundable);
         }
     }
+
+    onTicketTypeChange(event : any){
+        this.ticketType?.setValue(event.value);
+        
+        if(event.value === TicketType.PAID || event.value === TicketType.GIFT) {
+            this.price?.enable();
+            this.refundable?.enable();
+            this.transactionFeesSupported?.enable();
+        }
+
+        if(event.value === TicketType.FREE){
+            this.price?.disable();
+            this.refundable?.disable();
+            this.transactionFeesSupported?.disable();
+        }
+
+    }
+
 
     onRefundableChange(event : ToggleButtonChangeEvent){
         this.refundable?.setValue(event.checked);
@@ -171,6 +203,11 @@ export class TicketCreateComponent {
     get quantity() {
         return this.ticketForm.get('quantity');
     }
+
+    get ticketType() {
+        return this.ticketForm.get('ticketType');
+    }
+
 
     get price() {
         return this.ticketForm.get('price');

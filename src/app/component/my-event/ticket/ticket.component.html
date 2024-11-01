@@ -11,14 +11,14 @@
         </div>
     </p-card>
 
-    <p-sidebar [(visible)]="createTicketSidebarVisible" position="right" [style]="{width: '50%'}">
+    <p-sidebar [(visible)]="createTicketSidebarVisible" position="right" [style]="{width: '50%'}" modal="false" showCloseIcon="false">
         <app-ticket-create (closeSidebar)="hideCreateTicketSidebar($event)" [eventId]="event.id" [ticket]="selectedTicket"></app-ticket-create>
     </p-sidebar>
 </section>
 
 <section>
     <p-card header="Liste des tickets">
-        <div class="flex justify-content-end flex-wrap mb-2">
+        <div class="flex justify-content-end flex-wrap mb-3">
             <p-button label="Créer un ticket" icon="pi pi-plus" (onClick)="showCreateTicketSidebar()"></p-button>
         </div>
         <app-ticket-list [tickets]="tickets" (ticketDeleted)="handleTicketDeletion($event)" (ticketEdited)="handleTicketEdition($event)"></app-ticket-list>

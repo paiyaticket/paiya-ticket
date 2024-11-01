@@ -1,5 +1,36 @@
 <h2>Création d'un ticket</h2>
 <form [formGroup]="ticketForm" (ngSubmit)="submit()">
+
+    <p-messages severity="info">
+        <ng-template pTemplate>
+            <i class="pi pi-info-circle text-3xl"></i>
+            @for (item of ticketTypeOptions; track $index) {
+                <div class="ml-2">
+                    <b>{{ item.label }}</b>
+                    <br>
+                    {{ item.description }}
+                </div>
+            }
+        </ng-template>
+    </p-messages>
+
+    <div class="field xl:col-12 lg:col-12 col-12">
+        <p-selectButton 
+            [options]="ticketTypeOptions" 
+            formControlName="ticketType" 
+            optionValue="value" 
+            optionLabel="label"
+            (onChange)="onTicketTypeChange($event)"
+            styleClass="w-full">
+                <ng-template let-item pTemplate>
+                    <div>
+                        <div class="font-bold text-xl" i18n>{{ item.label }}</div> 
+                    </div>
+                </ng-template>
+        </p-selectButton>
+    </div>
+
+    <!-- TICKET INFORMATION -->
     <p-fieldset legend="Informations du ticket" i18n-legend="Informations du ticket" styleClass="hover:border-blue-400 border-3">
         <div class="formgrid grid" >
             <div class="field xl:col-3 lg:col-3 col-12 p-fluid">
@@ -143,6 +174,7 @@
         </div>
     </p-fieldset>
 
+    <!-- TICKET CONDITION -->
     <p-fieldset legend="Politiques de vente" i18n-legend="Politiques de vente" styleClass="mt-4 hover:border-blue-400 border-3">
         
         <div class="formgrid grid">
@@ -150,14 +182,14 @@
                 <b>Les frais de transaction sont supportés par vous.</b>
             </div>
             <div class="field xl:col-2 lg:col-2 col-2 mb-2">
-                <p-toggleButton [(ngModel)]="transactionFeesSupported" onLabel="Oui" offLabel="Non" (onChange)="onTransactionFeesSupportedChange($event)" />
+                <p-toggleButton formControlName="transactionFeesSupported"  onLabel="Oui" offLabel="Non" (onChange)="onTransactionFeesSupportedChange($event)" />
             </div>
 
             <div class="field xl:col-10 lg:col-10 col-10 mt-2 align-content-center">
                 <b>Les tickets achété sont remboursés sous certaines conditions.</b>
             </div>
             <div class="field xl:col-2 lg:col-2 col-2 mt-2">
-                <p-toggleButton [(ngModel)]="refundable" onLabel="Oui" offLabel="Non" (onChange)="onRefundableChange($event)" />
+                <p-toggleButton formControlName="refundable" onLabel="Oui" offLabel="Non" (onChange)="onRefundableChange($event)" />
             </div>
 
             @if(refundable?.value === true){
@@ -169,7 +201,7 @@
         </div>
     </p-fieldset>
 
-    <div class="mt-4 flex justify-content-end flex-wrap">
+    <div class="mt-4 flex align-content-end justify-content-end flex-wrap">
         <p-button type="button" label="Annuler" i18n-label="Annuler" styleClass="bg-primary-reverse mr-2" 
             (onClick)="cancel()" icon="pi pi-times"></p-button>
         <p-button type="submit" label="Sauvegarder" i18n-label="Sauvegarder" [disabled]="ticketForm.invalid" 

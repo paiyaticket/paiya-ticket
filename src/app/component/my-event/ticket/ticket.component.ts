@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, SimpleChanges, ViewChild } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { SidebarModule } from 'primeng/sidebar';
 import { TicketCreateComponent } from "./ticket-create/ticket-create.component";
@@ -53,9 +53,16 @@ export class TicketComponent {
         this.eventService.findById(this.eventId).subscribe(event => {
             this.event = event;
         });
-        this.ticketService.findByEventId(this.eventId).subscribe(tickets => {
-            this.tickets = tickets;
-        });
+    }
+
+    ngOnChanges(changes : SimpleChanges){
+        console.log(changes);
+        if(changes['eventId'].currentValue){
+            this.ticketService.findByEventId(changes['eventId'].currentValue).subscribe(tickets => {
+                this.tickets = tickets;
+                this.cdRef.detectChanges();
+            });
+        }
     }
 
     showCreateTicketSidebar() {
@@ -138,7 +145,8 @@ export class TicketComponent {
                 icon: 'pi pi-trash',
                 severity: 'success', 
                 summary: $localize`Ticket supprimé avec succès`, 
-                detail: $localize`${ticket.code} - ${ticket.label}`});
+                detail: $localize`${ticket.code} - ${ticket.label}`
+            });
             this.cdRef.detectChanges();
         });
     }
