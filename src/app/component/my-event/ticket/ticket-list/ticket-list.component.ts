@@ -39,7 +39,6 @@ export class TicketListComponent {
     }
 
     ngOnChanges(changes : SimpleChanges){
-        console.log(changes);
     }
 
     ngOnDestroy(): void {

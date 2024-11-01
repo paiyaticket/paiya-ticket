@@ -1,9 +1,7 @@
 export class PublishSettings {
     eventVisibility : EventVisibility | undefined;
-    publishMoment : PublishMoment | undefined;
-    date : Date | undefined;
-    time : string | undefined;
-    timezone : string | undefined;
+    whenToPublish : PublishMoment | undefined;
+    publicationScheduledDate : string | undefined;
 }
 
 export enum EventVisibility{
