@@ -582,11 +582,11 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         event.id = this.eventId as string;
         this.updateEventSubscription = this.eventService.update(event).subscribe({
             next : (event) => {
-                this.messageService.add({ severity: 'success', key: "global", summary: $localize`Succès`, detail: $localize`Mise a jour réussie.` });
+                this.messageService.add({ severity: 'success', summary: $localize`Succès`, detail: $localize`Mise a jour réussie.` });
                 // this.reloadPageWithEventId(event.id);
             },
             error : (error) => {
-                this.messageService.add({ severity: 'error', key: "global", summary: $localize`Erreur`, detail: $localize`Un problème est survenu lors de la mise a jour de l'événement.` });
+                this.messageService.add({ severity: 'error', summary: $localize`Erreur`, detail: $localize`Un problème est survenu lors de la mise a jour de l'événement.` });
                 console.log(error);
             }
         });
@@ -596,11 +596,11 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
 
         this.createEventSubscription = this.eventService.save(event).subscribe({
             next : (event) => {
-                this.messageService.add({ severity: 'success', key: "global", summary: $localize`Succès`, detail: $localize`Création de l'événement réussie.` });
+                this.messageService.add({ severity: 'success', summary: $localize`Succès`, detail: $localize`Création de l'événement réussie.` });
                 this.reloadPageWithEventId(event.id);
             },
             error : (error) => {
-                this.messageService.add({ severity: 'error', key: "global", summary: $localize`Erreur`, detail: $localize`Un problème est survenu lors de la création de l'événement.` });
+                this.messageService.add({ severity: 'error', summary: $localize`Erreur`, detail: $localize`Un problème est survenu lors de la création de l'événement.` });
                 console.log(error);
             }
         });

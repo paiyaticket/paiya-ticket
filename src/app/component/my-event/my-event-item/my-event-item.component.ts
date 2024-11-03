@@ -13,7 +13,7 @@ import { PanelModule } from 'primeng/panel';
 import { TableModule } from 'primeng/table';
 import { EventService } from '../../../service/event.service';
 import { Subscription } from 'rxjs';
-import { ImageCover } from '../../../models/image-cover';
+import { TagModule } from 'primeng/tag';
 
 @Component({
     selector: 'app-my-event-item',
@@ -30,6 +30,7 @@ import { ImageCover } from '../../../models/image-cover';
         DataViewModule,
         SplitButtonModule,
         ConfirmDialogModule,
+        TagModule
     ],
     templateUrl: './my-event-item.component.html',
     styleUrl: './my-event-item.component.scss',

@@ -56,7 +56,6 @@ export class TicketComponent {
     }
 
     ngOnChanges(changes : SimpleChanges){
-        console.log(changes);
         if(changes['eventId'].currentValue){
             this.ticketService.findByEventId(changes['eventId'].currentValue).subscribe(tickets => {
                 this.tickets = tickets;
@@ -95,7 +94,6 @@ export class TicketComponent {
                 detail: $localize`${ticket.code} - ${ticket.label}`
             });
         }
-        console.log(this.tickets);
         this.cdRef.detectChanges();
     }
 

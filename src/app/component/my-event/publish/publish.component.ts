@@ -6,11 +6,14 @@ import { Event } from '../../../models/event';
 import { EventService } from '../../../service/event.service';
 import { EventVisibility, PublishMoment, PublishSettings } from '../../../models/publishSettings';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { MessageService } from 'primeng/api';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { CalendarModule } from 'primeng/calendar';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { utcDateToZonedDateTime } from '../../../utils/date-util';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { MessagesModule } from 'primeng/messages';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-publish',
@@ -22,13 +25,16 @@ import { utcDateToZonedDateTime } from '../../../utils/date-util';
     ButtonModule,
     CardModule,
     SelectButtonModule,
-    CalendarModule
+    CalendarModule,
+    ConfirmDialogModule,
+    MessagesModule,
+    ToastModule
 
   ],
   templateUrl: './publish.component.html',
   styleUrl: './publish.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [MessageService]
+  providers: [MessageService, ConfirmationService]
 })
 export class PublishComponent {
 
@@ -49,10 +55,12 @@ export class PublishComponent {
 
 
     constructor(
+        private route : ActivatedRoute, 
         private router : Router,
         private eventService : EventService,
         private cdRef : ChangeDetectorRef,
-        private messageService : MessageService
+        private messageService : MessageService,
+        private confirmationService : ConfirmationService
     ) { }
 
     ngOnInit(): void {
@@ -121,15 +129,41 @@ export class PublishComponent {
         publishSetting.publicationScheduledDate = this.publicationScheduledDate?.value?.toISOString();
         this.event.publishSettings = publishSetting;
 
-        this.eventService.update(this.event).subscribe((event : Event)=>{
+        this.eventService.update(this.event).subscribe(()=>{
             this.messageService.add({ 
                 icon: 'pi pi-megaphone',
                 severity: 'success', 
                 summary: $localize`Évènement publié avec succès`, 
                 detail: $localize`${this.event?.title}`
             });
-            this.router.navigate(['/my-events']);
+            this.router.navigate(['my-events']);
         });
+    }
+
+    confirmUnpublish(event: any) {
+        this.confirmationService.confirm({
+            target: event.target as EventTarget,
+            header: $localize `Etes-vous sur(e)?`,
+            message: $localize `Je confirme vouloir retirer la publication de l'évènement "${this.event.title}".`,
+            accept: () => this.unpublish(),
+            reject: () => {}
+        });
+    }
+
+    unpublish(){
+        this.event.published = false;
+        this.event.publicationDate = undefined;
+        this.event.publishSettings = undefined;
+        this.eventService.update(this.event).subscribe(() => {
+            this.messageService.add({ 
+                icon: 'pi pi-megaphone',
+                severity: 'success', 
+                summary: $localize`Publication retirée avec succès`, 
+                detail: $localize`${this.event?.title}`
+            });
+            this.router.navigate(['my-events']);
+        });
+        
     }
 
     get eventVisibility() {
