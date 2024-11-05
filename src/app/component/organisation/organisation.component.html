@@ -2,8 +2,56 @@
     <div class="col-12">
         <div class="card pr-6 pl-6">
             <h2 class="uppercase font-heavy">Organisateurs d'évènements</h2>
-            
-            <router-outlet></router-outlet>
+
+            <section class="mb-6">
+                <div class="flex justify-content-end flex-wrap">
+                    
+                    <p-button (onClick)="showSidebar()" styleClass="font-bold" i18n>
+                        <i class="pi pi-plus mr-2"></i>
+                        Créer une nouvelle organisation
+                    </p-button>
+
+                    <p-sidebar [(visible)]="sidebarVisible" styleClass="w-6" position="right" [modal]="false" [showCloseIcon]="false">
+                        <app-event-organisation-create [eventOrganizerId]="selectedEventOrganizerId" (onSave)="closeSidebar()" (onCancel)="closeSidebar()"></app-event-organisation-create>
+                    </p-sidebar>
+                    
+                </div>
+            </section>
+
+            <section class="grid">
+                <app-event-organisation-list [eventOrganizerList]="eventOrganizerList$ | async" (onUpdate)="handleUpdate($event)" (onDelete)="handleDelete($event)"></app-event-organisation-list>
+            </section>
+
+
         </div>
     </div>
 </div>
+
+
+<p-confirmDialog #cd>
+    <ng-template pTemplate="headless" let-message>
+        <div class="flex flex-column align-items-center p-5 surface-overlay border-round">
+            <div class="border-circle bg-primary inline-flex justify-content-center align-items-center h-6rem w-6rem">
+                <i class="pi pi-question text-5xl"></i>
+            </div>
+            <span class="font-bold text-2xl block mb-2 mt-4">
+                {{ message.header }}
+            </span>
+            <p class="mb-0">{{ message.message }}</p>
+            <div class="flex align-items-center gap-2 mt-4">
+                <button 
+                    pButton 
+                    label="Oui" 
+                    (click)="cd.accept()" 
+                    class="w-8rem">
+                </button>
+                <button 
+                    pButton 
+                    label="Non"
+                    (click)="cd.reject()" 
+                    class="p-button-outlined w-8rem ">
+                </button>
+            </div>
+        </div>
+    </ng-template>
+</p-confirmDialog>
