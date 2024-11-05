@@ -14,11 +14,11 @@
 <section class="grid">
     @if (eventList$ | async; as eventList) {
         @if (eventList.length != 0) {
-            <p-dataView #dv [value]="eventList" [layout]="'grid'" [rows]="4" [paginator]="true" class="w-full">
-                <ng-template pTemplate="grid" let-eventList>
+            <p-dataView #dv [value]="eventList" [layout]="'list'" [rows]="4" [paginator]="true" class="w-full">
+                <ng-template pTemplate="list" let-eventList>
                     <div class="grid grid-nogutter">
                         @for (eventItem of eventList; track $index) {
-                            <app-my-event-item [event]="eventItem" class="col-12 sm:col-6 md:col-4 xl:col-3 p-2"></app-my-event-item>
+                            <app-my-event-item [event]="eventItem" class="col-12"></app-my-event-item>
                         }
                     </div>
                 </ng-template>

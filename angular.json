@@ -4,117 +4,120 @@
   "newProjectRoot": "projects",
   "projects": {
     "paiya-ticket": {
-      "projectType": "application",
-      "schematics": {
-        "@schematics/angular:component": {
-          "style": "scss",
-          "changeDetection": "OnPush"
-        }
-      },
-      "root": "",
-      "sourceRoot": "src",
-      "prefix": "app",
-      "architect": {
-        "build": {
-          "builder": "@angular-devkit/build-angular:application",
-          "options": {
-            "outputPath": "dist/paiya-ticket",
-            "index": "src/index.html",
-            "browser": "src/main.ts",
-            "allowedCommonJsDependencies": [
-                "undici",
-                "quill-delta"
-            ],
-            "polyfills": [
-              "zone.js"
-            ],
-            "tsConfig": "tsconfig.app.json",
-            "inlineStyleLanguage": "scss",
-            "assets": [
+        "i18n": {
+            "sourceLocale": "fr-FR"
+        },
+        "projectType": "application",
+        "schematics": {
+            "@schematics/angular:component": {
+            "style": "scss",
+            "changeDetection": "OnPush"
+            }
+        },
+        "root": "",
+        "sourceRoot": "src",
+        "prefix": "app",
+        "architect": {
+            "build": {
+            "builder": "@angular-devkit/build-angular:application",
+            "options": {
+                "outputPath": "dist/paiya-ticket",
+                "index": "src/index.html",
+                "browser": "src/main.ts",
+                "allowedCommonJsDependencies": [
+                    "undici",
+                    "quill-delta"
+                ],
+                "polyfills": [
+                "zone.js"
+                ],
+                "tsConfig": "tsconfig.app.json",
+                "inlineStyleLanguage": "scss",
+                "assets": [
+                    "src/favicon.ico",
+                    "src/assets"
+                ],
+                "styles": [
+                    "src/styles.scss",
+                    "node_modules/filepond/dist/filepond.min.css",
+                    "node_modules/@pqina/pintura/pintura.css",
+                    "node_modules/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css"
+                ],
+                "scripts": [],
+                "server": "src/main.server.ts",
+                "prerender": true,
+                "ssr": {
+                "entry": "server.ts"
+                }
+            },
+            "configurations": {
+                "production": {
+                "budgets": [
+                    {
+                    "type": "initial",
+                    "maximumWarning": "2mb",
+                    "maximumError": "4mb"
+                    },
+                    {
+                    "type": "anyComponentStyle",
+                    "maximumWarning": "2kb",
+                    "maximumError": "4kb"
+                    }
+                ],
+                "outputHashing": "all"
+                },
+                "development": {
+                "optimization": false,
+                "extractLicenses": false,
+                "sourceMap": true,
+                "fileReplacements": [
+                    {
+                    "replace": "src/environments/environment.ts",
+                    "with": "src/environments/environment.development.ts"
+                    }
+                ]
+                }
+            },
+            "defaultConfiguration": "production"
+            },
+            "serve": {
+            "builder": "@angular-devkit/build-angular:dev-server",
+            "configurations": {
+                "production": {
+                "buildTarget": "paiya-ticket:build:production"
+                },
+                "development": {
+                "buildTarget": "paiya-ticket:build:development"
+                }
+            },
+            "defaultConfiguration": "development"
+            },
+            "extract-i18n": {
+            "builder": "@angular-devkit/build-angular:extract-i18n",
+            "options": {
+                "buildTarget": "paiya-ticket:build"
+            }
+            },
+            "test": {
+            "builder": "@angular-devkit/build-angular:karma",
+            "options": {
+                "polyfills": [
+                "zone.js",
+                "zone.js/testing"
+                ],
+                "tsConfig": "tsconfig.spec.json",
+                "inlineStyleLanguage": "scss",
+                "assets": [
                 "src/favicon.ico",
                 "src/assets"
-            ],
-            "styles": [
-                "src/styles.scss",
-                "node_modules/filepond/dist/filepond.min.css",
-                "node_modules/@pqina/pintura/pintura.css",
-                "node_modules/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css"
-            ],
-            "scripts": [],
-            "server": "src/main.server.ts",
-            "prerender": true,
-            "ssr": {
-              "entry": "server.ts"
+                ],
+                "styles": [
+                "src/styles.scss"
+                ],
+                "scripts": []
             }
-          },
-          "configurations": {
-            "production": {
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "4mb"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
-                }
-              ],
-              "outputHashing": "all"
-            },
-            "development": {
-              "optimization": false,
-              "extractLicenses": false,
-              "sourceMap": true,
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.development.ts"
-                }
-              ]
             }
-          },
-          "defaultConfiguration": "production"
-        },
-        "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
-          "configurations": {
-            "production": {
-              "buildTarget": "paiya-ticket:build:production"
-            },
-            "development": {
-              "buildTarget": "paiya-ticket:build:development"
-            }
-          },
-          "defaultConfiguration": "development"
-        },
-        "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
-          "options": {
-            "buildTarget": "paiya-ticket:build"
-          }
-        },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
-            "tsConfig": "tsconfig.spec.json",
-            "inlineStyleLanguage": "scss",
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ],
-            "styles": [
-              "src/styles.scss"
-            ],
-            "scripts": []
-          }
         }
-      }
     }
   }
 }

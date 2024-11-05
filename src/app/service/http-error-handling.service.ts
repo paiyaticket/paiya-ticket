@@ -19,7 +19,7 @@ export class HttpErrorHandlingService {
             // The error is from the client side
             console.error("CLIENT SIDE ERROR : " + error.message);
             let message = {
-                key: "global", 
+                
                 severity : "error", 
                 summary : $localize `Erreur côté client`, 
                 detail : $localize `Backend injoignable ou ploblème reseau. Réessayer plutard ou contactez un administrateur.`
@@ -28,7 +28,7 @@ export class HttpErrorHandlingService {
         } else {
             // The error come from the backend
             let message = {
-                key: "global", 
+                
                 severity : "error", 
                 summary : $localize `Erreur côté serveur`, 
                 detail : $localize `Nous rencontrons un petit soucis, réessayer plutard.`

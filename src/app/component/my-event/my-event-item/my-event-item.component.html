@@ -1,20 +1,42 @@
-
-<div class="p-4 border-1 surface-border surface-card border-round flex flex-column">
-        <a [routerLink]="['/my-events', event.id, 'details']">
-            <div class="relative mx-auto">
-                <img class="border-round w-full" [src]="imageCover" [alt]="event.title" style="max-height: 200px; object-fit: cover;"/>
-            </div>
+<div class="flex flex-column sm:flex-row sm:align-items-center p-4 gap-3">
+    <div class="md:w-20rem relative">
+        <a [routerLink]="['..','my-event-configuration',event.id,'details']">
+            <img class="border-round w-full" [src]="imageCover" [alt]="event.title" style="max-height: 200px; object-fit: cover;"/>
         </a>
-        <div class="pt-4">
-            <div class="flex flex-row align-items-center justify-content-center gap-2">
-                <div>
-                    <div class="text-2xl font-bold">{{ event.title | uppercase }}</div>
+    </div>
+    <div class="flex flex-column md:flex-row justify-content-between md:align-items-center flex-1 gap-4">
+        <div class="flex flex-row md:flex-column justify-content-between align-items-start gap-2">
+            <div>
+                <p-tag [value]="(event.published) ? 'Publié' : 'Non Publié'" 
+                        [severity]="(event.published) ? 'success' : 'warning'" 
+                        [icon]="(event.published) ? 'pi pi-check' : 'pi pi-times'"
+                        styleClass="text-lg font-semibold text-900"></p-tag>
+            </div>
+            <div>
+                <a [routerLink]="['..','my-event-configuration',event.id,'details']">
+                    <div class="text-xl font-bold text-900 mt-2">{{ event.title | uppercase }}</div>
+                </a>
+            </div>
+            <div>
+                <div class="text-xl font-semibold text-700 mt-1">{{ event.physicalAddress?.location }}</div>
+            </div>
+            <div class="surface-100 p-1" style="border-radius: 30px">
+                <div class="surface-0 flex align-items-center gap-2 justify-content-center py-1 px-2" style="border-radius: 30px; box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.04), 0px 1px 2px 0px rgba(0, 0, 0, 0.06)">
+                    <span class="text-xl text-900 font-medium">De {{ event.startTime | date:'dd/MM/yyyy, HH:mm' }} à {{ event.endTime | date:'dd/MM/yyyy, HH:mm' }}  </span>
                 </div>
             </div>
-            <div class="flex flex-wrap justify-content-end mt-3">
-                <p-splitButton label="Voir détails" i18n-label="Détails" (onClick)="goToDetailsPage(event)" [model]="items" 
-                    icon="pi pi-eye" size="small" styleClass="p-button-info" severity="info" outlined/>
+        </div>
+        <div class="flex flex-column md:align-items-end gap-2">
+            <span class="text-xl font-semibold text-900">0 / 0 tickets vendus</span>
+            <div>
+                <div class="font-italic text-700"> dernière modification : {{event.lastModifiedDate | date:'dd/MM/yyyy, HH:mm'}} </div>
+            </div>
+            <div class="flex flex-row-reverse md:flex-row">
+                <p-splitButton label="Voir détails" i18n-label="Détails" (onClick)="goToDetailsPage(event.id)" [model]="items" 
+                    icon="pi pi-eye" size="small" class="flex-auto md:flex-initial white-space-nowrap"
+                    styleClass="p-button-info" severity="info" outlined/>
             </div>
         </div>
     </div>
+</div>
     

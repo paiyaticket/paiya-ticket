@@ -1,0 +1,16 @@
+<section class="grid">
+    <div class="col-12 sm:col-12 md:col-12 lg:col-3 xl:col-3">
+        <span class="text-4xl text-blue-500 font-bold">Création d'un évènement</span>
+        <p class="text-800" i18n>
+            L'évènement est au coeur de votre activité. Ça peut être un concert, un salon, un festival, une simple réunion. 
+            Ça peut être un rassemblement physique ou virtuel! Pour vue que des gens se rassemble, au une date précise ou une cause commune.
+            Donnez le plus de détail possible.
+        </p>
+
+        <app-my-event-sidebar-menu [eventId]="eventId" class="mt-3"></app-my-event-sidebar-menu>
+        
+    </div>
+    <div class="col-12 sm:col-12 md:col-12 lg:col-9 xl:col-9">
+        <router-outlet></router-outlet>
+    </div>
+</section>

@@ -35,7 +35,6 @@ import { EventOrganisationComponent } from '../event-organisation/event-organisa
     templateUrl: './event-organisation-list.component.html',
     styleUrl: './event-organisation-list.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [ConfirmationService]
 })
 export class EventOrganisationListComponent implements OnInit{
 

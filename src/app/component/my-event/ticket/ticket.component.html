@@ -1,0 +1,60 @@
+<h2>Configuration des tickets</h2>
+<section class="mb-6">
+    
+    <p-card header="{{event.title}}">
+        <div class="flex flex-row gap-2">
+            <div class="flex">
+                <div>
+                    {{event.startTime | date:'dd/MM/yyyy, HH:mm'}} - {{event.endTime | date:'dd/MM/yyyy, HH:mm'}}
+                    <br>
+                    {{event.physicalAddress?.location}}
+                </div>
+            </div>
+            <div class="flex align-items-center justify-content-center bg-blue-100 border-round px-2 py-2" i18n>
+                <p>Un évènement de <b>{{ event.eventOrganizer?.name }}</b> .</p>
+            </div>
+        </div>
+    </p-card>
+
+    <p-sidebar [(visible)]="createTicketSidebarVisible" position="right" [style]="{width: '50%'}" modal="false" showCloseIcon="false">
+        <app-ticket-create (closeSidebar)="hideCreateTicketSidebar($event)" [eventId]="event.id" [ticket]="selectedTicket"></app-ticket-create>
+    </p-sidebar>
+</section>
+
+<section>
+    <p-card header="Liste des tickets">
+        <div class="flex justify-content-end flex-wrap mb-3">
+            <p-button label="Créer un ticket" icon="pi pi-plus" (onClick)="showCreateTicketSidebar()"></p-button>
+        </div>
+        <app-ticket-list [tickets]="tickets" (ticketDeleted)="handleTicketDeletion($event)" (ticketEdited)="handleTicketEdition($event)"></app-ticket-list>
+    </p-card>
+</section>
+
+<p-confirmDialog #cd>
+    <ng-template pTemplate="headless" let-message>
+        <div class="flex flex-column align-items-center p-5 surface-overlay border-round">
+            <div class="border-circle bg-primary inline-flex justify-content-center align-items-center h-6rem w-6rem">
+                <i class="pi pi-question text-5xl"></i>
+            </div>
+            <span class="font-bold text-2xl block mb-2 mt-4">
+                {{ message.header }}
+            </span>
+            <p class="mb-0">{{ message.message }}</p>
+            <div class="flex align-items-center gap-2 mt-4">
+                <button 
+                    pButton 
+                    label="Oui" 
+                    (click)="cd.accept()" 
+                    class="w-8rem">
+                </button>
+                <button 
+                    pButton 
+                    label="Non"
+                    (click)="cd.reject()" 
+                    class="p-button-outlined w-8rem ">
+                </button>
+            </div>
+        </div>
+    </ng-template>
+</p-confirmDialog>
+

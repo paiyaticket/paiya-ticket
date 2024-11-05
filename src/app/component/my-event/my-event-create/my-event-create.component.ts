@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Inject, Input, OnDestroy, OnInit, PLATFORM_ID, ViewChild, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, Inject, Input, OnDestroy, OnInit, PLATFORM_ID, Signal, ViewChild, ViewEncapsulation, WritableSignal } from '@angular/core';
 import { Auth, getAuth, User } from '@angular/fire/auth';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -245,7 +245,6 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         } else {
             this.eventOrganizer?.setValue({id : this.currentUser?.email, name : this.currentUser?.displayName});
         }
-        console.log(this.eventForm);
     }
 
 
@@ -258,7 +257,6 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
     /* *********************** */
     process() : ProcessServerConfigFunction {
         return (fieldName, file, metadata, load, error, progress, abort, transfer, options) => {
-            console.log("PROCESS...");
             let path = 'repos/'+this.auth?.currentUser?.uid+'/images';
             const uploadTask = this.fileStorageService.uploadFile(file as File, path);
 
@@ -329,7 +327,6 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
 
     fetch() : FetchServerConfigFunction {
         return (url, load, error, progress, abort, headers) => {
-            console.log("FETCH...");
             this.fileStorageService.downloadBlod(url).then((blob) => {
                 let urlParts = url.split("%2F");
                 blob.name = urlParts[urlParts.length - 1].split("?")[0];
@@ -582,14 +579,14 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
     }
 
     updateEvent(event : Event){
-        event.id = this.eventId;
+        event.id = this.eventId as string;
         this.updateEventSubscription = this.eventService.update(event).subscribe({
             next : (event) => {
-                this.messageService.add({ severity: 'success', key: "global", summary: $localize`Succès`, detail: $localize`Mise a jour réussie.` });
+                this.messageService.add({ severity: 'success', summary: $localize`Succès`, detail: $localize`Mise a jour réussie.` });
                 // this.reloadPageWithEventId(event.id);
             },
             error : (error) => {
-                this.messageService.add({ severity: 'error', key: "global", summary: $localize`Erreur`, detail: $localize`Un problème est survenu lors de la mise a jour de l'événement.` });
+                this.messageService.add({ severity: 'error', summary: $localize`Erreur`, detail: $localize`Un problème est survenu lors de la mise a jour de l'événement.` });
                 console.log(error);
             }
         });
@@ -599,11 +596,11 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
 
         this.createEventSubscription = this.eventService.save(event).subscribe({
             next : (event) => {
-                this.messageService.add({ severity: 'success', key: "global", summary: $localize`Succès`, detail: $localize`Création de l'événement réussie.` });
+                this.messageService.add({ severity: 'success', summary: $localize`Succès`, detail: $localize`Création de l'événement réussie.` });
                 this.reloadPageWithEventId(event.id);
             },
             error : (error) => {
-                this.messageService.add({ severity: 'error', key: "global", summary: $localize`Erreur`, detail: $localize`Un problème est survenu lors de la création de l'événement.` });
+                this.messageService.add({ severity: 'error', summary: $localize`Erreur`, detail: $localize`Un problème est survenu lors de la création de l'événement.` });
                 console.log(error);
             }
         });
@@ -615,8 +612,20 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         return new Date(zonedDateTime);
     }
 
+    /**
+     * Reload the page depending on if "eventId" is already presente in he URL.
+     * If not, the reload goes to "my-event" URI before going to "my-events/my-event-configuration/eventId"
+     * in order to pass "eventId" property to the parent component (myEventConfigurationComponent) input.
+     * @param eventId 
+     */
     reloadPageWithEventId(eventId : string | undefined){
-        this.router.navigate([`/my-events/${eventId}/details`]);
+        if(this.route.snapshot.paramMap.get('eventId') === null){
+            this.router.navigate(['my-events']).then(() => {
+                this.router.navigate(['my-events','my-event-configuration',eventId,'details']);
+            });
+        } else{
+            this.router.navigate(['my-events','my-event-configuration',eventId,'details']);
+        }
     }
 
     goToEventListPage(){

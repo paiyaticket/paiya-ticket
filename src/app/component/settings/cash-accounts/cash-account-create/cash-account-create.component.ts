@@ -170,7 +170,7 @@ export class CashAccountCreateComponent {
     }
 
     pushMessage(){
-        this.messageService.add({key: 'global', severity: 'success', summary: $localize `Succès`, detail: $localize `Compte d'encaissement crée.`, life: 3000 });
+        this.messageService.add({severity: 'success', summary: $localize `Succès`, detail: $localize `Compte d'encaissement crée.`, life: 3000 });
     }
 
     returnToListPage(){

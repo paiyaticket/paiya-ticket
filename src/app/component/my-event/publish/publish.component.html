@@ -1,0 +1,137 @@
+<h2>Publication</h2>
+<section class="mb-6">
+    <p-card header="{{event.title}}">
+        <div class="flex flex-row justify-content-between">
+            <div class="flex">
+                <div>
+                    {{event.startTime | date:'dd/MM/yyyy, HH:mm'}} - {{event.endTime | date:'dd/MM/yyyy, HH:mm'}}
+                    <br>
+                    {{event.physicalAddress?.location}}
+                </div>
+            </div>
+            <div class="flex align-items-center justify-content-center surface-200 border-round px-3 py-3" i18n>
+                <p>Organisé par : <b>{{ event.eventOrganizer?.name }}</b> .</p>
+            </div>
+        </div>
+    </p-card>
+</section>
+
+
+<form [formGroup]="publishForm" (ngSubmit)="publish()">
+    <section>
+        <p-card header="Paramètres de publication" i18n-header="Paramètres de publication">
+            @if (!event.published) {
+                <p-messages severity="info" class="mb-2">
+                    <ng-template pTemplate>
+                        <i class="pi pi-info-circle text-3xl"></i>
+                        <div class="ml-2">Cet évènement n'est pas encore publié.</div>
+                    </ng-template>
+                </p-messages>
+            }
+            <div class="formgrid grid" >
+                <div class="col-6">
+                    <div class="field col-12 p-fluid">
+                        <label for="eventVisibility" class="font-bold" i18n>Visibilitée de l'évènement</label>
+                        <p-selectButton 
+                            [options]="visibilityOptions" 
+                            formControlName="eventVisibility" 
+                            optionValue="value" 
+                            optionLabel="label"
+                            (onChange)="onEventVisibilityChange($event)"/>
+                        <div *ngIf="eventVisibility?.invalid && (eventVisibility?.touched || eventVisibility?.dirty)">
+                            @if (eventVisibility?.hasError('required')) {
+                                <small id="title-required-help" [hidden]="eventVisibility?.pristine || eventVisibility?.valid" class="p-error font-bold" i18n="Un choix de valeur est requis.">
+                                    Un choix de valeur est requis.
+                                </small>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="field col-12 p-fluid">
+                        <label for="whenToPublish" class="font-bold" i18n>Moment de visibilitée de l'évènement</label>
+                        <p class="text-800" i18n>
+                            L'évènement peut être publié maintenant et devenir aussitôt visible dans les résultats de recherche,
+                            mais vous pouvez aussi définir une date ultérieur à laquelle l'évènement sera visible dans les résultats de recherche
+                            après avoir été publié.
+                        </p>
+                        <p-selectButton 
+                            [options]="whenToPublishOptions" 
+                            formControlName="whenToPublish" 
+                            optionValue="value" 
+                            optionLabel="label"
+                            (onChange)="onWhenToPublishChange($event)"
+                            styleClass="w-full"/>
+                        <div *ngIf="whenToPublish?.invalid && (whenToPublish?.touched || whenToPublish?.dirty)">
+                            @if (whenToPublish?.hasError('required')) {
+                                <small id="title-required-help" [hidden]="whenToPublish?.pristine || whenToPublish?.valid" class="p-error font-bold" i18n="Un choix de valeur est requis.">
+                                    Un choix de valeur est requis.
+                                </small>
+                            }
+                        </div>
+                    </div>
+    
+                    @if (isPublicationScheduledDateVisible()) {
+                        <div class="field col-12 p-fluid">
+                            <label for="publicationScheduledDate" class="font-bold" i18n>L'évènement sera visible après le:</label>
+                            <p-calendar id="publicationScheduledDate" formControlName="publicationScheduledDate" [showTime]="true" dateFormat="dd/mm/yy" 
+                                hourFormat="24" class="w-full" styleClass="w-full"/>
+
+                            <div *ngIf="publicationScheduledDate?.invalid && (publicationScheduledDate?.touched || publicationScheduledDate?.dirty)">
+                                @if (publicationScheduledDate?.hasError('required')) {
+                                    <small id="publicationScheduledDate-required-help" [hidden]="publicationScheduledDate?.pristine || publicationScheduledDate?.valid" 
+                                        class="p-error font-bold" i18n="Une date et une heure sont requis.">
+                                        Une date et une heure sont requis.
+                                    </small>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+        
+            </div>
+        </p-card>
+    </section>
+
+    <div class="mt-4 flex justify-content-between flex-wrap">
+        <div>
+            <p-button type="button" label="Retourner à la liste des évènements" i18n-label="Annuler" styleClass="bg-primary-reverse mr-2" 
+            (onClick)="goToEventListPage()" icon="pi pi-chevron-left"></p-button>
+        </div>
+        <div>
+            @if (event.published) {
+                <p-button (onClick)="confirmUnpublish($event)" type="button" label="Retirer la publication" i18n-label="Retirer la publication" styleClass="m-auto"
+                    icon="pi pi-undo" outlined="true" severity="secondary" class="mr-2" ></p-button>
+            }
+            <p-button type="submit" label="Publier l'évènement" i18n-label="Publier l'évènement" styleClass="m-auto"
+                icon="pi pi-megaphone" [disabled]="publishForm.invalid"></p-button>
+        </div>
+    </div>
+</form>
+
+<p-confirmDialog #cd>
+    <ng-template pTemplate="headless" let-message>
+        <div class="flex flex-column align-items-center p-5 surface-overlay border-round">
+            <div class="border-circle bg-primary inline-flex justify-content-center align-items-center h-6rem w-6rem">
+                <i class="pi pi-question text-5xl"></i>
+            </div>
+            <span class="font-bold text-2xl block mb-2 mt-4">
+                {{ message.header }}
+            </span>
+            <p class="mb-0">{{ message.message }}</p>
+            <div class="flex align-items-center gap-2 mt-4">
+                <button 
+                    pButton 
+                    label="Oui" 
+                    (click)="cd.accept()" 
+                    class="w-8rem">
+                </button>
+                <button 
+                    pButton 
+                    label="Non"
+                    (click)="cd.reject()" 
+                    class="p-button-outlined w-8rem ">
+                </button>
+            </div>
+        </div>
+    </ng-template>
+</p-confirmDialog>

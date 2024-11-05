@@ -21,7 +21,7 @@ export const environment = {
     },
     instanceParams: {
         country : "CI",
-        currency : "FCFA",
+        currency : "XOF",
         mobileCode : "+225"
     }
 };

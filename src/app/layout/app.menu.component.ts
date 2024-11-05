@@ -24,26 +24,25 @@ export class AppMenuComponent implements OnInit {
             {
                 label: `Évènements`, icon: 'pi pi-calendar',
 				items: [
-                    { label: 'Évènements', icon: 'pi pi-calendar', routerLink: ['./events'] },
+                    { label: 'Évènements', icon: 'pi pi-calendar', routerLink: ['./events'], routerLinkActiveOptions: {exact: false}  },
                 ]
             },
 			{
                 label: `Tickets`, icon: 'pi pi-ticket',
 				items: [
-                    { label: 'Vos Tickets', icon: 'pi pi-ticket', routerLink: ['./tickets'] },
-					{ label: 'Revendre', icon: 'pi pi-sync', routerLink: ['./resell'] },
-					{ label: 'Remboursements', icon: 'pi pi-money-bill', routerLink: ['./payback'] },
+                    { label: 'Vos Tickets', icon: 'pi pi-ticket', routerLink: ['./tickets'], routerLinkActiveOptions: {exact: false}  },
+					{ label: 'Revendre', icon: 'pi pi-sync', routerLink: ['./resell'], routerLinkActiveOptions: {exact: false}  },
+					{ label: 'Remboursements', icon: 'pi pi-money-bill', routerLink: ['./payback'], routerLinkActiveOptions: {exact: false}  },
                 ]
             },
             {
                 label: 'Organisation', icon: 'pi pi-sliders-v', routerLink: ['/dashboard'],
                 items: [
-                    { label: 'Organisateur', icon: 'pi pi-sitemap', routerLink: ['./organisations'] },
-                    { label: 'Mes Évènements', icon: 'pi pi-star', routerLink: ['./my-events'], },
-                    { label: 'Publications', icon: 'pi pi-megaphone', routerLink: ['./publications'] },
-                    { label: 'Contrôl de ticket', icon: 'pi pi-verified', routerLink: ['./ticket-checking'] },
-                    { label: 'Point de ventes', icon: 'pi pi-chart-bar', routerLink: ['./ticket-checking'] },
-                    { label: 'Facturation', icon: 'pi pi-credit-card', routerLink: ['./ticket-checking'] }
+                    { label: 'Organisateur', icon: 'pi pi-sitemap', routerLink: ['./organisations'], routerLinkActiveOptions: {exact: false} },
+                    { label: 'Mes Évènements', icon: 'pi pi-star', routerLink: ['./my-events'], routerLinkActiveOptions: {exact: false} },
+                    { label: 'Contrôl de ticket', icon: 'pi pi-verified', routerLink: ['./ticket-checking'], routerLinkActiveOptions: {exact: false} },
+                    { label: 'Point de ventes', icon: 'pi pi-chart-bar', routerLink: ['./ticket-checking'], routerLinkActiveOptions: {exact: false} },
+                    { label: 'Facturation', icon: 'pi pi-credit-card', routerLink: ['./ticket-checking'], routerLinkActiveOptions: {exact: false} }
                 ]
             }
         ];
