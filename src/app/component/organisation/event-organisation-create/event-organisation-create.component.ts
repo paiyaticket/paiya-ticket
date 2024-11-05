@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, output, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit, output, SimpleChanges } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
@@ -9,12 +9,12 @@ import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { TableModule } from 'primeng/table';
 import { ChipsModule } from 'primeng/chips';
-import { User, getAuth, onAuthStateChanged } from '@angular/fire/auth';
+import { Auth } from '@angular/fire/auth';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SOCIALMEDIA } from '../../../data/socialmedia.data';
 import { SocialMedia, EventOrganizer } from '../../../models/event-organizer';
 import { EventOrganizerService } from '../../../service/event-organizer.service';
-import { Message } from 'primeng/api';
+import { MessageService } from 'primeng/api';
 
 @Component({
     selector: 'app-event-organisation-create',
@@ -38,13 +38,15 @@ import { Message } from 'primeng/api';
 })
 export class EventOrganisationCreateComponent implements OnInit {
 
-    SUCCESS_MESSAGE : Message = {severity: 'success', summary: $localize `Succès`, detail: $localize `Organisation créee avec succès.`, life: 3000 };
-    
-    onSave = output<Message>();
+    @Input({required : false})
+    eventOrganizerId : string | undefined;
+    eventOrganizer : EventOrganizer = new EventOrganizer();
+
+    onSave = output<void>();
 
     onCancel = output<void>();
 
-    user : User | undefined;
+    user : any;
     
     socialMediaOptions : SocialMedia[] = SOCIALMEDIA;
 
@@ -52,13 +54,14 @@ export class EventOrganisationCreateComponent implements OnInit {
 
     eventOrganizerForm !: FormGroup;
 
-    eventOrganizer : EventOrganizer = new EventOrganizer();
-
-    constructor(private route : ActivatedRoute, 
+    constructor(private auth : Auth,
+                private route : ActivatedRoute, 
                 private router : Router,
+                private messageService : MessageService,
                 private organizationService : EventOrganizerService){}
     
     ngOnInit(): void {
+        this.user = this.auth.currentUser;
         this.eventOrganizerForm = new FormGroup({
             name : new FormControl<string | undefined>('', [Validators.required]),
             details : new FormControl<string | undefined>('', [Validators.maxLength(150)]),
@@ -68,14 +71,31 @@ export class EventOrganisationCreateComponent implements OnInit {
             selectedSocialMedia : new FormControl<SocialMedia | undefined>(undefined),
             selectedSocialMediaLink : new FormControl<string | undefined>('')
         });
-        
-        const auth = getAuth();
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                this.user = user;
-            } 
-        });
+        this.initFormIfUpdate();
     } 
+
+    ngOnChanges(changes : SimpleChanges){
+        if(changes['eventOrganizerId']){
+            this.eventOrganizerId = changes['eventOrganizerId'].currentValue;
+            this.initFormIfUpdate();
+        }
+    }
+
+    initFormIfUpdate(){
+        if(this.eventOrganizerId){
+            this.organizationService.findById(this.eventOrganizerId).subscribe((eventOrganizer : EventOrganizer) => {
+                this.eventOrganizer = eventOrganizer;
+                this.eventOrganizerForm.patchValue({
+                    name : eventOrganizer.name,
+                    details : eventOrganizer.details,
+                    email : eventOrganizer.email,
+                    phoneNumbers : eventOrganizer.phoneNumbers,
+                    staffMembers : eventOrganizer.staffMembers
+                });
+                this.socialMediaList = eventOrganizer.socialMedia;
+            });
+        }
+    }
 
     addSocialMedia(){
         let media : SocialMedia = this.eventOrganizerForm.value.selectedSocialMedia as SocialMedia;
@@ -110,7 +130,8 @@ export class EventOrganisationCreateComponent implements OnInit {
         this.eventOrganizer.createdBy = this.user?.email;
         this.organizationService.save(this.eventOrganizer).subscribe(() => {
             this.eventOrganizerForm.reset();
-            this.onSave.emit(this.SUCCESS_MESSAGE);
+            this.messageService.add({severity: 'success', icon: 'pi pi-check', summary: $localize `Succès`, detail: $localize `Organisation créee avec succès.`});
+            this.onSave.emit();
         });        
     }
 
