@@ -30,7 +30,7 @@
                         <div *ngIf="email?.invalid && (email?.touched || email?.dirty)">
                             @if (email?.hasError('email')) {
                                 <small id="email-required-help" [hidden]="email?.pristine || email?.valid" class="p-error" i18n="Le nom est requis.">
-                                    Le nom est requis.
+                                    Une adresse mail est requise.
                                 </small>
                             }
                         </div>

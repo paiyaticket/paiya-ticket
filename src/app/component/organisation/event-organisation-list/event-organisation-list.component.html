@@ -1,12 +1,13 @@
 <section class="mb-6">
     <div class="flex justify-content-end flex-wrap">
 
-        <p-sidebar [(visible)]="createSidebarVisible" styleClass="w-8 my-closeicon" position="right" (onHide)="handleHideSidebar()">
+        <p-sidebar [(visible)]="createSidebarVisible" styleClass="w-6" position="right" (onHide)="handleHideSidebar()" [showCloseIcon]="false">
             <app-event-organisation-create (onSave)="closeCreateSidebar($event)" (onCancel)="closeCreateSidebar()"></app-event-organisation-create>
         </p-sidebar>
 
         @if (updateSidebarParam !== undefined) {
-            <p-sidebar [(visible)]="updateSidebarVisible" styleClass="w-8" position="right" (onHide)="handleHideSidebar()">
+            <p-sidebar [(visible)]="updateSidebarVisible" styleClass="w-4" position="right" (onHide)="handleHideSidebar()" 
+                [showCloseIcon]="false">
                 <app-event-organisation [id]="updateSidebarParam" (onSave)="closeUpdateSidebar($event)" (onCancel)="closeUpdateSidebar()"></app-event-organisation>
             </p-sidebar>
         }
