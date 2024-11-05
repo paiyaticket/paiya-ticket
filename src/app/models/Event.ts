@@ -8,6 +8,7 @@ import { PhysicalAddress } from "./physical-address";
 import { PublishSettings } from "./publishSettings";
 import { Question } from "./question";
 import { Scheduling } from "./scheduling";
+import { EventStatut } from "../enumerations/event-statut";
 
 export class Event {
     id !: string;
@@ -21,6 +22,7 @@ export class Event {
     description : string | undefined;
     publicationDate : string | undefined;
     published : boolean = false;
+    eventStatut : EventStatut = EventStatut.DRAFT;
 
     startTime : string | undefined;
     endTime : string | undefined;

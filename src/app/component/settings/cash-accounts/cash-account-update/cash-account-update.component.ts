@@ -233,7 +233,7 @@ export class CashAccountUpdateComponent implements OnInit {
     }
 
     pushMessage(){
-        this.messageService.add({key: 'global', severity: 'success', summary: $localize `Succès`, detail: $localize `Compte d'encaissement mis à jour.`, life: 3000 });
+        this.messageService.add({severity: 'success', summary: $localize `Succès`, detail: $localize `Compte d'encaissement mis à jour.`, life: 3000 });
     }
 
 

@@ -109,7 +109,7 @@ export class UserDataComponent {
         this.userService.updateUserProfile(this.userProfile).subscribe(() => {
             if(this.userProfile.displayname !== this.currentUser?.displayName)
                 this.authService.updateProfileDisplayNameAndPhotoURLInFireBase(this.userProfile);
-            this.messageService.add({ key: 'global', severity: 'success', summary: $localize `Succès`, detail: $localize `Profile mis à jour.` });
+            this.messageService.add({ severity: 'success', summary: $localize `Succès`, detail: $localize `Profile mis à jour.` });
         });
     }
 

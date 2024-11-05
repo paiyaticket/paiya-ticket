@@ -43,7 +43,6 @@ export class EventOrganisationComponent implements OnInit, OnDestroy{
     id : string | undefined;
 
     SUCCESS_MESSAGE : Message = {
-        key: 'global', 
         severity: 'success', 
         summary: $localize `Succès`, 
         detail: $localize `Organisation modifiée avec succès.`, 

@@ -8,7 +8,7 @@ import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { environment } from '../environments/environment.development';
 import { HttpClient, provideHttpClient, withFetch, withInterceptors, withNoXsrfProtection } from '@angular/common/http';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { HttpErrorInterceptor } from './interceptors/http-error-interceptor';
 import { loggingInterceptor } from './interceptors/log-interceptor';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
@@ -33,6 +33,7 @@ export const appConfig: ApplicationConfig = {
         ),
         // primeng features providers
         MessageService,
+        ConfirmationService,
         TranslateModule.forRoot({
             defaultLanguage: 'fr',
             loader: {

@@ -42,7 +42,6 @@ import { ChooseOrganizerComponent } from "../choose-organizer/choose-organizer.c
     templateUrl: './my-event-list.component.html',
     styleUrl: './my-event-list.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [ConfirmationService],
 })
 export class MyEventListComponent implements OnInit {
 

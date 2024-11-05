@@ -122,7 +122,7 @@ export class CashAccountComponent {
     }
 
     pushMessage(){
-        this.messageService.add({key: 'global', severity: 'success', summary: $localize `Succès`, detail: $localize `Compte d'encaissement supprimé.`, life: 3000 });
+        this.messageService.add({severity: 'success', summary: $localize `Succès`, detail: $localize `Compte d'encaissement supprimé.`, life: 3000 });
     }
 
     goToUpdatePage(id : string | undefined){

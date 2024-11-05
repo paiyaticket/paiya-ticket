@@ -14,6 +14,7 @@ import { utcDateToZonedDateTime } from '../../../utils/date-util';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MessagesModule } from 'primeng/messages';
 import { ToastModule } from 'primeng/toast';
+import { EventStatut } from '../../../enumerations/event-statut';
 
 @Component({
   selector: 'app-publish',
@@ -34,7 +35,6 @@ import { ToastModule } from 'primeng/toast';
   templateUrl: './publish.component.html',
   styleUrl: './publish.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [MessageService, ConfirmationService]
 })
 export class PublishComponent {
 
@@ -116,6 +116,7 @@ export class PublishComponent {
         if(!this.event) return;
         if(this.whenToPublish?.value === PublishMoment.NOW){
             this.event.published = true;
+            this.event.eventStatut = EventStatut.PUBLISHED;
             this.event.publicationDate = new Date().toISOString();
         } else {
             this.event.published = false;
@@ -136,7 +137,7 @@ export class PublishComponent {
                 summary: $localize`Évènement publié avec succès`, 
                 detail: $localize`${this.event?.title}`
             });
-            this.router.navigate(['my-events']);
+            this.goToEventListPage();
         });
     }
 
@@ -152,6 +153,7 @@ export class PublishComponent {
 
     unpublish(){
         this.event.published = false;
+        this.event.eventStatut = EventStatut.DRAFT;
         this.event.publicationDate = undefined;
         this.event.publishSettings = undefined;
         this.eventService.update(this.event).subscribe(() => {
@@ -161,9 +163,13 @@ export class PublishComponent {
                 summary: $localize`Publication retirée avec succès`, 
                 detail: $localize`${this.event?.title}`
             });
-            this.router.navigate(['my-events']);
+            this.goToEventListPage();
         });
         
+    }
+
+    goToEventListPage(){
+        this.router.navigate(['/my-events']);
     }
 
     get eventVisibility() {

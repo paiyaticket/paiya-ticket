@@ -38,7 +38,7 @@ import { Message } from 'primeng/api';
 })
 export class EventOrganisationCreateComponent implements OnInit {
 
-    SUCCESS_MESSAGE : Message = {key: 'global', severity: 'success', summary: $localize `Succès`, detail: $localize `Organisation créee avec succès.`, life: 3000 };
+    SUCCESS_MESSAGE : Message = {severity: 'success', summary: $localize `Succès`, detail: $localize `Organisation créee avec succès.`, life: 3000 };
     
     onSave = output<Message>();
 

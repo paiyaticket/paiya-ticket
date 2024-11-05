@@ -1,26 +1,5 @@
-<!--
-    <div class="p-4 border-1 surface-border surface-card border-round flex flex-column">
-        <a [routerLink]="['..','my-event-configuration',event.id,'details']">
-            <div class="relative mx-auto">
-                <img class="border-round w-full" [src]="imageCover" [alt]="event.title" style="max-height: 200px; object-fit: cover;"/>
-            </div>
-        </a>
-        <div class="pt-4">
-            <div class="flex flex-row align-items-center justify-content-center gap-2">
-                <div>
-                    <div class="text-2xl font-bold">{{ event.title | uppercase }}</div>
-                </div>
-            </div>
-            <div class="flex flex-wrap justify-content-end mt-3">
-                <p-splitButton label="Voir détails" i18n-label="Détails" (onClick)="goToDetailsPage(event.id)" [model]="items" 
-                    icon="pi pi-eye" size="small" styleClass="p-button-info" severity="info" outlined/>
-            </div>
-        </div>
-    </div>
--->
-
 <div class="flex flex-column sm:flex-row sm:align-items-center p-4 gap-3">
-    <div class="md:w-15rem relative">
+    <div class="md:w-20rem relative">
         <a [routerLink]="['..','my-event-configuration',event.id,'details']">
             <img class="border-round w-full" [src]="imageCover" [alt]="event.title" style="max-height: 200px; object-fit: cover;"/>
         </a>
@@ -31,7 +10,7 @@
                 <p-tag [value]="(event.published) ? 'Publié' : 'Non Publié'" 
                         [severity]="(event.published) ? 'success' : 'warning'" 
                         [icon]="(event.published) ? 'pi pi-check' : 'pi pi-times'"
-                        styleClass="text-xl font-semibold text-900"></p-tag>
+                        styleClass="text-lg font-semibold text-900"></p-tag>
             </div>
             <div>
                 <a [routerLink]="['..','my-event-configuration',event.id,'details']">

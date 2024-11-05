@@ -49,7 +49,6 @@ import { MessagesModule } from 'primeng/messages';
     templateUrl: './ticket-create.component.html',
     styleUrl: './ticket-create.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [MessageService]
 })
 export class TicketCreateComponent {
 

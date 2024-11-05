@@ -20,7 +20,6 @@ import { TableModule } from 'primeng/table';
         CashAccountComponent,
         ConfirmDialogModule
     ],
-    providers: [ConfirmationService],
     templateUrl: './cash-account-list.component.html',
     styleUrl: './cash-account-list.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush

@@ -29,7 +29,6 @@ import { ToastModule } from 'primeng/toast';
     templateUrl: './ticket.component.html',
     styleUrl: './ticket.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [MessageService, ConfirmationService]
 })
 export class TicketComponent {
     @Input()

@@ -24,15 +24,15 @@ export class AppMenuComponent implements OnInit {
             {
                 label: `Évènements`, icon: 'pi pi-calendar',
 				items: [
-                    { label: 'Évènements', icon: 'pi pi-calendar', routerLink: ['./events'] },
+                    { label: 'Évènements', icon: 'pi pi-calendar', routerLink: ['./events'], routerLinkActiveOptions: {exact: false}  },
                 ]
             },
 			{
                 label: `Tickets`, icon: 'pi pi-ticket',
 				items: [
-                    { label: 'Vos Tickets', icon: 'pi pi-ticket', routerLink: ['./tickets'] },
-					{ label: 'Revendre', icon: 'pi pi-sync', routerLink: ['./resell'] },
-					{ label: 'Remboursements', icon: 'pi pi-money-bill', routerLink: ['./payback'] },
+                    { label: 'Vos Tickets', icon: 'pi pi-ticket', routerLink: ['./tickets'], routerLinkActiveOptions: {exact: false}  },
+					{ label: 'Revendre', icon: 'pi pi-sync', routerLink: ['./resell'], routerLinkActiveOptions: {exact: false}  },
+					{ label: 'Remboursements', icon: 'pi pi-money-bill', routerLink: ['./payback'], routerLinkActiveOptions: {exact: false}  },
                 ]
             },
             {

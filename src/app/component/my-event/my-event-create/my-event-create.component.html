@@ -344,9 +344,9 @@
     
     }
 
-    <div class="mt-4 flex justify-content-end flex-wrap">
-        <p-button type="button" label="Annuler" i18n-label="Annuler" styleClass="bg-primary-reverse mr-2" 
-            (onClick)="goToEventListPage()" icon="pi pi-times"></p-button>
+    <div class="mt-4 flex justify-content-between flex-wrap">
+        <p-button type="button" label="Retourner à la liste des évènements" i18n-label="Annuler" styleClass="bg-primary-reverse mr-2" 
+            (onClick)="goToEventListPage()" icon="pi pi-chevron-left"></p-button>
         <p-button type="submit" label="Sauvegarder et continuer" i18n-label="Sauvegarder et continuer" styleClass="m-auto"
             icon="pi pi-save" [disabled]="eventForm.invalid"></p-button>
     </div>
