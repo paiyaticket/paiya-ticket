@@ -11,11 +11,11 @@ export const environment = {
     appName: "PaiyaTicket",
     backendApi: {
         accountManager: {
-            baseUrl: "",
+            baseUrl: "https://paiya-accountmanager-1025378920331.us-central1.run.app",
             apiKey: ""
         },
         eventManager: {
-            baseUrl: "",
+            baseUrl: "https://paiya-eventmanager-1025378920331.us-central1.run.app",
             apiKey: ""
         }
     },
