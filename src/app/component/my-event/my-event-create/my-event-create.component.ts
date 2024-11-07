@@ -18,14 +18,12 @@ import { MessagesModule } from 'primeng/messages';
 import { Message } from 'primeng/api/message';
 import { laterDateValidator } from '../../../validators/laterDateValidator';
 import { PanelModule } from 'primeng/panel';
-import { Country } from '../../../models/country';
 import { COUNTRIES } from '../../../data/countries.data';
 import { EditorModule } from 'primeng/editor';
 import { CardModule } from 'primeng/card';
 import { GalleriaModule } from 'primeng/galleria';
 import { ChipsModule } from 'primeng/chips';
 import { VenueType } from '../../../enumerations/venueType';
-import { Event } from '../../../models/event';
 import { EventService } from '../../../service/event.service';
 import { Subscription } from 'rxjs';
 import { FilePondModule, registerPlugin } from 'ngx-filepond';
@@ -51,6 +49,8 @@ import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { FaqCreateComponent } from './faq/faq-create/faq-create.component';
 import { FaqListComponent } from './faq/faq-list/faq-list.component';
 import { EventOrganizerService } from '../../../service/event-organizer.service';
+import { Country } from '../../../models/country';
+import { Event } from '../../../models/event';
 
 
 
