@@ -3,8 +3,7 @@
       "origin": [
         "http://127.0.0.1:4200", 
         "http://localhost:4200",
-        "https://paiya-accountmanager-1025378920331.us-central1.run.app",
-        "https://paiya-eventmanager-1025378920331.us-central1.run.app"
+        "https://paiya-ticket--paiya-413605.us-central1.hosted.app"
       ],
       "method": [
         "GET",
