@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
+// @ts-ignore
 import { Ticket } from '../../../../models/ticket';
 import { TicketService } from '../../../../service/ticket.service';
 import { CommonModule } from '@angular/common';

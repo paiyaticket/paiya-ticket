@@ -13,6 +13,7 @@ import { Observable } from "rxjs";
 import { EventService } from "../../../service/event.service";
 import { DataViewModule } from 'primeng/dataview';
 import { SplitButtonModule } from 'primeng/splitbutton';
+// @ts-ignore
 import { Event } from "../../../models/event";
 import { SidebarModule } from "primeng/sidebar";
 import { DialogModule } from 'primeng/dialog';

@@ -49,7 +49,9 @@ import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { FaqCreateComponent } from './faq/faq-create/faq-create.component';
 import { FaqListComponent } from './faq/faq-list/faq-list.component';
 import { EventOrganizerService } from '../../../service/event-organizer.service';
+// @ts-ignore
 import { Country } from '../../../models/country';
+// @ts-ignore
 import { Event } from '../../../models/event';
 
 

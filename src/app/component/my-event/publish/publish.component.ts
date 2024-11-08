@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, SimpleChanges } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
+// @ts-ignore
 import { Event } from '../../../models/event';
 import { EventService } from '../../../service/event.service';
 import { EventVisibility, PublishMoment, PublishSettings } from '../../../models/publishSettings';

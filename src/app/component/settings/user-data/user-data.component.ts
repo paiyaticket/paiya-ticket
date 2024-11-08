@@ -13,6 +13,7 @@ import { InputMaskModule } from 'primeng/inputmask';
 import { UserData } from '../../../models/user-data';
 import { User, Auth, onAuthStateChanged, UserProfile } from '@angular/fire/auth';
 import { MessageService } from 'primeng/api';
+// @ts-ignore
 import { Country } from '../../../models/country';
 import { UserService } from '../../../service/user.service';
 import { COUNTRIES } from '../../../data/countries.data';

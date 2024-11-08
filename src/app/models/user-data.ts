@@ -1,3 +1,4 @@
+// @ts-ignore
 import { Country } from "./country";
 
 export class UserData{

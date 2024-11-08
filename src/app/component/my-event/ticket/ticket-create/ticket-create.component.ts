@@ -15,10 +15,10 @@ import { laterDateValidator } from '../../../../validators/laterDateValidator';
 import { EditorModule } from 'primeng/editor';
 import { ToggleButtonChangeEvent, ToggleButtonModule } from 'primeng/togglebutton';
 import { TableModule } from 'primeng/table';
+// @ts-ignore
 import { Ticket } from '../../../../models/ticket';
 import { TicketService } from '../../../../service/ticket.service';
-import { MessageService } from 'primeng/api';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { TicketType } from '../../../../enumerations/ticket-type';
 import { MessagesModule } from 'primeng/messages';
