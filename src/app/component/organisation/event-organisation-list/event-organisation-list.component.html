@@ -1,5 +1,5 @@
-<section class="grid">
-    @if (eventOrganizerList) {
+
+    @if (eventOrganizerList && eventOrganizerList.length > 0) {
         @for(org of eventOrganizerList; track org.id){
             <article class="sm:col-12 md:col-6 lg:col-4 xl:col-3">
                 <div class="border-top-3 border-blue-400 p-2">
@@ -27,11 +27,11 @@
     @else {
         <div class= "surface-200 col-12 border-round-md border-dashed ">
             <p class="text-gray-500 font-semibold text-center" i18n>
-                Vous n'avez aucun profile d'organisation pour l'instant.
+                Vous n'avez aucune organisation pour l'instant.
             </p>
         </div> 
     }
-</section>
+
      
 
 
