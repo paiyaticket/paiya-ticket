@@ -18,7 +18,7 @@ export const environment = {
             baseUrl: "http://localhost:8011/api",
             apiKey: ""
         }
-    },
+    },  
     instanceParams: {
         country : "CI",
         currency : "FCFA",
