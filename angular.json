@@ -4,9 +4,6 @@
   "newProjectRoot": "projects",
   "projects": {
     "paiya-ticket": {
-        "i18n": {
-            "sourceLocale": "fr-FR"
-        },
         "projectType": "application",
         "schematics": {
             "@schematics/angular:component": {

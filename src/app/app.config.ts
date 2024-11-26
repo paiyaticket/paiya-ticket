@@ -34,18 +34,22 @@ export const appConfig: ApplicationConfig = {
         // primeng features providers
         MessageService,
         ConfirmationService,
+        /*
         TranslateModule.forRoot({
-            defaultLanguage: 'fr',
+            defaultLanguage: 'en',
             loader: {
                 provide: TranslateLoader,
                 useFactory: HttpLoaderFactory,
                 deps: [HttpClient]
             }
         }).providers!
+        */
         
     ]
 };
 
+/*
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http);
 }
+    */

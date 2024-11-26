@@ -7,7 +7,7 @@
 
 <section class="grid">
     @if (cashAccounts$ | async; as cashAccounts) {
-        @if (cashAccounts.length != 0) {
+        @if (cashAccounts) {
             @for (item of cashAccounts; track $index) {
                 <div class="col sm:col-12 md:col-6 lg:col-4 xl:col-4">
                     <app-cash-account [cashAccount] = "item"></app-cash-account>
