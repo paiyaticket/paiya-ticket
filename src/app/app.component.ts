@@ -18,7 +18,10 @@ export class AppComponent {
 
   title = 'paiya ticket';
 
-  constructor(private primengConfig: PrimeNGConfig, private translateService: TranslateService) { }
+  constructor(
+            private primengConfig: PrimeNGConfig, 
+            // private translateService: TranslateService
+        ) { }
 
     ngOnInit(): void {
         this.primengConfig.ripple = true;

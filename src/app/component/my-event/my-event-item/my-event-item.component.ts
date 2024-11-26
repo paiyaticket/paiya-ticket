@@ -15,6 +15,7 @@ import { TableModule } from 'primeng/table';
 import { EventService } from '../../../service/event.service';
 import { Subscription } from 'rxjs';
 import { TagModule } from 'primeng/tag';
+import { utcDateToZonedDateTime } from '../../../utils/date-util';
 
 @Component({
     selector: 'app-my-event-item',
@@ -68,6 +69,8 @@ export class MyEventItemComponent implements OnDestroy {
             },
         ]
     }
+
+
 
     get imageCover(){
         if(this.event.imageCovers && this.event.imageCovers.length > 0){

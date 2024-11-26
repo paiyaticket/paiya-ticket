@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { Auth, getAuth } from '@angular/fire/auth';
 import { MessageService, Message, ConfirmationService } from 'primeng/api';
 import { Observable } from 'rxjs';
@@ -24,7 +24,8 @@ import { TableModule } from 'primeng/table';
     styleUrl: './cash-account-list.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CashAccountListComponent implements OnInit{
+export class CashAccountListComponent implements OnInit, OnChanges{
+    
     
     cashAccounts : CashAccount[] = [];
     cashAccounts$ : Observable<CashAccount[]> | undefined;
@@ -43,5 +44,9 @@ export class CashAccountListComponent implements OnInit{
             this.cashAccounts$ = this.cashAccountService.listByUserEmail(email);
         }
     } 
+
+    ngOnChanges(changes: SimpleChanges): void {
+        
+    }
 
 }

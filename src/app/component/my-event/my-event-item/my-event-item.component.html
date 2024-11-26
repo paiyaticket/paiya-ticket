@@ -28,9 +28,6 @@
         </div>
         <div class="flex flex-column md:align-items-end gap-2">
             <span class="text-xl font-semibold text-900">0 / 0 tickets vendus</span>
-            <div>
-                <div class="font-italic text-700"> dernière modification : {{event.lastModifiedDate | date:'dd/MM/yyyy, HH:mm'}} </div>
-            </div>
             <div class="flex flex-row-reverse md:flex-row">
                 <p-splitButton label="Voir détails" i18n-label="Détails" (onClick)="goToDetailsPage(event.id)" [model]="items" 
                     icon="pi pi-eye" size="small" class="flex-auto md:flex-initial white-space-nowrap"
