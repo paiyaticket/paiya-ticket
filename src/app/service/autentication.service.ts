@@ -92,7 +92,7 @@ export class AutenticationService {
     }
 
     private redirectToHomePage(){
-        this.router.navigate(['']);
+        this.router.navigate(['my-events']);
     }
 
     getAuthenticatedUserData(user: User) : UserData {
