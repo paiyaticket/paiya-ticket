@@ -1,32 +1,35 @@
+import { CommonModule, DOCUMENT } from '@angular/common';
 import { Component, Inject, OnDestroy, Renderer2, ViewChild } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { AppTopBarComponent } from '../layout/app.topbar.component';
 import { filter, Subscription } from 'rxjs';
-import { TabCloseEvent } from './api/tabcloseevent';
-import { MenuService } from './app.menu.service';
-import { ParticipantSidebarComponent } from './app.sidebar.component';
-import { AppTopBarComponent } from './app.topbar.component';
-import { LayoutService } from './service/app.layout.service';
-import { CommonModule, DOCUMENT } from '@angular/common';
-import { AppBreadcrumbComponent } from './app.breadcrumb.component';
-import { AppFooterComponent } from './app.footer.component';
-import { AppConfigComponent } from './config/app.config.component';
+import { MenuService } from '../layout/app.menu.service';
+import { TabCloseEvent } from '../layout/api/tabcloseevent';
+import { ParticipantTopBarComponent } from './participant.topbar.component';
+import { ParticipantBreadcrumbComponent } from './participant.breadcrumb.component';
+import { ParticipantFooterComponent } from './participant.footer.component';
+import { ParticipantConfigComponent } from './config/participant.config.component';
+import { ParticipantSidebarComponent } from './participant.sidebar.component';
+import { ParticipantLayoutService } from './service/participant.layout.service';
+import { ParticipantMenuService } from './participant.menu.service';
 
 @Component({
-    selector: 'app-layout',
-    templateUrl: './app.layout.component.html',
-    standalone : true,
+    selector: 'participant-mode-layout',
+    standalone: true,
     imports: [
         CommonModule,
         RouterOutlet,
-        AppTopBarComponent,
+        ParticipantTopBarComponent,
         ParticipantSidebarComponent,
-        AppBreadcrumbComponent,
-        AppFooterComponent,
-        AppConfigComponent
+        ParticipantBreadcrumbComponent,
+        ParticipantFooterComponent,
+        ParticipantConfigComponent
     ],
+    templateUrl: './participant.mode.layout.component.html',
+    styleUrl: './participant.mode.layout.component.scss'
 })
-export class AppLayoutComponent implements OnDestroy {
-
+export class ParticipantModeLayoutComponent implements OnDestroy {
+    
     overlayMenuOpenSubscription: Subscription;
 
     tabOpenSubscription: Subscription;
@@ -41,8 +44,8 @@ export class AppLayoutComponent implements OnDestroy {
 
     @ViewChild(AppTopBarComponent) appTopbar!: AppTopBarComponent;
 
-    constructor(private menuService: MenuService, 
-                public layoutService: LayoutService, 
+    constructor(private menuService: ParticipantMenuService, 
+                public layoutService: ParticipantLayoutService, 
                 public renderer: Renderer2, 
                 public router: Router,
                 @Inject(DOCUMENT) private document: Document
@@ -171,6 +174,4 @@ export class AppLayoutComponent implements OnDestroy {
             this.tabCloseSubscription.unsubscribe();
         }
     }
-
 }
-

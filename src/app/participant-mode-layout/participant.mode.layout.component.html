@@ -1,0 +1,15 @@
+<div [ngClass]="containerClass">
+    <participant-topbar></participant-topbar>
+    <!-- <participant-sidebar></participant-sidebar> -->
+    <div class="layout-content-wrapper">
+        <div class="layout-content">
+            <div class="layout-content-inner">
+                <!-- <participant-breadcrumb></participant-breadcrumb> -->
+                <router-outlet></router-outlet>
+                <participant-footer></participant-footer>
+            </div>
+        </div>
+    </div>
+    <!-- <participant-config></participant-config> -->
+    
+</div>
