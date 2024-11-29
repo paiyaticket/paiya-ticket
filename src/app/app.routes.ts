@@ -19,13 +19,24 @@ import { MyEventConfigurationComponent } from './component/my-event/my-event-con
 import { TicketListComponent } from './component/my-event/ticket/ticket-list/ticket-list.component';
 import { TicketComponent } from './component/my-event/ticket/ticket.component';
 import { PublishComponent } from './component/my-event/publish/publish.component';
+import { ParticipantModeComponent } from './participant-mode/participant-mode.component';
+import { OrganizerModeComponent } from './organizer-mode/organizer-mode.component';
+import { participantModeRoutes } from './participant-mode/participant.routes';
+import { organizerModeRoutes } from './organizer-mode/organizer.routes';
 
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['auth/login']);
 
 export const routes: Routes = [
+    {path: "", component: ParticipantModeComponent, canActivate: [AuthGuard], children: organizerModeRoutes},
+    {path: "organizer-mode", component: AppLayoutComponent, canActivate: [AuthGuard], children: participantModeRoutes},
+    {path: 'auth/login', component: LoginComponent, title: 'Login'},
+    {path: "auth/register", component: RegisterComponent},
+    {path: "**", component: NotFoundComponent},
+    /*
     {path : "", component: AppLayoutComponent, title: `Accueil`, 
         data: { breadcrumb: `Accueil`}, 
+        
         children: [
             {path: "", component: EmptyComponent},
             {path: "settings", 
@@ -73,8 +84,8 @@ export const routes: Routes = [
             },
             
         ]
+        
     },
-    {path: 'auth/login', component: LoginComponent, title: 'Login'},
-    {path: "auth/register", component: RegisterComponent},
-    {path: "**", component: NotFoundComponent},
+    */
+    
 ];
