@@ -6,10 +6,8 @@ import { filter } from 'rxjs/operators';
 import { ParticipantMenuService } from './participant.menu.service';
 import { ParticipantLayoutService } from './service/participant.layout.service';
 import { ParticipantSidebarComponent } from './participant.sidebar.component';
-import {DomHandler} from 'primeng/dom';
 import { CommonModule, NgClass } from '@angular/common';
 import { TooltipModule } from 'primeng/tooltip';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @Component({
     // eslint-disable-next-line @angular-eslint/component-selector
