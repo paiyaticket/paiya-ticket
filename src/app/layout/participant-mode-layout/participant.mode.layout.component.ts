@@ -1,10 +1,7 @@
 import { CommonModule, DOCUMENT } from '@angular/common';
 import { Component, Inject, OnDestroy, Renderer2, ViewChild } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
-import { AppTopBarComponent } from '../layout/app.topbar.component';
 import { filter, Subscription } from 'rxjs';
-import { MenuService } from '../layout/app.menu.service';
-import { TabCloseEvent } from '../layout/api/tabcloseevent';
 import { ParticipantTopBarComponent } from './participant.topbar.component';
 import { ParticipantBreadcrumbComponent } from './participant.breadcrumb.component';
 import { ParticipantFooterComponent } from './participant.footer.component';
@@ -12,6 +9,7 @@ import { ParticipantConfigComponent } from './config/participant.config.componen
 import { ParticipantSidebarComponent } from './participant.sidebar.component';
 import { ParticipantLayoutService } from './service/participant.layout.service';
 import { ParticipantMenuService } from './participant.menu.service';
+import { TabCloseEvent } from './api/tabcloseevent';
 
 @Component({
     selector: 'participant-mode-layout',
