@@ -1,35 +1,19 @@
 import { Routes } from '@angular/router';
-import { EmptyComponent } from './component/empty/empty.component';
-import { AppLayoutComponent } from './layout/app.layout.component';
 import { LoginComponent } from './component/authentication/login/login.component';
 import { RegisterComponent } from './component/authentication/register/register.component';
 import { NotFoundComponent } from './component/not-found/not-found.component';
-import { SettingsComponent } from './component/settings/settings.component';
 import {AuthGuard, redirectUnauthorizedTo} from '@angular/fire/auth-guard';
-import { UserDataComponent } from './component/settings/user-data/user-data.component';
-import { CashAccountListComponent } from './component/settings/cash-accounts/cash-account-list/cash-account-list.component';
-import { CashAccountCreateComponent } from './component/settings/cash-accounts/cash-account-create/cash-account-create.component';
-import { CashAccountUpdateComponent } from './component/settings/cash-accounts/cash-account-update/cash-account-update.component';
-import { EventOrganisationListComponent } from './component/organisation/event-organisation-list/event-organisation-list.component';
-import { OrganisationComponent } from './component/organisation/organisation.component';
-import { MyEventListComponent } from './component/my-event/my-event-list/my-event-list.component';
-import { MyEventCreateComponent } from './component/my-event/my-event-create/my-event-create.component';
-import { MyEventComponent } from './component/my-event/my-event.component';
-import { MyEventConfigurationComponent } from './component/my-event/my-event-configuration/my-event-configuration.component';
-import { TicketListComponent } from './component/my-event/ticket/ticket-list/ticket-list.component';
-import { TicketComponent } from './component/my-event/ticket/ticket.component';
-import { PublishComponent } from './component/my-event/publish/publish.component';
-import { OrganizerModeComponent } from './organizer-mode/organizer-mode.component';
-import { participantModeRoutes } from './participant-mode-layout/participant.routes';
-import { organizerModeRoutes } from './organizer-mode/organizer.routes';
-import { ParticipantModeLayoutComponent } from './participant-mode-layout/participant.mode.layout.component';
+import { ParticipantModeLayoutComponent } from './layout/participant-mode-layout/participant.mode.layout.component';
+import { organizerModeRoutes } from './component/organizer-mode/organizer.mode.routes';
+import { OrganizerModeLayoutComponent } from './layout/organizer-mode-layout/organizer-mode-layout.component';
+import { participantModeRoutes } from './component/participant-mode/participant.mode.routes';
 
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['auth/login']);
 
 export const routes: Routes = [
     {path: "", component: ParticipantModeLayoutComponent, canActivate: [AuthGuard], children: participantModeRoutes },
-    {path: "organizer-mode", component: AppLayoutComponent, canActivate: [AuthGuard], children: organizerModeRoutes },
+    {path: "organizer-mode", component: OrganizerModeLayoutComponent, canActivate: [AuthGuard], children: organizerModeRoutes },
     {path: 'auth/login', component: LoginComponent, title: 'Login'},
     {path: "auth/register", component: RegisterComponent},
     {path: "**", component: NotFoundComponent},

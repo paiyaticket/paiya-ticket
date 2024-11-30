@@ -6,8 +6,8 @@ import { ButtonModule } from 'primeng/button';
 import { DividerModule } from 'primeng/divider';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
-import { LayoutService } from '../../../layout/service/app.layout.service';
 import { AutenticationService } from '../../../service/autentication.service';
+import { OrganizerLayoutService } from '../../../layout/organizer-mode-layout/service/organizer.layout.service';
 
 @Component({
     selector: 'app-register',
@@ -30,7 +30,7 @@ export class RegisterComponent {
     email: string = '';
 	password: string = '';
 
-    private layoutService: LayoutService = inject(LayoutService); 
+    private layoutService: OrganizerLayoutService = inject(OrganizerLayoutService); 
     private authService: AutenticationService = inject(AutenticationService);
 
 	signUp(){
