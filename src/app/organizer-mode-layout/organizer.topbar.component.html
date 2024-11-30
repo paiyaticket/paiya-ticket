@@ -4,11 +4,9 @@
         <span class="app-name">PaiyaTicket</span>
     </a>
     
-    <!--
-        <button #menubutton class="topbar-menubutton p-link" type="button" (click)="onMenuButtonClick()">
-            <span></span>
-        </button>
-    -->
+    <button #menubutton class="topbar-menubutton p-link" type="button" (click)="onMenuButtonClick()">
+        <span></span>
+    </button>
 
     <ul class="topbar-menu">
         <li *ngFor="let item of tabs; let i = index">
@@ -35,7 +33,7 @@
     </div>
 
     <div class="ml-4">
-        <p-button label="Créer un évènement" icon="pi pi-calendar-plus" outlined="true" severity="info" routerLink="/my-events/my-event-configuration"></p-button>
+        <p-button label="Basculer en mode participant" icon="pi pi-arrow-right-arrow-left" outlined="true" severity="info" routerLink="/"></p-button>
     </div>
     
     <div class="topbar-profile">

@@ -1,0 +1,15 @@
+<div class="layout-container" [ngClass]="containerClass">
+    <organizer-topbar></organizer-topbar>
+    <organizer-sidebar></organizer-sidebar>
+    <div class="layout-content-wrapper">
+        <div class="layout-content">
+            <div class="layout-content-inner">
+                <organizer-breadcrumb></organizer-breadcrumb>
+                <router-outlet></router-outlet>
+                <organizer-footer></organizer-footer>
+            </div>
+        </div>
+    </div>
+    <!-- <organizer-config></organizer-config> -->
+    
+</div>

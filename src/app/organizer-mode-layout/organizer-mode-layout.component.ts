@@ -1,35 +1,33 @@
 import { CommonModule, DOCUMENT } from '@angular/common';
-import { Component, Inject, OnDestroy, Renderer2, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, Renderer2, ViewChild } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
-import { AppTopBarComponent } from '../layout/app.topbar.component';
-import { filter, Subscription } from 'rxjs';
-import { MenuService } from '../layout/app.menu.service';
-import { TabCloseEvent } from '../layout/api/tabcloseevent';
-import { ParticipantTopBarComponent } from './participant.topbar.component';
-import { ParticipantBreadcrumbComponent } from './participant.breadcrumb.component';
-import { ParticipantFooterComponent } from './participant.footer.component';
-import { ParticipantConfigComponent } from './config/participant.config.component';
-import { ParticipantSidebarComponent } from './participant.sidebar.component';
-import { ParticipantLayoutService } from './service/participant.layout.service';
-import { ParticipantMenuService } from './participant.menu.service';
+import { OrganizerConfigComponent } from './config/organizer.config.component';
+import { OrganizerBreadcrumbComponent } from './organizer.breadcrumb.component';
+import { OrganizerFooterComponent } from './organizer.footer.component';
+import { OrganizerSidebarComponent } from './organizer.sidebar.component';
+import { OrganizerTopBarComponent } from './organizer.topbar.component';
+import { Subscription, filter } from 'rxjs';
+import { TabCloseEvent } from './api/tabcloseevent';
+import { OrganizerMenuService } from './organizer.menu.service';
+import { OrganizerLayoutService } from './service/organizer.layout.service';
 
 @Component({
-    selector: 'participant-mode-layout',
-    standalone: true,
-    imports: [
-        CommonModule,
-        RouterOutlet,
-        ParticipantTopBarComponent,
-        ParticipantSidebarComponent,
-        ParticipantBreadcrumbComponent,
-        ParticipantFooterComponent,
-        ParticipantConfigComponent
-    ],
-    templateUrl: './participant.mode.layout.component.html',
-    styleUrl: './participant.mode.layout.component.scss'
+  selector: 'organizer-mode-layout',
+  standalone: true,
+  imports: [
+    CommonModule,
+    RouterOutlet,
+    OrganizerTopBarComponent,
+    OrganizerSidebarComponent,
+    OrganizerBreadcrumbComponent,
+    OrganizerFooterComponent,
+    // OrganizerConfigComponent
+  ],
+  templateUrl: './organizer-mode-layout.component.html',
+  styleUrl: './organizer-mode-layout.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ParticipantModeLayoutComponent implements OnDestroy {
-    
+export class OrganizerModeLayoutComponent {
     overlayMenuOpenSubscription: Subscription;
 
     tabOpenSubscription: Subscription;
@@ -40,12 +38,12 @@ export class ParticipantModeLayoutComponent implements OnDestroy {
 
     menuScrollListener: any;
 
-    @ViewChild(ParticipantSidebarComponent) appSidebar!: ParticipantSidebarComponent;
+    @ViewChild(OrganizerSidebarComponent) appSidebar!: OrganizerSidebarComponent;
 
-    @ViewChild(ParticipantTopBarComponent) appTopbar!: ParticipantTopBarComponent;
+    @ViewChild(OrganizerTopBarComponent) appTopbar!: OrganizerTopBarComponent;
 
-    constructor(private menuService: ParticipantMenuService, 
-                public layoutService: ParticipantLayoutService, 
+    constructor(private menuService: OrganizerMenuService, 
+                public layoutService: OrganizerLayoutService, 
                 public renderer: Renderer2, 
                 public router: Router,
                 @Inject(DOCUMENT) private document: Document
