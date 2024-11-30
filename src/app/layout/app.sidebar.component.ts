@@ -10,7 +10,7 @@ import { AppMenuComponent } from './app.menu.component';
         AppMenuComponent
     ]
 })
-export class AppSidebarComponent {
+export class ParticipantSidebarComponent {
 
     @ViewChild('menuContainer') menuContainer!: ElementRef;
     constructor(public layoutService: LayoutService, public el: ElementRef) {}

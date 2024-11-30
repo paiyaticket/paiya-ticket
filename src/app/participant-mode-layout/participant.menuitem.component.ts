@@ -3,9 +3,9 @@ import { IsActiveMatchOptions, NavigationEnd, Router, RouterLink, RouterLinkActi
 import { animate, state, style, transition, trigger,AnimationEvent } from '@angular/animations';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { MenuService } from './app.menu.service';
-import { LayoutService } from './service/app.layout.service';
-import { ParticipantSidebarComponent } from './app.sidebar.component';
+import { ParticipantMenuService } from './participant.menu.service';
+import { ParticipantLayoutService } from './service/participant.layout.service';
+import { ParticipantSidebarComponent } from './participant.sidebar.component';
 import {DomHandler} from 'primeng/dom';
 import { CommonModule, NgClass } from '@angular/common';
 import { TooltipModule } from 'primeng/tooltip';
@@ -13,7 +13,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @Component({
     // eslint-disable-next-line @angular-eslint/component-selector
-    selector: '[app-menuitem]',
+    selector: '[participant-menuitem]',
     standalone: true,
     imports: [
         CommonModule,
@@ -43,7 +43,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 			<ul #submenu *ngIf="item.items && item.visible !== false" [@children]="submenuAnimation" (@children.done)="onSubmenuAnimated($event)">
 				<ng-template ngFor let-child let-i="index" [ngForOf]="item.items">
-					<li app-menuitem [item]="child" [index]="i" [parentKey]="key" [class]="child.badgeClass"></li>
+					<li participant-menuitem [item]="child" [index]="i" [parentKey]="key" [class]="child.badgeClass"></li>
 				</ng-template>
 			</ul>
 		</ng-container>
@@ -66,7 +66,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
         ])
     ]
 })
-export class AppMenuitemComponent implements OnInit, OnDestroy {
+export class ParticipantMenuitemComponent implements OnInit, OnDestroy {
 
     @Input() item: any;
 
@@ -86,7 +86,7 @@ export class AppMenuitemComponent implements OnInit, OnDestroy {
 
     key: string = "";
 
-    constructor(public layoutService: LayoutService, private cd: ChangeDetectorRef,private appSidebar: ParticipantSidebarComponent, public router: Router, private menuService: MenuService) {
+    constructor(public layoutService: ParticipantLayoutService, private cd: ChangeDetectorRef,private appSidebar: ParticipantSidebarComponent, public router: Router, private menuService: ParticipantMenuService) {
         this.menuSourceSubscription = this.menuService.menuSource$.subscribe(value => {
             Promise.resolve(null).then(() => {
                 if (value.routeEvent) {
