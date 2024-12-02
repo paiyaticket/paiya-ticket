@@ -1,12 +1,12 @@
 import { Routes } from '@angular/router';
-import { LoginComponent } from './component/authentication/login/login.component';
-import { RegisterComponent } from './component/authentication/register/register.component';
-import { NotFoundComponent } from './component/not-found/not-found.component';
+import { LoginComponent } from './components/authentication/login/login.component';
+import { RegisterComponent } from './components/authentication/register/register.component';
+import { NotFoundComponent } from './components/not-found/not-found.component';
 import {AuthGuard, redirectUnauthorizedTo} from '@angular/fire/auth-guard';
-import { ParticipantModeLayoutComponent } from './layout/participant-mode-layout/participant.mode.layout.component';
-import { organizerModeRoutes } from './component/organizer-mode/organizer.mode.routes';
-import { OrganizerModeLayoutComponent } from './layout/organizer-mode-layout/organizer-mode-layout.component';
-import { participantModeRoutes } from './component/participant-mode/participant.mode.routes';
+import { ParticipantModeLayoutComponent } from './layouts/participant-mode-layout/participant.mode.layout.component';
+import { organizerModeRoutes } from './components/organizer-mode/organizer.mode.routes';
+import { OrganizerModeLayoutComponent } from './layouts/organizer-mode-layout/organizer-mode-layout.component';
+import { participantModeRoutes } from './components/participant-mode/participant.mode.routes';
 
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['auth/login']);
