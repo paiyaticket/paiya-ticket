@@ -4,7 +4,7 @@ import { EventOrganizerService } from '../../../../services/event-organizer.serv
 import { Observable, Subscription } from 'rxjs';
 import { EventOrganizer } from '../../../../models/event-organizer';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { DividerModule } from 'primeng/divider';
 
@@ -26,6 +26,7 @@ export class ChooseOrganizerComponent {
     currentUser : any;
     
     constructor(
+        private route : ActivatedRoute,
         private router : Router,
         private auth: Auth, 
         private organizerService: EventOrganizerService) { }
@@ -36,7 +37,7 @@ export class ChooseOrganizerComponent {
     }
 
     selectOrganizer(id : string){
-        this.router.navigate(['/my-events/my-event-configuration'], { queryParams: { organizerId: id } });
+        this.router.navigate(['../my-event-configuration'], { queryParams: { organizerId: id }, relativeTo: this.route });
     }
 
 }

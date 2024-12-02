@@ -1,0 +1,48 @@
+<div class="formgrid grid">
+    <div class="field xl:col-12 lg:col-12 col-12 imageCover">
+        <file-pond
+            [files]="initImagesIfEventIdIsPassed()"
+            [options]="pondOptions"
+            class="my-2">
+        </file-pond>
+
+        @if(imageCovers?.value.length > 0){
+            <p-button label="Slectionner l'Image de couverture" icon="pi pi-star" severity="info"  (onClick)="showDialog()"/>
+        }
+        
+    </div>
+    <div class="field xl:col-12 lg:col-12 col-12 ">
+        <p-inputGroup>
+            <p-inputGroupAddon>Lien vidéo</p-inputGroupAddon>
+            <input type="text" pInputText placeholder="https://youtu.be/5zaeAcjTito?si=76KM-btaSvC4V9Pz" formControlName="videoLink" />
+        </p-inputGroup>
+    </div>
+</div>
+
+
+<p-dialog 
+    header="Header" 
+    [(visible)]="visible" 
+    [modal]="true" 
+    [style]="{ width: '50rem', height: '50rem' }">
+        <ng-template pTemplate="header">
+            <div class="inline-flex align-items-center justify-content-center gap-2">
+                <span class="font-bold white-space-nowrap">
+                    Sélectionner une image de couverture par defaut.
+                </span>
+            </div>
+        </ng-template>
+        <div class="grid">
+            @for (image of imageCovers?.value; track $index) {
+                <div class="col-4 justify-content-center">
+                    <div class="relative">
+                        <img class="border-round w-full hover:shadow-4" 
+                            [src]="image.source" [alt]="" (click)="makeImageDefault($index)"/>
+                        @if (image.byDefault) {
+                            <i class="pi pi-star-fill text-3xl text-primary absolute top-0 right-0 z-10 mt-2 mr-2"></i>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+</p-dialog>

@@ -2,43 +2,43 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, Inject, Input, OnDestroy, OnInit, PLATFORM_ID, Signal, ViewChild, ViewEncapsulation, WritableSignal } from '@angular/core';
 import { Auth, getAuth, User } from '@angular/fire/auth';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
 import { FieldsetModule } from 'primeng/fieldset';
 import { InputMaskModule } from 'primeng/inputmask';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
-import { EventOrganizer } from '../../../../models/event-organizer';
-import { CashAccount } from '../../../../models/cash-account';
+import { EventOrganizer } from '@models/event-organizer';
+import { CashAccount } from '@models/cash-account';
 import { SelectButtonModule } from 'primeng/selectbutton';
-import { EventType } from '../../../../enumerations/event-type';
+import { EventType } from '@enumerations/event-type';
 import { CalendarModule } from 'primeng/calendar';
 import { MessagesModule } from 'primeng/messages';
 import { Message } from 'primeng/api/message';
-import { laterDateValidator } from '../../../../validators/laterDateValidator';
+import { laterDateValidator } from '@validators/laterDateValidator';
 import { PanelModule } from 'primeng/panel';
-import { COUNTRIES } from '../../../../datas/countries.data';
+import { COUNTRIES } from '@datas/countries.data';
 import { EditorModule } from 'primeng/editor';
 import { CardModule } from 'primeng/card';
 import { GalleriaModule } from 'primeng/galleria';
 import { ChipsModule } from 'primeng/chips';
-import { VenueType } from '../../../../enumerations/venueType';
-import { EventService } from '../../../../services/event.service';
+import { VenueType } from '@enumerations/venueType';
+import { EventService } from '@services/event.service';
 import { Subscription } from 'rxjs';
 import { FilePondModule, registerPlugin } from 'ngx-filepond';
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 import FilePondPluginImageResize from 'filepond-plugin-image-resize';
 import FilePondPluginImageTransform from 'filepond-plugin-image-transform';
-import { FileStorageService } from '../../../../services/file-storage.service';
+import { FileStorageService } from '@services/file-storage.service';
 import { getDownloadURL } from '@angular/fire/storage';
-import { ImageCover } from '../../../../models/image-cover';
+import { ImageCover } from '@models/image-cover';
 import { MessageService } from 'primeng/api';
 import { FetchServerConfigFunction, FilePond, FilePondOptions, LoadServerConfigFunction, ProcessServerConfigFunction, RemoveServerConfigFunction, RevertServerConfigFunction } from 'filepond';
 import { DialogModule } from 'primeng/dialog';
-import { TimeSlot } from '../../../../models/time-slot';
-import { Question } from '../../../../models/question';
+import { TimeSlot } from '@models/time-slot';
+import { Question } from '@models/question';
 import { AgendaCreateComponent } from './agenda/agenda-create/agenda-create.component';
 import { SidebarModule } from 'primeng/sidebar';
 import { AgendaListComponent } from './agenda/agenda-list/agenda-list.component';
@@ -48,11 +48,11 @@ import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { FaqCreateComponent } from './faq/faq-create/faq-create.component';
 import { FaqListComponent } from './faq/faq-list/faq-list.component';
-import { EventOrganizerService } from '../../../../services/event-organizer.service';
+import { EventOrganizerService } from '@services/event-organizer.service';
 // @ts-ignore
-import { Country } from '../../../../models/country';
+import { Country } from '@models/country';
 // @ts-ignore
-import { Event } from '../../../../models/event';
+import { Event } from '@models/event';
 
 
 
@@ -64,6 +64,7 @@ import { Event } from '../../../../models/event';
     standalone: true,
     imports: [
         CommonModule,
+        RouterLink,
         FormsModule,
         InputTextModule,
         InputTextareaModule,
@@ -631,7 +632,7 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
     }
 
     goToEventListPage(){
-        this.router.navigate(['/my-events']);
+        this.router.navigate(['../my-events'], {relativeTo: this.route});
     }
 
     ngOnDestroy(): void {
