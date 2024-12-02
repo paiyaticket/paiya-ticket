@@ -1,12 +1,17 @@
 import { Routes } from '@angular/router';
-import { LoginComponent } from './components/authentication/login/login.component';
-import { RegisterComponent } from './components/authentication/register/register.component';
-import { NotFoundComponent } from './components/not-found/not-found.component';
+import { LoginComponent } from '@components/authentication/login/login.component';
+import { RegisterComponent } from '@components/authentication/register/register.component';
+import { NotFoundComponent } from '@components/not-found/not-found.component';
 import {AuthGuard, redirectUnauthorizedTo} from '@angular/fire/auth-guard';
-import { ParticipantModeLayoutComponent } from './layouts/participant-mode-layout/participant.mode.layout.component';
-import { organizerModeRoutes } from './components/organizer-mode/organizer.mode.routes';
-import { OrganizerModeLayoutComponent } from './layouts/organizer-mode-layout/organizer-mode-layout.component';
-import { participantModeRoutes } from './components/participant-mode/participant.mode.routes';
+import { ParticipantModeLayoutComponent } from '@layouts/participant-mode-layout/participant.mode.layout.component';
+import { organizerModeRoutes } from '@components/organizer-mode/organizer.mode.routes';
+import { OrganizerModeLayoutComponent } from '@layouts/organizer-mode-layout/organizer-mode-layout.component';
+import { participantModeRoutes } from '@components/participant-mode/participant.mode.routes';
+import { SettingsComponent } from '@components/settings/settings.component';
+import { CashAccountCreateComponent } from '@components/settings/cash-accounts/cash-account-create/cash-account-create.component';
+import { CashAccountListComponent } from '@components/settings/cash-accounts/cash-account-list/cash-account-list.component';
+import { CashAccountUpdateComponent } from '@components/settings/cash-accounts/cash-account-update/cash-account-update.component';
+import { UserDataComponent } from '@components/settings/user-data/user-data.component';
 
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['auth/login']);
