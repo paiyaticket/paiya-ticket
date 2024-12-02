@@ -2,6 +2,19 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "baseUrl": "./src",
+    "paths": {
+      "@components/*": ["app/components/*"],
+      "@layouts/*": ["app/layouts/*"],
+      "@directives/*": ["app/directives/*"],
+      "@services/*": ["app/services/*"],
+      "@pipes/*": ["app/pipes/*"],
+      "@datas/*": ["app/datas/*"],
+      "@models/*": ["app/models/*"],
+      "@enumerations/*": ["app/enumerations/*"],
+      "@utils/*": ["app/utils/*"],
+      "@validators/*": ["app/validators/*"]
+    },
     "outDir": "./dist/out-tsc",
     "strict": true,
     "noImplicitOverride": true,
