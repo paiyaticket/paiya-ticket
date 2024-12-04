@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FilePondModule, registerPlugin } from 'ngx-filepond';
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
@@ -6,7 +6,7 @@ import FilePondPluginImageResize from 'filepond-plugin-image-resize';
 import FilePondPluginImageTransform from 'filepond-plugin-image-transform';
 import { CommonModule } from '@angular/common';
 import { ImageCover } from '@models/image-cover';
-import { FetchServerConfigFunction, FilePondOptions, LoadServerConfigFunction, ProcessServerConfigFunction, RemoveServerConfigFunction, RevertServerConfigFunction } from 'filepond';
+import { FetchServerConfigFunction, FilePond, FilePondInitialFile, FilePondOptions, LoadServerConfigFunction, ProcessServerConfigFunction, RemoveServerConfigFunction, RevertServerConfigFunction } from 'filepond';
 import { getDownloadURL } from '@angular/fire/storage';
 import { FileStorageService } from '@services/file-storage.service';
 import { Auth } from '@angular/fire/auth';
@@ -15,6 +15,8 @@ import { ButtonModule } from 'primeng/button';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { DialogModule } from 'primeng/dialog';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+
 
 @Component({
     selector: 'app-image-cover',
@@ -29,28 +31,30 @@ import { DialogModule } from 'primeng/dialog';
     ],
     templateUrl: './image-cover.component.html',
     styleUrl: './image-cover.component.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ImageCoverComponent implements OnInit {
-    @Input() eventForm : any;
-    @Input() imageCovers : any;
-    @Input() eventId : string | undefined;
-    images: ImageCover[] = [];
-    defaultImage : ImageCover | undefined;
+    eventId : string | undefined;
+    imageCovers: ImageCover[] = [];
     pondOptions : FilePondOptions | undefined;
-    visible : boolean = false;
-
+    @ViewChild("filePond") filePond !: FilePond;
 
     constructor(
         private auth: Auth,
-        private eventService : EventService,
+        private ref: DynamicDialogRef,
+        private dialogConfig: DynamicDialogConfig,
         private fileStorageService : FileStorageService
     ){
-        registerPlugin(FilePondPluginFileValidateType, FilePondPluginImagePreview, 
-            FilePondPluginImageResize, FilePondPluginImageTransform);
+        registerPlugin(
+            FilePondPluginFileValidateType, 
+            FilePondPluginImagePreview, 
+            FilePondPluginImageResize, 
+            FilePondPluginImageTransform);
     }
 
     ngOnInit(): void {
+        this.imageCovers = this.dialogConfig.data.imageCovers;
+        this.eventId = this.dialogConfig.data.eventId;
         this.pondOptions = {
             name: 'imagesCoverPond',
             allowMultiple: true,
@@ -62,16 +66,14 @@ export class ImageCoverComponent implements OnInit {
             acceptedFileTypes: ['image/jpeg', 'image/png'],
             labelInvalidField: $localize `Ce champ contient des fichiers invalides.`,
             labelIdle: $localize `Glisser & déposer OU <span class="filepond--label-action"> naviguer </span>.`,
-            imagePreviewHeight:300,
             allowImageResize : true,
             imageResizeTargetWidth : 600,
             imageResizeTargetHeight : 300,
-            files: [],
             server : {
                 process : this.process(), 
-                load : this.load(),
-                fetch: this.fetch(),
-                revert: this.revert(),
+                // load : this.load(),
+                // fetch: this.fetch(),
+                // revert: this.revert(),
                 remove: this.remove(),
             },
             credits : false
@@ -79,16 +81,15 @@ export class ImageCoverComponent implements OnInit {
     }
 
     // initialise le fileuploader avec des fichiers existants
-    initImagesIfEventIdIsPassed(){
-        if(this.eventId){
-            return this.imageCovers?.value.map((image: { source: string }) => {
-                return { source: image.source, options: {
-                    metadata: {
-                        revertUrl: image.source,
-                    },
-                } };
-            });
-        }
+    initImages() : any[] {
+        return this.imageCovers.map((image) => {
+            return { 
+                source: image.source, 
+                options: {
+                    type: 'local'
+                } 
+            };
+        });
     }
 
     extractFileNameFromUrl(url : string){
@@ -101,7 +102,7 @@ export class ImageCoverComponent implements OnInit {
         const filter = (value: ImageCover) => {
             return Object.is(value.name,filename);
         }
-        return this.imageCovers?.value.some(filter);
+        return this.imageCovers?.some(filter);
     }
 
     addImage(downloadURL : string){
@@ -115,23 +116,22 @@ export class ImageCoverComponent implements OnInit {
         const filter = (value: ImageCover) => {
             return Object.is(value.source.split("?")[0],downloadURL.split("?")[0]);
         }
-        if(!this.imageCovers?.value.some(filter)){
-            this.imageCovers?.value.push(image);
+        if(!this.imageCovers?.some(filter)){
+            this.imageCovers?.push(image);
         }
-        this.images = this.imageCovers?.value;
     }
 
     removeImage(url : string){
         let filter = (value : any, index : number , obj : any[]) => {
             return Object.is(value.source.split("?")[0],url.split("?")[0]);
         }
-        let i = this.imageCovers?.value.findIndex(filter);
+        let i = this.imageCovers?.findIndex(filter);
         let j = this.pondOptions?.files?.findIndex(filter);
 
-        if(this.imageCovers?.value.length > 1){
-            this.imageCovers?.value.splice(i, 1);
+        if(this.imageCovers?.length > 1){
+            this.imageCovers?.splice(i, 1);
         } else {
-            this.imageCovers?.value.pop();
+            this.imageCovers?.pop();
         }
 
         if(this.pondOptions?.files && this.pondOptions?.files?.length > 1 && j){
@@ -140,8 +140,6 @@ export class ImageCoverComponent implements OnInit {
             this.pondOptions?.files?.pop();
         }
         
-        // this.images = this.imageCovers?.value;
-        this.partialUpdateEvent(this.eventForm.value);
     }
 
 
@@ -179,6 +177,7 @@ export class ImageCoverComponent implements OnInit {
         }
     }
 
+    
     load() : LoadServerConfigFunction {
         return (source, load, error, progress, abort, headers) => {
             console.log("LOAD...");
@@ -235,48 +234,33 @@ export class ImageCoverComponent implements OnInit {
             };
         }
     }
+    
 
     remove() : RemoveServerConfigFunction {
         return (source, load, error) => {
             console.log("REMOVE...");
             // Should somehow send `source` to server so server can remove the file with this source
             this.fileStorageService.removeFile(source).then(() => {
-                
+                console.log('image removed');
                 // this.removeImage(source);
-                load();
+                // load();
             }).catch((e) => {
                 error(e.message);
             });
         }
     }
 
-    partialUpdateEvent(event : Event){
-        // to implement later
-    }
-
-
-
-
-
-    /* *********************** */
-    //   DEFAULT IMAGE MODAL   //
-    /* *********************** */
-    showDialog() {
-        this.visible = true;
-    }
-
-    makeImageDefault(index : number){
-        let images = this.imageCovers?.value;
-
-        if(images[index]){
-            images[index].byDefault = true;
-            this.defaultImage = images[index];
-            for(let i = 0; i < images.length; i++) {
-                if(i !== index){
-                    images[i].byDefault = false;
-                }
-            }
-            this.eventForm.patchValue({imageCovers : images});
+    close() {
+        if (this.ref) {
+            this.filePond.removeFiles();
+            this.ref.close(this.imageCovers);
         }
     }
+
+    ngOnDestroy() {
+        if (this.ref) {
+            this.ref.close();
+        }
+    }
+
 }
