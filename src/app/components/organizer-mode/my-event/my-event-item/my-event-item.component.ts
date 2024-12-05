@@ -1,21 +1,20 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input, OnDestroy } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ConfirmationService, MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { SplitButtonModule } from 'primeng/splitbutton';
 // @ts-ignore
-import { Event } from '../../../../models/event';
+import { Event } from '@models/event';
 import { ChipModule } from 'primeng/chip';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DataViewModule } from 'primeng/dataview';
 import { PanelModule } from 'primeng/panel';
 import { TableModule } from 'primeng/table';
-import { EventService } from '../../../../services/event.service';
+import { EventService } from '@services/event.service';
 import { Subscription } from 'rxjs';
 import { TagModule } from 'primeng/tag';
-import { utcDateToZonedDateTime } from '../../../../utils/date-util';
 
 @Component({
     selector: 'app-my-event-item',
@@ -48,7 +47,9 @@ export class MyEventItemComponent implements OnDestroy {
     publishSubscription : Subscription | undefined;
 
 
-    constructor(private router : Router, 
+    constructor(
+                private route : ActivatedRoute, 
+                private router : Router, 
                 private confirmationService : ConfirmationService,
                 private eventService : EventService){
         
@@ -118,7 +119,7 @@ export class MyEventItemComponent implements OnDestroy {
     }
 
     goToDetailsPage(eventId : string | undefined){
-        this.router.navigate(['my-events','my-event-configuration',eventId,'details'])
+        this.router.navigate(['../my-event-configuration',eventId,'details'], {relativeTo : this.route})
     }
 
     reloadComponent(){

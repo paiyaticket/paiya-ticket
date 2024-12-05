@@ -1,0 +1,32 @@
+<div class="formgrid grid">
+    <div class="field xl:col-12 lg:col-12 col-12 imageCover">
+        <file-pond
+            #filePond
+            [options]="pondOptions"
+            class="my-2">
+        </file-pond>        
+    </div>
+    
+    @for (item of imageCovers; track $index) {
+        <div class="field xl:col-3 lg:col-3 col-3 relative">
+            <img class="border-round w-full" [src]="item.source" [alt]="item.alt" style="max-height: 120px; object-fit: cover;"/>
+            <p-button class="absolute top-0 right-0 mt-2 mr-4 opacity-60" size="small" severity="primary" 
+                (onClick)="removeImageCover($index)" icon="pi pi-trash"></p-button>
+            <div class="absolute bottom-0 left-0 mb-2 ml-4 surface-300 border-round w-2rem h-2rem 
+                flex items-center align-items-center justify-content-center cursor-pointer" 
+                pTooltip="Image de couverture par défaut"
+                (click)="makeImageDefault($index)">
+                @if (item.byDefault) {
+                    <i class="pi pi-star-fill font-bold text-xl text-primary-500"></i>
+                } @else {
+                    <i class="pi pi-star font-bold text-xl text-primary-500"></i>
+                }
+            </div>
+        </div>
+    }
+
+    <div class="field xl:col-12 lg:col-12 col-12 justify-content-end">
+        <p-button (onClick)="close()" outlined="true" severity="primary" icon="pi pi-times" label="Fermer"></p-button>
+    </div>
+</div>
+

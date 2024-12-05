@@ -1,44 +1,37 @@
-import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, Inject, Input, OnDestroy, OnInit, PLATFORM_ID, Signal, ViewChild, ViewEncapsulation, WritableSignal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Auth, getAuth, User } from '@angular/fire/auth';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
 import { FieldsetModule } from 'primeng/fieldset';
 import { InputMaskModule } from 'primeng/inputmask';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
-import { EventOrganizer } from '../../../../models/event-organizer';
-import { CashAccount } from '../../../../models/cash-account';
+import { EventOrganizer } from '@models/event-organizer';
+import { CashAccount } from '@models/cash-account';
 import { SelectButtonModule } from 'primeng/selectbutton';
-import { EventType } from '../../../../enumerations/event-type';
+import { EventType } from '@enumerations/event-type';
 import { CalendarModule } from 'primeng/calendar';
 import { MessagesModule } from 'primeng/messages';
 import { Message } from 'primeng/api/message';
-import { laterDateValidator } from '../../../../validators/laterDateValidator';
+import { laterDateValidator } from '@validators/laterDateValidator';
 import { PanelModule } from 'primeng/panel';
-import { COUNTRIES } from '../../../../datas/countries.data';
+import { COUNTRIES } from '@datas/countries.data';
 import { EditorModule } from 'primeng/editor';
 import { CardModule } from 'primeng/card';
 import { GalleriaModule } from 'primeng/galleria';
 import { ChipsModule } from 'primeng/chips';
-import { VenueType } from '../../../../enumerations/venueType';
-import { EventService } from '../../../../services/event.service';
+import { VenueType } from '@enumerations/venueType';
+import { EventService } from '@services/event.service';
 import { Subscription } from 'rxjs';
-import { FilePondModule, registerPlugin } from 'ngx-filepond';
-import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
-import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
-import FilePondPluginImageResize from 'filepond-plugin-image-resize';
-import FilePondPluginImageTransform from 'filepond-plugin-image-transform';
-import { FileStorageService } from '../../../../services/file-storage.service';
-import { getDownloadURL } from '@angular/fire/storage';
-import { ImageCover } from '../../../../models/image-cover';
+import { FilePondModule } from 'ngx-filepond';
+import { ImageCover } from '@models/image-cover';
 import { MessageService } from 'primeng/api';
-import { FetchServerConfigFunction, FilePond, FilePondOptions, LoadServerConfigFunction, ProcessServerConfigFunction, RemoveServerConfigFunction, RevertServerConfigFunction } from 'filepond';
 import { DialogModule } from 'primeng/dialog';
-import { TimeSlot } from '../../../../models/time-slot';
-import { Question } from '../../../../models/question';
+import { TimeSlot } from '@models/time-slot';
+import { Question } from '@models/question';
 import { AgendaCreateComponent } from './agenda/agenda-create/agenda-create.component';
 import { SidebarModule } from 'primeng/sidebar';
 import { AgendaListComponent } from './agenda/agenda-list/agenda-list.component';
@@ -48,11 +41,15 @@ import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { FaqCreateComponent } from './faq/faq-create/faq-create.component';
 import { FaqListComponent } from './faq/faq-list/faq-list.component';
-import { EventOrganizerService } from '../../../../services/event-organizer.service';
+import { EventOrganizerService } from '@services/event-organizer.service';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 // @ts-ignore
-import { Country } from '../../../../models/country';
+import { Country } from '@models/country';
 // @ts-ignore
-import { Event } from '../../../../models/event';
+import { Event } from '@models/event';
+import { ImageCoverComponent } from './image-cover/image-cover.component';
+import * as _ from 'lodash-es';
+
 
 
 
@@ -64,6 +61,7 @@ import { Event } from '../../../../models/event';
     standalone: true,
     imports: [
         CommonModule,
+        RouterLink,
         FormsModule,
         InputTextModule,
         InputTextareaModule,
@@ -90,12 +88,14 @@ import { Event } from '../../../../models/event';
         AvatarModule,
         AvatarGroupModule,
         InputGroupModule,
-        InputGroupAddonModule
+        InputGroupAddonModule,
+        GalleriaModule
     ],
     templateUrl: './my-event-create.component.html',
     styleUrl: './my-event-create.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    providers: [DialogService]
 })
 export class MyEventCreateComponent implements OnInit, OnDestroy {
 
@@ -109,10 +109,41 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
     eventForm !: FormGroup;
     selectedEventType : EventType | undefined = EventType.SINGLE_EVENT;
     selectedVenueType : VenueType | undefined = VenueType.FACE_TO_FACE;
-    showGalleriaPlaceholder : boolean = true;
-    images: ImageCover[] = [];
-    defaultImage : ImageCover | undefined;
-    pondOptions : FilePondOptions | undefined;
+    galleriaImages : any[] | undefined;
+    defaultGalleriaImages : any[] = [
+        {
+            source: '../../../../../assets/layout/images/galleria/cover1.jpg',
+            thumbnail: '../../../../../assets/layout/images/galleria/cover1.jpg',
+            alt: 'Description for Image 1',
+            title: 'Title 1'
+        },
+        {
+            source: '../../../../../assets/layout/images/galleria/cover2.jpg',
+            thumbnail: '../../../../../assets/layout/images/galleria/cover2.jpg',
+            alt: 'Description for Image 2',
+            title: 'Title 2'
+        },
+        {
+            source: '../../../../../assets/layout/images/galleria/cover3.jpg',
+            thumbnail: '../../../../../assets/layout/images/galleria/cover3.jpg',
+            alt: 'Description for Image 3',
+            title: 'Title 3'
+        }
+    ];
+    responsiveOptions: any[] = [
+        {
+            breakpoint: '1024px',
+            numVisible: 5
+        },
+        {
+            breakpoint: '768px',
+            numVisible: 3
+        },
+        {
+            breakpoint: '560px',
+            numVisible: 1
+        }
+    ];
     messages!: Message[];
     countries : Country[] = COUNTRIES;
     currentUser : User | null = null;
@@ -129,19 +160,15 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
     @Input() eventId : string | undefined;
     @ViewChild("agendaList") agendaList : AgendaListComponent | undefined;
 
+    ref: DynamicDialogRef | undefined;
     
     constructor(private route : ActivatedRoute,
                 private router : Router, 
+                private cdr : ChangeDetectorRef,
                 private eventService : EventService,
                 private eventOrganizerService : EventOrganizerService,
-                private fileStorageService : FileStorageService,
                 private messageService: MessageService,
-                @Inject(PLATFORM_ID) private platformId: any){
-                    registerPlugin(FilePondPluginFileValidateType, FilePondPluginImagePreview, 
-                                    FilePondPluginImageResize, FilePondPluginImageTransform);
-                    if (isPlatformBrowser(this.platformId)) {
-                        import('filepond-plugin-file-poster').then(m => registerPlugin(m.default));
-                    }
+                private dialogService: DialogService){
                 }
     
     ngOnInit(): void {
@@ -187,32 +214,6 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
             faq : new FormControl<Question[]>(new Array<Question>()),
         }, {validators : [laterDateValidator]});
 
-        this.pondOptions = {
-            name: 'imagesCoverPond',
-            allowMultiple: true,
-            maxFiles: 10,
-            itemInsertLocation: 'after',
-            allowReorder: false,
-            allowRevert: true,
-            allowRemove: true,
-            acceptedFileTypes: ['image/jpeg', 'image/png'],
-            labelInvalidField: $localize `Ce champ contient des fichiers invalides.`,
-            labelIdle: $localize `Glisser & déposer OU <span class="filepond--label-action"> naviguer </span>.`,
-            imagePreviewHeight:300,
-            allowImageResize : true,
-            imageResizeTargetWidth : 600,
-            imageResizeTargetHeight : 300,
-            files: [],
-            server : {
-                process : this.process(), 
-                load : this.load(),
-                fetch: this.fetch(),
-                revert: this.revert(),
-                remove: this.remove(),
-            },
-            credits : false
-        };
-
         // init event informations if the eventId is passed. 
         this.initEventIfIdIsPassed();
 
@@ -252,209 +253,45 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
 
 
 
-
-
-    /* *********************** */
-    // FILEPOND EVENT HANDLERS //
-    /* *********************** */
-    process() : ProcessServerConfigFunction {
-        return (fieldName, file, metadata, load, error, progress, abort, transfer, options) => {
-            let path = 'repos/'+this.auth?.currentUser?.uid+'/images';
-            const uploadTask = this.fileStorageService.uploadFile(file as File, path);
-
-            uploadTask.on('state_changed', 
-                (snapshot) => {
-                    const p = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    progress(true, snapshot.bytesTransferred, snapshot.totalBytes);
-                }, 
-                (storageError) => {
-                    error(storageError.message);
-                }, 
-                () => {
-                    getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                        this.addImage(downloadURL);
-                        load(downloadURL);
-                    });
-                }
-            );
-
-            return {
-                abort: () => {
-                    uploadTask.cancel();
-                    abort();
-                },
-            };
-            
-        }
-    }
-
-    load() : LoadServerConfigFunction {
-        return (source, load, error, progress, abort, headers) => {
-            console.log("LOAD...");
-
-            this.fileStorageService.downloadFile(source).then((downloadURL) => {
-                const xhr = new XMLHttpRequest();
-                xhr.responseType = 'blob';
-                xhr.onload = (event) => {
-                    const blob = xhr.response;
-                    const file : File = new File(blob, source);
-                    load(file);
-                };
-                xhr.open('GET', downloadURL);
-                xhr.send();
-
-            }).catch((error) => {
-                error(error.message);
-            })
-            
-            return {
-                abort: () => {
-                    abort();
-                },
-            };
-        }
-    }
-
-    revert() : RevertServerConfigFunction {
-        return (source, load, error) => {
-            console.log("REVERT...");
-            this.fileStorageService.removeFile(source).then(() => {
-                this.removeImage(source);
-                load();
-            }).catch((e) => {
-                error(e.message);
-            });
-        }
-    }
-
-    fetch() : FetchServerConfigFunction {
-        return (url, load, error, progress, abort, headers) => {
-            this.fileStorageService.downloadBlod(url).then((blob) => {
-                let urlParts = url.split("%2F");
-                blob.name = urlParts[urlParts.length - 1].split("?")[0];
-                load(blob);
-            }).catch((e) => {
-                error(e.message);
-            });
-            
-            return {
-                abort: () => {
-                    abort();
-                },
-            };
-        }
-    }
-
-    remove() : RemoveServerConfigFunction {
-        return (source, load, error) => {
-            console.log("REMOVE...");
-            // Should somehow send `source` to server so server can remove the file with this source
-            this.fileStorageService.removeFile(source).then(() => {
-                
-                // this.removeImage(source);
-                load();
-            }).catch((e) => {
-                error(e.message);
-            });
-        }
-    }
-
-    // initialise le fileuploader avec des fichiers existants
-    initImagesIfEventIdIsPassed(){
-        if(this.eventId){
-            return this.imageCovers?.value.map((image: { source: string }) => {
-                return { source: image.source, options: {
-                    metadata: {
-                        revertUrl: image.source,
-                    },
-                } };
-            });
-        }
-    }
-
-    extractFileNameFromUrl(url : string){
-        let urlParts = url.split("%2F");
-        const filename = urlParts[urlParts.length - 1].split("?")[0];
-        return filename;
-    }
-
-    isFileAlreadyExist(filename : string){
-        const filter = (value: ImageCover) => {
-            return Object.is(value.name,filename);
-        }
-        return this.imageCovers?.value.some(filter);
-    }
-
-    addImage(downloadURL : string){
-        let image = new ImageCover();
-        image.source = downloadURL;
-        image.byDefault = false;
-        image.name = this.extractFileNameFromUrl(downloadURL);
-        image.alt = image.name;
-
-
-        const filter = (value: ImageCover) => {
-            return Object.is(value.source.split("?")[0],downloadURL.split("?")[0]);
-        }
-        if(!this.imageCovers?.value.some(filter)){
-            this.imageCovers?.value.push(image);
-        }
-        this.images = this.imageCovers?.value;
-    }
-
-    removeImage(url : string){
-        let filter = (value : any, index : number , obj : any[]) => {
-            return Object.is(value.source.split("?")[0],url.split("?")[0]);
-        }
-        let i = this.imageCovers?.value.findIndex(filter);
-        let j = this.pondOptions?.files?.findIndex(filter);
-
-        if(this.imageCovers?.value.length > 1){
-            this.imageCovers?.value.splice(i, 1);
-        } else {
-            this.imageCovers?.value.pop();
-        }
-
-        if(this.pondOptions?.files && this.pondOptions?.files?.length > 1 && j){
-            this.pondOptions?.files.splice(j, 1);
-        } else {
-            this.pondOptions?.files?.pop();
-        }
-        
-        // this.images = this.imageCovers?.value;
-        this.partialUpdateEvent(this.eventForm.value);
-    }
-
-
-
-
-
-
-
-
-
     /* *********************** */
     //   DEFAULT IMAGE MODAL   //
     /* *********************** */
-    showDialog() {
-        this.visible = true;
-    }
-
-    makeImageDefault(index : number){
-        let images = this.imageCovers?.value;
-
-        if(images[index]){
-            images[index].byDefault = true;
-            this.defaultImage = images[index];
-            for(let i = 0; i < images.length; i++) {
-                if(i !== index){
-                    images[i].byDefault = false;
-                }
+    showDialog(){
+        // open dialog
+        this.ref = this.dialogService.open(ImageCoverComponent, { 
+            header: 'Charger des images de couverture',
+            width: '50vw',
+            modal:true,
+            closable: false,
+            breakpoints: {
+                '960px': '75vw',
+                '640px': '90vw',
+            },
+            data: {
+                imageCovers : this.imageCovers?.value,
+                eventId : this.eventId
             }
-            this.eventForm.patchValue({imageCovers : images});
-        }
+        })
+
+        // close dialog
+        this.ref.onClose.subscribe((images : ImageCover[]) => {
+            if(images){
+                this.imageCovers?.setValue(images);
+                this.partialUpdateEvent(this.eventForm.value as Event);
+                this.initGalleria();
+            }
+        });
     }
 
+
+    /* *********************** */
+    //   IMAGE COVER GALLERIA   //
+    /* *********************** */
+
+    initGalleria(){
+        this.galleriaImages = (this.imageCovers) ? this.imageCovers?.value : this.defaultGalleriaImages;
+        return this.galleriaImages;
+    }
 
 
 
@@ -575,6 +412,9 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
     }
 
     partialUpdateEvent(event : Event){
+        if(this.eventId){
+            event.id = this.eventId;
+        }
         this.updateEventSubscription = this.eventService.update(event).subscribe(()=>{
             console.log("Event partialy updated");
         });
@@ -631,7 +471,7 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
     }
 
     goToEventListPage(){
-        this.router.navigate(['/my-events']);
+        this.router.navigate(['../my-events'], {relativeTo: this.route});
     }
 
     ngOnDestroy(): void {

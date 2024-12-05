@@ -3,26 +3,17 @@
 
     <!-- IMAGES AND VIDEO -->
     <p-fieldset legend="Images et vidéos" i18n-legend="Images et vidéos" styleClass="mt-4 hover:border-blue-400 border-3">
-        <div class="formgrid grid">
-            <div class="field xl:col-12 lg:col-12 col-12 imageCover">
-                <file-pond
-                    [files]="initImagesIfEventIdIsPassed()"
-                    [options]="pondOptions"
-                    class="my-2">
-                </file-pond>
-
-                @if(imageCovers?.value.length > 0){
-                    <p-button label="Slectionner l'Image de couverture" icon="pi pi-star" severity="info"  (onClick)="showDialog()"/>
-                }
-                
-            </div>
-            <div class="field xl:col-12 lg:col-12 col-12 ">
-                <p-inputGroup>
-                    <p-inputGroupAddon>Lien vidéo</p-inputGroupAddon>
-                    <input type="text" pInputText placeholder="https://youtu.be/5zaeAcjTito?si=76KM-btaSvC4V9Pz" formControlName="videoLink" />
-                </p-inputGroup>
-            </div>
-        </div>
+        <p-galleria 
+            [value]="initGalleria()"
+            [showIndicators]="true" 
+            [showThumbnails]="false" 
+            [responsiveOptions]="responsiveOptions">
+            <ng-template pTemplate="item" let-item>
+                <img [src]="item.source" style="width: 100%; display: block; height: 400px; max-height: 4200px; object-fit: contain;" />
+            </ng-template>
+        </p-galleria>
+        <p-button label="Slectionner l'Image de couverture" i18n-label="Slectionner l'Image de couverture"
+            icon="pi pi-images" severity="info"  (onClick)="showDialog()"/>
     </p-fieldset>
 
 
@@ -345,39 +336,16 @@
     }
 
     <div class="mt-4 flex justify-content-between flex-wrap">
-        <p-button type="button" label="Retourner à la liste des évènements" i18n-label="Annuler" styleClass="bg-primary-reverse mr-2" 
-            (onClick)="goToEventListPage()" icon="pi pi-chevron-left"></p-button>
+        <a [routerLink]="['../../../']" class="bg-primary-reverse p-button mr-2" >
+            <i class="pi pi-chevron-left mr-2"></i>
+            Retourner à la liste des évènements
+        </a>
         <p-button type="submit" label="Sauvegarder et continuer" i18n-label="Sauvegarder et continuer" styleClass="m-auto"
             icon="pi pi-save" [disabled]="eventForm.invalid"></p-button>
     </div>
 </form>
 
-<p-dialog 
-    header="Header" 
-    [(visible)]="visible" 
-    [modal]="true" 
-    [style]="{ width: '50rem', height: '50rem' }">
-        <ng-template pTemplate="header">
-            <div class="inline-flex align-items-center justify-content-center gap-2">
-                <span class="font-bold white-space-nowrap">
-                    Sélectionner une image de couverture par defaut.
-                </span>
-            </div>
-        </ng-template>
-        <div class="grid">
-            @for (image of imageCovers?.value; track $index) {
-                <div class="col-4 justify-content-center">
-                    <div class="relative">
-                        <img class="border-round w-full hover:shadow-4" 
-                            [src]="image.source" [alt]="" (click)="makeImageDefault($index)"/>
-                        @if (image.byDefault) {
-                            <i class="pi pi-star-fill text-3xl text-primary absolute top-0 right-0 z-10 mt-2 mr-2"></i>
-                        }
-                    </div>
-                </div>
-            }
-        </div>
-</p-dialog>
+
 
 
 

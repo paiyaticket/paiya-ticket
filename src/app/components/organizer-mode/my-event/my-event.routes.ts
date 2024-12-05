@@ -24,8 +24,7 @@ export const myEventRoutes : Routes = [
                     {path: "create", title: $localize `Création d'un évènement`, component: MyEventCreateComponent, data: { breadcrumb: $localize `Création d'un évènement`}, canActivate: [AuthGuard]},
                     {path: ":eventId/details", title: $localize `Configuration d'un évènement`, component: MyEventCreateComponent, data: { breadcrumb: $localize `Configuration de évènement`}, canActivate: [AuthGuard]},
                     {path: ":eventId/tickets", title: $localize `Configuration de la billeterie`, component: TicketComponent, data: { breadcrumb: $localize `Configuration de la billeterie`}, canActivate: [AuthGuard]},
-                    {path: ":eventId/publish", title: $localize `Configuration de la billeterie`, component: PublishComponent, data: { breadcrumb: $localize `Configuration de la billeterie`}, canActivate: [AuthGuard]},
-                
+                    {path: ":eventId/publish", title: $localize `Publication`, component: PublishComponent, data: { breadcrumb: $localize `Publication`}, canActivate: [AuthGuard]},
                 ]
             },
         ]

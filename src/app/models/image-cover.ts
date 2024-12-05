@@ -1,6 +1,6 @@
-export class ImageCover {
-    source !: string;
-    byDefault : boolean = false;
+export interface ImageCover {
+    source : string;
+    byDefault : boolean ;
     name : string | undefined;
     alt : string | undefined;
 }
