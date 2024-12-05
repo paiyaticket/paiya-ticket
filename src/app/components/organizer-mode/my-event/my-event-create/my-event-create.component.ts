@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Auth, getAuth, User } from '@angular/fire/auth';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -88,7 +88,8 @@ import * as _ from 'lodash-es';
         AvatarModule,
         AvatarGroupModule,
         InputGroupModule,
-        InputGroupAddonModule
+        InputGroupAddonModule,
+        GalleriaModule
     ],
     templateUrl: './my-event-create.component.html',
     styleUrl: './my-event-create.component.scss',
@@ -108,8 +109,41 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
     eventForm !: FormGroup;
     selectedEventType : EventType | undefined = EventType.SINGLE_EVENT;
     selectedVenueType : VenueType | undefined = VenueType.FACE_TO_FACE;
-    showGalleriaPlaceholder : boolean = true;
-    defaultImage : ImageCover | undefined;
+    galleriaImages : any[] | undefined;
+    defaultGalleriaImages : any[] = [
+        {
+            source: '../../../../../assets/layout/images/galleria/cover1.jpg',
+            thumbnail: '../../../../../assets/layout/images/galleria/cover1.jpg',
+            alt: 'Description for Image 1',
+            title: 'Title 1'
+        },
+        {
+            source: '../../../../../assets/layout/images/galleria/cover2.jpg',
+            thumbnail: '../../../../../assets/layout/images/galleria/cover2.jpg',
+            alt: 'Description for Image 2',
+            title: 'Title 2'
+        },
+        {
+            source: '../../../../../assets/layout/images/galleria/cover3.jpg',
+            thumbnail: '../../../../../assets/layout/images/galleria/cover3.jpg',
+            alt: 'Description for Image 3',
+            title: 'Title 3'
+        }
+    ];
+    responsiveOptions: any[] = [
+        {
+            breakpoint: '1024px',
+            numVisible: 5
+        },
+        {
+            breakpoint: '768px',
+            numVisible: 3
+        },
+        {
+            breakpoint: '560px',
+            numVisible: 1
+        }
+    ];
     messages!: Message[];
     countries : Country[] = COUNTRIES;
     currentUser : User | null = null;
@@ -130,6 +164,7 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
     
     constructor(private route : ActivatedRoute,
                 private router : Router, 
+                private cdr : ChangeDetectorRef,
                 private eventService : EventService,
                 private eventOrganizerService : EventOrganizerService,
                 private messageService: MessageService,
@@ -243,25 +278,20 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
             if(images){
                 this.imageCovers?.setValue(images);
                 this.partialUpdateEvent(this.eventForm.value as Event);
+                this.initGalleria();
             }
         });
     }
 
-    makeImageDefault(index : number){
-        let images = this.imageCovers?.value;
 
-        if(images[index]){
-            images[index].byDefault = true;
-            this.defaultImage = images[index];
-            for(let i = 0; i < images.length; i++) {
-                if(i !== index){
-                    images[i].byDefault = false;
-                }
-            }
-            this.eventForm.patchValue({imageCovers : images});
-        }
+    /* *********************** */
+    //   IMAGE COVER GALLERIA   //
+    /* *********************** */
+
+    initGalleria(){
+        this.galleriaImages = (this.imageCovers) ? this.imageCovers?.value : this.defaultGalleriaImages;
+        return this.galleriaImages;
     }
-
 
 
 
