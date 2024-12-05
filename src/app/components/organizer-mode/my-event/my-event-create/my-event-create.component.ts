@@ -240,9 +240,8 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
 
         // close dialog
         this.ref.onClose.subscribe((images : ImageCover[]) => {
-            if(images && images.length > 0 && !_.isEqual(images, this.imageCovers?.value)){
+            if(images){
                 this.imageCovers?.setValue(images);
-                console.log(this.eventForm.value);
                 this.partialUpdateEvent(this.eventForm.value as Event);
             }
         });
