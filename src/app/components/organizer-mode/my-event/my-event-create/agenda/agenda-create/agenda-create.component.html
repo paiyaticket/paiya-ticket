@@ -96,8 +96,8 @@
                         @if (description?.invalid  && (description?.touched || description?.dirty)) {
                             @if (description?.hasError('maxlength')) {
                                 <small id="summary-required-help" class="p-error font-bold" i18n="Nombre maximum de caratère atteint.">
-                                    Le nombre maximum de caratère ({{ timeSlotForm.get('summary')?.getError('maxlength').requiredLength}}) est atteint. 
-                                    Nombre actuel de caratère saisi: {{ timeSlotForm.get('summary')?.getError('maxlength').actualLength}}.
+                                    Le nombre maximum de caratère ({{ timeSlotForm.get('description')?.getError('maxlength').requiredLength}}) est atteint. 
+                                    Nombre actuel de caratère saisi: {{ timeSlotForm.get('description')?.getError('maxlength').actualLength}}.
                                 </small>
                             }
                         }

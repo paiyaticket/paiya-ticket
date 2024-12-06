@@ -4,14 +4,14 @@ import { ButtonModule } from 'primeng/button';
 import { SidebarModule } from 'primeng/sidebar';
 import { TicketCreateComponent } from "./ticket-create/ticket-create.component";
 import { CardModule } from 'primeng/card';
-import { EventService } from '../../../../services/event.service';
+import { EventService } from '@services/event.service';
 // @ts-ignore
-import { Event } from '../../../../models/event';
+import { Event } from '@models/event';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 // @ts-ignore
-import { Ticket } from '../../../../models/ticket';
+import { Ticket } from '@models/ticket';
 import { TicketListComponent } from "./ticket-list/ticket-list.component";
-import { TicketService } from '../../../../services/ticket.service';
+import { TicketService } from '@services/ticket.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 

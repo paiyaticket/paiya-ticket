@@ -10,15 +10,17 @@ import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { PanelModule } from "primeng/panel";
 import { TableModule } from "primeng/table";
 import { Observable } from "rxjs";
-import { EventService } from "../../../../services/event.service";
+import { EventService } from "@services/event.service";
 import { DataViewModule } from 'primeng/dataview';
 import { SplitButtonModule } from 'primeng/splitbutton';
+import { SkeletonModule } from 'primeng/skeleton';
 // @ts-ignore
-import { Event } from "../../../../models/event";
+import { Event } from "@models/event";
 import { SidebarModule } from "primeng/sidebar";
 import { DialogModule } from 'primeng/dialog';
 import { MyEventItemComponent } from "../my-event-item/my-event-item.component";
 import { ChooseOrganizerComponent } from "../choose-organizer/choose-organizer.component";
+import { NgTemplateOutlet } from '@angular/common';
 
 
 @Component({
@@ -26,8 +28,7 @@ import { ChooseOrganizerComponent } from "../choose-organizer/choose-organizer.c
     standalone: true,
     imports: [
         CommonModule,
-        RouterLink,
-        ButtonModule, 
+        ButtonModule,
         CardModule,
         PanelModule,
         TableModule,
@@ -37,6 +38,8 @@ import { ChooseOrganizerComponent } from "../choose-organizer/choose-organizer.c
         SplitButtonModule,
         SidebarModule,
         DialogModule,
+        SkeletonModule,
+        NgTemplateOutlet,
         MyEventItemComponent,
         ChooseOrganizerComponent
     ],
@@ -50,6 +53,7 @@ export class MyEventListComponent implements OnInit {
     owner !: User | null;
     eventList$ !: Observable<Event[]>;
     layout: string = 'list';
+    skeletonList : number[] = [1,2,3];
 
     organisationDialogVisible : boolean = false;
     createSidebarVisible : boolean = false;

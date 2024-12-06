@@ -1,36 +1,64 @@
-
-    @if (eventOrganizerList && eventOrganizerList.length > 0) {
-        @for(org of eventOrganizerList; track org.id){
-            <article class="sm:col-12 md:col-6 lg:col-4 xl:col-3">
+<div class="grid">
+    @if (eventOrganizerList) {
+        @if (eventOrganizerList && eventOrganizerList.length > 0) {
+            @for(org of eventOrganizerList; track org.id){
+                <article class="sm:col-12 md:col-6 lg:col-4 xl:col-3">
+                    <div class="border-top-3 border-blue-400 p-2">
+                        <div class="text-2xl font-bold">{{ org.name }}</div> 
+                        <div class="text-500 text-base"> {{ org.email }}</div>
+                        <div>
+                            @for(phone of org.phoneNumbers; track $index){
+                                <p-chip label="{{phone}}" icon="pi pi-phone" styleClass="mr-2 mt-2 text-xs"/>
+                            }
+                        </div> 
+                        <div class="details-resume mb-2">
+                            {{ org.details }}
+                        </div>
+                        <div class="flex justify-content-end">
+                            <p-button label="Voir détails" (click)="update(org)" severity="info" outlined="true" size="small" icon="pi pi-eye" i18n>
+                            </p-button>
+    
+                            <p-button label="Supprimer" (click)="delete(org)" severity="danger" outlined="true" size="small" icon="pi pi-trash" class="ml-3" i18n>
+                            </p-button>
+                        </div>
+                    </div>
+                </article>
+            }
+        }
+        @else {
+            <div class= "surface-200 col-12 border-round-md border-dashed ">
+                <p class="text-gray-500 font-semibold text-center" i18n>
+                    Vous n'avez aucune organisation pour l'instant.
+                </p>
+            </div> 
+        }
+    } @else {
+        <ng-container *ngTemplateOutlet="eventOrganizerListSkeleton"></ng-container>
+    }
+        
+    <ng-template #eventOrganizerListSkeleton>
+        @for (n of skeletonList; track $index) {
+            <article class="sm:col-12 md:col-6 lg:col-4 xl:col-3 col">
                 <div class="border-top-3 border-blue-400 p-2">
-                    <div class="text-2xl font-bold">{{ org.name }}</div> 
-                    <div class="text-500 text-base"> {{ org.email }}</div>
-                    <div>
-                        @for(phone of org.phoneNumbers; track $index){
-                            <p-chip label="{{phone}}" icon="pi pi-phone" styleClass="mr-2 mt-2 text-xs"/>
-                        }
+                    <p-skeleton height="1rem"/>
+                    <div class="mb-2 mt-2 flex flex-row">
+                        <div class="flex flex-row">
+                            <p-skeleton height="1rem" width="5rem"/>
+                            <p-skeleton height="1rem" width="5rem"/>
+                        </div>
                     </div> 
                     <div class="details-resume mb-2">
-                        {{ org.details }}
+                        <p-skeleton height="3rem"/>
                     </div>
-                    <div class="flex justify-content-end">
-                        <p-button label="Voir détails" (click)="update(org)" severity="info" outlined="true" size="small" icon="pi pi-eye" i18n>
-                        </p-button>
-
-                        <p-button label="Supprimer" (click)="delete(org)" severity="danger" outlined="true" size="small" icon="pi pi-trash" class="ml-3" i18n>
-                        </p-button>
+                    <div class="flex flex-row justify-content-end gap-3">
+                        <p-skeleton height="2rem" width="5rem"/>
+                        <p-skeleton height="2rem" width="5rem"/>
                     </div>
                 </div>
             </article>
         }
-    }
-    @else {
-        <div class= "surface-200 col-12 border-round-md border-dashed ">
-            <p class="text-gray-500 font-semibold text-center" i18n>
-                Vous n'avez aucune organisation pour l'instant.
-            </p>
-        </div> 
-    }
+    </ng-template>
+</div>
 
      
 

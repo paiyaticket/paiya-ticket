@@ -466,7 +466,7 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
                 this.router.navigate(['my-events','my-event-configuration',eventId,'details']);
             });
         } else{
-            this.router.navigate(['my-events','my-event-configuration',eventId,'details']);
+            this.router.navigate(['my-events','my-event-configuration',eventId,'details'], {relativeTo: this.route});
         }
     }
 

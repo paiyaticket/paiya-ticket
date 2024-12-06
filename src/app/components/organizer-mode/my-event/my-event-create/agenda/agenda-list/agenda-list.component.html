@@ -11,17 +11,19 @@
 
             <div class="ml-3 flex-1">
             <div class="flex align-items-center justify-content-between mb-3">
-                <span>
-                    <strong>{{item.title}}</strong>
-                </span>
-                <div class="flex align-items-center">
-                    <span class="mr-2 font-bold text-color-secondary">
+                <div>
+                    <span class="font-bold text-color-secondary">
                         {{displayTimeslotInterval(item)}}
                     </span>
+                    <br/>
+                    <strong>{{item.title}}</strong>
+                </div>
+                <div class="flex align-items-center">
                     <p-button icon="pi pi-trash" severity="secondary" size="small" (onClick)="removeTimeSlot(item)"></p-button>
                 </div>
             </div>
-            <div class="p-3 border-round" [style]="{'background-color': 'rgba(227, 248, 255, 0.1)'}">
+            <hr>
+            <div class="p-3 border-round surface-100">
                 <p class="text-color-secondary mb-3">
                     {{item.description}}
                 </p>
