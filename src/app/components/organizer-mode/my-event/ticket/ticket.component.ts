@@ -14,6 +14,7 @@ import { TicketListComponent } from "./ticket-list/ticket-list.component";
 import { TicketService } from '@services/ticket.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { Observable } from 'rxjs';
 
 @Component({
     selector: 'app-ticket',
@@ -36,9 +37,11 @@ export class TicketComponent {
     @Input()
     eventId !: string;
     createTicketSidebarVisible: boolean = false;
-    event !: Event;
+    event : Event | undefined;
     tickets !: Ticket[];
     selectedTicket : Ticket | undefined;
+    eventSubscription$ : Observable<Event> | undefined;
+
 
 
 
@@ -51,9 +54,7 @@ export class TicketComponent {
     ) { }
 
     ngOnInit(): void {
-        this.eventService.findById(this.eventId).subscribe(event => {
-            this.event = event;
-        });
+        this.eventSubscription$ = this.eventService.findById(this.eventId);
     }
 
     ngOnChanges(changes : SimpleChanges){
@@ -71,6 +72,7 @@ export class TicketComponent {
 
     hideCreateTicketSidebar(ticket : Ticket) {
         this.createTicketSidebarVisible = false;
+        if(ticket)
         this.refreshTicketListAfterCreateOrUpdate(ticket);
     }
 

@@ -3,19 +3,19 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, SimpleCha
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 // @ts-ignore
-import { Event } from '../../../../models/event';
-import { EventService } from '../../../../services/event.service';
-import { EventVisibility, PublishMoment, PublishSettings } from '../../../../models/publishSettings';
+import { Event } from '@models/event';
+import { EventService } from '@services/event.service';
+import { EventVisibility, PublishMoment, PublishSettings } from '@models/publishSettings';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { CalendarModule } from 'primeng/calendar';
 import { SelectButtonModule } from 'primeng/selectbutton';
-import { utcDateToZonedDateTime } from '../../../../utils/date-util';
+import { utcDateToZonedDateTime } from '@utils/date-util';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MessagesModule } from 'primeng/messages';
 import { ToastModule } from 'primeng/toast';
-import { EventStatut } from '../../../../enumerations/event-statut';
+import { EventStatut } from '@enumerations/event-statut';
 
 @Component({
   selector: 'app-publish',
@@ -87,10 +87,6 @@ export class PublishComponent {
             this.whenToPublish?.setValue(PublishMoment.NOW);
             this.publicationScheduledDate?.setValue(undefined);
         }
-    }
-
-
-    ngOnChanges(changes : SimpleChanges){
     }
 
     isPublicationScheduledDateVisible(){
@@ -170,7 +166,7 @@ export class PublishComponent {
     }
 
     goToEventListPage(){
-        this.router.navigate(['/my-events']);
+        this.router.navigate(['../../../'], {relativeTo: this.route});
     }
 
     get eventVisibility() {

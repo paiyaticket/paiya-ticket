@@ -461,13 +461,15 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
      * @param eventId 
      */
     reloadPageWithEventId(eventId : string | undefined){
+        
         if(this.route.snapshot.paramMap.get('eventId') === null){
             this.router.navigate(['my-events']).then(() => {
-                this.router.navigate(['my-events','my-event-configuration',eventId,'details']);
+                this.router.navigate(['my-events','my-event-configuration',eventId,'details'], {relativeTo: this.route});
             });
         } else{
             this.router.navigate(['my-events','my-event-configuration',eventId,'details'], {relativeTo: this.route});
         }
+        
     }
 
     goToEventListPage(){
