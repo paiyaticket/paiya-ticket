@@ -4,16 +4,17 @@ import { ButtonModule } from 'primeng/button';
 import { SidebarModule } from 'primeng/sidebar';
 import { TicketCreateComponent } from "./ticket-create/ticket-create.component";
 import { CardModule } from 'primeng/card';
-import { EventService } from '../../../../services/event.service';
+import { EventService } from '@services/event.service';
 // @ts-ignore
-import { Event } from '../../../../models/event';
+import { Event } from '@models/event';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 // @ts-ignore
-import { Ticket } from '../../../../models/ticket';
+import { Ticket } from '@models/ticket';
 import { TicketListComponent } from "./ticket-list/ticket-list.component";
-import { TicketService } from '../../../../services/ticket.service';
+import { TicketService } from '@services/ticket.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { Observable } from 'rxjs';
 
 @Component({
     selector: 'app-ticket',
@@ -36,9 +37,11 @@ export class TicketComponent {
     @Input()
     eventId !: string;
     createTicketSidebarVisible: boolean = false;
-    event !: Event;
+    event : Event | undefined;
     tickets !: Ticket[];
     selectedTicket : Ticket | undefined;
+    eventSubscription$ : Observable<Event> | undefined;
+
 
 
 
@@ -51,9 +54,7 @@ export class TicketComponent {
     ) { }
 
     ngOnInit(): void {
-        this.eventService.findById(this.eventId).subscribe(event => {
-            this.event = event;
-        });
+        this.eventSubscription$ = this.eventService.findById(this.eventId);
     }
 
     ngOnChanges(changes : SimpleChanges){
@@ -71,6 +72,7 @@ export class TicketComponent {
 
     hideCreateTicketSidebar(ticket : Ticket) {
         this.createTicketSidebarVisible = false;
+        if(ticket)
         this.refreshTicketListAfterCreateOrUpdate(ticket);
     }
 

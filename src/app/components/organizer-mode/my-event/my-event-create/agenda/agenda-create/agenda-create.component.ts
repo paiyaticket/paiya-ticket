@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
-import { Speaker, TimeSlot } from '../../../../../../models/time-slot';
+import { Speaker, TimeSlot } from '@models/time-slot';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CalendarModule } from 'primeng/calendar';
 import { CommonModule } from '@angular/common';
@@ -19,10 +19,10 @@ import { TableModule } from 'primeng/table';
 import { getDownloadURL } from '@angular/fire/storage';
 import { ProcessServerConfigFunction, LoadServerConfigFunction, RevertServerConfigFunction, FetchServerConfigFunction, RemoveServerConfigFunction, FilePond } from 'filepond';
 import { Auth } from '@angular/fire/auth';
-import { FileStorageService } from '../../../../../../services/file-storage.service';
-import { dateEarlyThanStartTimeValidator } from '../../../../../../validators/dateEarlyThanStartTimeValidator';
-import { dateLaterThanEndTimeValidator } from '../../../../../../validators/dateLaterThanEndTimeValidator';
-import { laterDateValidator } from '../../../../../../validators/laterDateValidator';
+import { FileStorageService } from '@services/file-storage.service';
+import { dateEarlyThanStartTimeValidator } from '@validators/dateEarlyThanStartTimeValidator';
+import { dateLaterThanEndTimeValidator } from '@validators/dateLaterThanEndTimeValidator';
+import { laterDateValidator } from '@validators/laterDateValidator';
 
 
 
@@ -82,11 +82,11 @@ export class AgendaCreateComponent {
             endTime : new FormControl<Date | undefined>(undefined, [Validators.required]),
             title : new FormControl<string | undefined>(undefined, [Validators.required]),
             icon : new FormControl<string | undefined>(undefined),
-            description : new FormControl<string | undefined>(undefined, [Validators.maxLength(400)]),
+            description : new FormControl<string | undefined>(undefined, [Validators.maxLength(500)]),
             speaker : new FormGroup({
                 completeName : new FormControl<string | undefined>(undefined),
                 photo : new FormControl<string | undefined>(undefined),
-                description : new FormControl<string | undefined>(undefined, [Validators.maxLength(400)]),
+                description : new FormControl<string | undefined>(undefined, [Validators.maxLength(500)]),
                 xlink : new FormControl<string | undefined>(undefined),
                 linkedin : new FormControl<string | undefined>(undefined),
                 instagram : new FormControl<string | undefined>(undefined),

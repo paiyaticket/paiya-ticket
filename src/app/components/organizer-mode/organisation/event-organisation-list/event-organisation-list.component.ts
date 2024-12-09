@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { ChipModule } from 'primeng/chip';
@@ -10,21 +9,20 @@ import { EventOrganizer } from '../../../../models/event-organizer';
 import { User } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
 import { SidebarModule } from 'primeng/sidebar';
-import { EventOrganisationCreateComponent } from '../event-organisation-create/event-organisation-create.component';
+import { SkeletonModule } from 'primeng/skeleton';
 
 @Component({
     selector: 'app-event-organisation-list',
     standalone: true,
     imports: [
         CommonModule,
-        RouterLink,
         ButtonModule, 
         CardModule,
         PanelModule,
         TableModule,
         ChipModule,
         SidebarModule,
-        EventOrganisationCreateComponent,
+        SkeletonModule
     ],
     templateUrl: './event-organisation-list.component.html',
     styleUrl: './event-organisation-list.component.scss',
@@ -42,6 +40,7 @@ export class EventOrganisationListComponent implements OnInit{
     user : User | null | undefined;
     
     eventOrganizerList$ !: Observable<EventOrganizer[]>;
+    skeletonList : number[] = [1,2,3,4];
 
 
     constructor () {}

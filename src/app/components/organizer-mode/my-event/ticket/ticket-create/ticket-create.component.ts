@@ -11,16 +11,16 @@ import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { environment } from '../../../../../../environments/environment';
 import { CalendarModule } from 'primeng/calendar';
-import { laterDateValidator } from '../../../../../validators/laterDateValidator';
+import { laterDateValidator } from '@validators/laterDateValidator';
 import { EditorModule } from 'primeng/editor';
 import { ToggleButtonChangeEvent, ToggleButtonModule } from 'primeng/togglebutton';
 import { TableModule } from 'primeng/table';
 // @ts-ignore
-import { Ticket } from '../../../../../models/ticket';
-import { TicketService } from '../../../../../services/ticket.service';
+import { Ticket } from '@models/ticket';
+import { TicketService } from '@services/ticket.service';
 import { Subscription } from 'rxjs';
 import { SelectButtonModule } from 'primeng/selectbutton';
-import { TicketType } from '../../../../../enumerations/ticket-type';
+import { TicketType } from '@enumerations/ticket-type';
 import { MessagesModule } from 'primeng/messages';
 
 @Component({

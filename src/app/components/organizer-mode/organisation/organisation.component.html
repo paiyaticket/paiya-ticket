@@ -18,7 +18,7 @@
                 </div>
             </section>
 
-            <section class="grid">
+            <section>
                 <app-event-organisation-list class="w-full" [eventOrganizerList]="eventOrganizerList$ | async" (onUpdate)="handleUpdate($event)" 
                 (onDelete)="handleDelete($event)"></app-event-organisation-list>
             </section>

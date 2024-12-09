@@ -7,17 +7,12 @@ import { ParticipantModeLayoutComponent } from '@layouts/participant-mode-layout
 import { organizerModeRoutes } from '@components/organizer-mode/organizer.mode.routes';
 import { OrganizerModeLayoutComponent } from '@layouts/organizer-mode-layout/organizer-mode-layout.component';
 import { participantModeRoutes } from '@components/participant-mode/participant.mode.routes';
-import { SettingsComponent } from '@components/settings/settings.component';
-import { CashAccountCreateComponent } from '@components/settings/cash-accounts/cash-account-create/cash-account-create.component';
-import { CashAccountListComponent } from '@components/settings/cash-accounts/cash-account-list/cash-account-list.component';
-import { CashAccountUpdateComponent } from '@components/settings/cash-accounts/cash-account-update/cash-account-update.component';
-import { UserDataComponent } from '@components/settings/user-data/user-data.component';
 
 
-const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['auth/login']);
+// const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['auth/login']);
 
 export const routes: Routes = [
-    {path: "", component: ParticipantModeLayoutComponent, canActivate: [AuthGuard], children: participantModeRoutes },
+    {path: "", component: ParticipantModeLayoutComponent, children: participantModeRoutes },
     {path: "organizer-mode", component: OrganizerModeLayoutComponent, canActivate: [AuthGuard], children: organizerModeRoutes },
     {path: 'auth/login', component: LoginComponent, title: 'Login'},
     {path: "auth/register", component: RegisterComponent},
