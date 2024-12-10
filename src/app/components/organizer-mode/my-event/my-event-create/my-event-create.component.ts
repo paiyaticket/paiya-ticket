@@ -283,6 +283,9 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
     }
 
 
+
+
+
     /* *********************** */
     //   IMAGE COVER GALLERIA   //
     /* *********************** */
@@ -310,15 +313,13 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         this.selectedVenueType = event.value;
     }
 
-    handleTimeSlotAdded(addedTimeSlot : any){
-        let timeSlots : TimeSlot[] = this.agenda?.value || [];
-        timeSlots.push(addedTimeSlot);
-        this.agenda?.setValue(timeSlots); 
-
-        
+    /**
+     * Close the agendaForm, Add emited timeslot in agenda array and make a partial update of the Event.
+     * @param addedTimeSlot 
+     */
+    handleTimeSlotAdded(addedTimeSlot : TimeSlot){
+        this.agenda?.value.push(addedTimeSlot); 
         let event = this.eventForm.value as Event;
-        event.agenda = this.agenda?.value;
-        
         this.partialUpdateEvent(event, $localize `Agenda mis à jour.`);
         this.displayAgendaForm = false;
         this.cdr.detectChanges();
