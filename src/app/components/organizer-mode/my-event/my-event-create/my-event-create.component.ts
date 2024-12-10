@@ -225,7 +225,6 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
     initEventIfIdIsPassed(){
         if(this.eventId){
             this.eventSubscription = this.eventService.findById(this.eventId).subscribe((event) => {
-                event.agenda = this.transformAgendaTimeSlotsIntoZonedDateTime(event.agenda as TimeSlot[], event.timeZone);
                 this.eventForm.patchValue(event);
                 // ce bout de code pourrait être amélioré en donnant a startTime et endTime le type "string | Date" au lieu 
                 // de string uniquement.
@@ -311,14 +310,18 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         this.selectedVenueType = event.value;
     }
 
-    handleTimeSlotAdded(event : any){
-        let tsTab : TimeSlot[] = this.agenda?.value || [];
-        tsTab.push(event);
-        this.agenda?.setValue(tsTab); 
-        if(this.agendaList){
-            this.agendaList.timeSlots = tsTab;
-        }
+    handleTimeSlotAdded(addedTimeSlot : any){
+        let timeSlots : TimeSlot[] = this.agenda?.value || [];
+        timeSlots.push(addedTimeSlot);
+        this.agenda?.setValue(timeSlots); 
+
+        
+        let event = this.eventForm.value as Event;
+        event.agenda = this.agenda?.value;
+        
+        this.partialUpdateEvent(event, $localize `Agenda mis à jour.`);
         this.displayAgendaForm = false;
+        this.cdr.detectChanges();
     }
 
     handleTimeSlotRemoved(event : any){
@@ -379,7 +382,9 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
 
     preSubmit() : Event {
         let event : Event = this.eventForm.value as Event;
-        event.agenda = this.transformAgendaTimeSlotsIntoUtcDate(event);
+        event.agenda = this.agenda?.value;
+        event.faq = this.faq?.value;
+        event.imageCovers = this.imageCovers?.value;
         event.startTime = this.startTime?.value.toISOString();
         event.endTime = this.endTime?.value.toISOString();
         event.timeZone = (this.timeZone?.value) ? this.timeZone?.value : Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -388,35 +393,21 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         return event;
     }
 
-
-    transformAgendaTimeSlotsIntoUtcDate(event : Event) : TimeSlot[]{
-        return this.agenda?.value.map((timeSlot : TimeSlot) => {
-            if(timeSlot.startTime instanceof Date)
-                timeSlot.startTime = timeSlot.startTime.toISOString();
-            if(timeSlot.endTime instanceof Date)
-                timeSlot.endTime = timeSlot.endTime.toISOString();
-            return timeSlot;
-        });
-    }
-
-    transformAgendaTimeSlotsIntoZonedDateTime(agenda : TimeSlot[], timeZone : string | undefined) : TimeSlot[]{
-        if(!timeZone)
-            timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        return agenda.map((timeSlot : TimeSlot) => {
-            if(timeSlot.startTime)
-                timeSlot.startTime = this.utcDateToZonedDateTime(timeSlot.startTime as string, timeZone);
-            if(timeSlot.endTime)
-                timeSlot.endTime = this.utcDateToZonedDateTime(timeSlot.endTime as string, timeZone);
-            return timeSlot;
-        });
-    }
-
-    partialUpdateEvent(event : Event){
+    partialUpdateEvent(event : Event, successMessage ?: string){
         if(this.eventId){
             event.id = this.eventId;
         }
-        this.updateEventSubscription = this.eventService.update(event).subscribe(()=>{
-            console.log("Event partialy updated");
+        
+        this.updateEventSubscription = this.eventService.update(event).subscribe({
+            next : (event) => {
+                if(successMessage)
+                    this.messageService.add({ severity: 'success', summary: $localize`Succès`, detail: successMessage });
+            },
+            error : (error) => {
+                this.messageService.add({ severity: 'error', summary: $localize`Erreur`, detail: $localize`Un problème est survenu lors de la mise a jour de l'événement.` });
+                console.log(error);
+            }
+            
         });
     }
 

@@ -23,6 +23,7 @@ import { FileStorageService } from '@services/file-storage.service';
 import { dateEarlyThanStartTimeValidator } from '@validators/dateEarlyThanStartTimeValidator';
 import { dateLaterThanEndTimeValidator } from '@validators/dateLaterThanEndTimeValidator';
 import { laterDateValidator } from '@validators/laterDateValidator';
+import { isSameDay } from '@utils/date-util';
 
 
 
@@ -60,6 +61,8 @@ export class AgendaCreateComponent {
     pondOptions : any;
     speakers : Speaker[] = [];
     currentUser : any;
+    isSameDay : boolean = false;
+
 
 
     constructor(private fileStorageService : FileStorageService, private auth : Auth){}
@@ -67,7 +70,7 @@ export class AgendaCreateComponent {
 
     ngOnInit(){
         this.currentUser = this.auth.currentUser;
-        
+
         registerPlugin(
             FilePondPluginFileValidateType,
             FilePondPluginImagePreview,
@@ -94,6 +97,8 @@ export class AgendaCreateComponent {
                 twitter : new FormControl<string | undefined>(undefined),
             }),
         }, {validators : [laterDateValidator]});
+
+        this.isSameDay = isSameDay(this.eventStartTime, this.eventEndTime);
 
         this.pondOptions = {
             name: 'speakerImageCoverPond',
@@ -140,6 +145,8 @@ export class AgendaCreateComponent {
         }
         
     }
+
+
 
 
     /* *********************** */
@@ -278,20 +285,42 @@ export class AgendaCreateComponent {
 
     submit(){
         this.timeSlot = this.timeSlotForm.value as TimeSlot;
-        this.timeSlot.startTime = (this.timeSlot.startTime) ? this.mergeEventDateWithTimeSlotDate(this.eventStartTime, this.timeSlot.startTime as Date) : this.timeSlot.startTime;
-        this.timeSlot.endTime = (this.timeSlot.endTime) ? this.mergeEventDateWithTimeSlotDate(this.eventStartTime, this.timeSlot.endTime as Date) : this.timeSlot.endTime;
-
+        this.preformatTimeslotDates(this.timeSlot, this.startTime?.value, this.endTime?.value);
         this.timeSlot.speakers = this.speakers;
         this.timeSlotAdded.emit(this.timeSlot);
+        this.postSubmit();
+    }
+
+    postSubmit(){
         this.timeSlotForm.reset();
-        
         this.startTime?.setValue(this.eventStartTime);
         this.endTime?.setValue(this.eventEndTime);
         this.timeSlot = undefined;
         this.speakers = [];
     }
 
-    mergeEventDateWithTimeSlotDate(eventDate : Date, timeSlotDate : Date){
+    /**
+     * transforme date startTime and endTime of the form into utcDateStrings and set them 
+     * in the timeslot object that will be sumited.
+     * if startTime and endTime are on the same day, we juste merge they time with startTime and endTime of the event object.
+     * Else we get startTime and endTime as they are.
+     * @param timeSlot 
+     * @param start 
+     * @param end 
+     */
+    preformatTimeslotDates(timeSlot : TimeSlot, start : Date, end : Date){
+        if(isSameDay(start, end)){
+            let startTime = this.mergeOneDateWithAnotherDateTime(this.eventStartTime, start);
+            let endTime = this.mergeOneDateWithAnotherDateTime(this.eventStartTime, end);
+            timeSlot.startTime = startTime.toISOString();
+            timeSlot.endTime = endTime.toISOString();
+        } else {
+            timeSlot.startTime = start.toISOString();
+            timeSlot.endTime = end.toISOString();
+        }
+    }
+
+    mergeOneDateWithAnotherDateTime(eventDate : Date, timeSlotDate : Date) : Date{
         return new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate(), timeSlotDate.getHours(), timeSlotDate.getMinutes());
     }
 

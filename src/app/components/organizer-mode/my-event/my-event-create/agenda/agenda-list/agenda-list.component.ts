@@ -28,6 +28,7 @@ export class AgendaListComponent implements OnChanges {
     @Output() timeSlotRemoved = new EventEmitter<number>();
 
 
+
     ngOnChanges(changes : SimpleChanges){
         this.timeSlots = Object.assign(this.timeSlots, changes['timeSlots'].currentValue);
     }
@@ -37,9 +38,9 @@ export class AgendaListComponent implements OnChanges {
         this.timeSlotRemoved.emit(index);
     }
 
-    displayTimeslotInterval(timeSlot : TimeSlot){
-        let startTime = new Date(timeSlot.startTime as string);
-        let endTime = new Date(timeSlot.endTime as string);
+    displayTimeslotDates(timeSlot : TimeSlot){
+        let startTime = new Date(Number(timeSlot.startTime!) * 1000);
+        let endTime = new Date(Number(timeSlot.endTime!) * 1000);
         return startTime?.getHours() + ':' + startTime?.getUTCMinutes().toString().padStart(2, '0') + 
                 ' - ' + endTime?.getHours() + ':' + endTime?.getUTCMinutes().toString().padStart(2, '0');
     }

@@ -8,7 +8,7 @@
             <div class="field xl:col-6 lg:col-6 col-12 mt-2">
                 <label for="startTime" class="font-bold" i18n>Heure de début</label>
         
-                <p-calendar id="startTime" formControlName="startTime" [timeOnly]="true" hourFormat="24" 
+                <p-calendar id="startTime" formControlName="startTime" [showTime]="true" [timeOnly]="isSameDay" hourFormat="24" 
                 class="w-full" styleClass="w-full"/>
         
                 <div *ngIf="startTime?.invalid && (startTime?.touched || startTime?.dirty)">
@@ -41,7 +41,7 @@
             <div class="field xl:col-6 lg:col-6 col-12 mt-2">
                 <label for="endTime" class="font-bold" i18n>Heure de fin</label>
         
-                <p-calendar id="endTime" formControlName="endTime" [timeOnly]="true" hourFormat="24" 
+                <p-calendar id="endTime" formControlName="endTime" [showTime]="true" [timeOnly]="isSameDay" hourFormat="24" 
                     class="w-full" styleClass="w-full"/>
         
                 <div *ngIf="endTime?.invalid && (endTime?.touched || endTime?.dirty)">
