@@ -28,7 +28,7 @@ import { isSameDay } from '@utils/date-util';
 
 
 @Component({
-  selector: 'app-agenda-create',
+  selector: 'app-agenda-update',
   standalone: true,
   imports: [
     CommonModule,
@@ -44,17 +44,17 @@ import { isSameDay } from '@utils/date-util';
     AvatarModule,
     AvatarGroupModule
   ],
-  templateUrl: './agenda-create.component.html',
-  styleUrl: './agenda-create.component.scss',
+  templateUrl: './agenda-update.component.html',
+  styleUrl: './agenda-update.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AgendaCreateComponent {
+export class AgendaUpdateComponent {
 
     @Input() eventStartTime !: Date;
     @Input() eventEndTime !: Date;
-    @Output() timeSlotAdded = new EventEmitter<TimeSlot>();
+    @Input() timeSlot ?: TimeSlot;
+    @Input() index ?: number;
     @Output() timeSlotUpdated = new EventEmitter<any>();
-    @Output() timeSlotRemoved = new EventEmitter<TimeSlot>();
     @Output() canceled = new EventEmitter<void>();
     @ViewChild('speakerPhoto') speakerPhoto : FilePond | undefined;
 
@@ -119,6 +119,7 @@ export class AgendaCreateComponent {
                 remove: this.remove(),
             }
         }
+        
     }
 
     ngOnChanges(changes : SimpleChanges){
@@ -137,8 +138,22 @@ export class AgendaCreateComponent {
             this.startTime?.setValue(changes['eventStartTime']?.currentValue);
             this.endTime?.setValue(changes['eventEndTime']?.currentValue);
         }
-        
+
+        this.timeSlot = changes['timeSlot']?.currentValue;
+        this.index = changes['index']?.currentValue;
+        if(this.timeSlot){
+            this.initTimeSlotFormForUpdate(this.timeSlot);
+        }
     }
+
+    initTimeSlotFormForUpdate(timeSlot : TimeSlot){
+        this.timeSlotForm.patchValue(timeSlot);
+        if(timeSlot.startTime && timeSlot.endTime){
+            this.startTime?.setValue(new Date(timeSlot.startTime));
+            this.endTime?.setValue(new Date(timeSlot.endTime));
+        }
+    }
+
 
 
     addSpeaker(){
@@ -158,30 +173,19 @@ export class AgendaCreateComponent {
         }
     }
 
-    onRemoveSpeaker(speaker : Speaker){
-        let index = this.speakers.indexOf(speaker);
-        this.speakers?.splice(index, 1);
-    }
-
     cancel(){
         this.postSubmit();
         this.canceled.emit();
     }
 
     submit(){
-        this.createTimeslot();
+        this.updateTimeslot();
     }
 
-    createTimeslot(){
-        let timeSlot : TimeSlot = {
-            startTime: this.startTime?.value,
-            endTime: this.endTime?.value,
-            title: this.title?.value,
-            description: this.description?.value,
-            speakers: this.speakers
-        }
-        this.preformatTimeslotDates(timeSlot, this.startTime?.value, this.endTime?.value);
-        this.timeSlotAdded.emit(timeSlot);
+    updateTimeslot(){
+        this.timeSlot = this.timeSlotForm.value as TimeSlot;
+        this.preformatTimeslotDates(this.timeSlot, this.startTime?.value, this.endTime?.value);
+        this.timeSlotUpdated.emit({timeSlot : this.timeSlot, index : this.index});
         this.postSubmit();
     }
 

@@ -49,6 +49,7 @@ import { Country } from '@models/country';
 import { Event } from '@models/event';
 import { ImageCoverComponent } from './image-cover/image-cover.component';
 import * as _ from 'lodash-es';
+import { AgendaUpdateComponent } from './agenda/agenda-update/agenda-update.component';
 
 
 
@@ -81,8 +82,9 @@ import * as _ from 'lodash-es';
         FilePondModule,
         DialogModule,
         SidebarModule,
-        AgendaCreateComponent,
         AgendaListComponent,
+        AgendaCreateComponent,
+        AgendaUpdateComponent,
         FaqCreateComponent,
         FaqListComponent,
         AvatarModule,
@@ -100,7 +102,10 @@ import * as _ from 'lodash-es';
 export class MyEventCreateComponent implements OnInit, OnDestroy {
 
     visible: boolean = false;
-    displayAgendaForm : boolean = false;
+    displayAgendaCreateForm : boolean = false;
+    displayAgendaUpdateForm : boolean = false;
+    timeslotToUpdate : TimeSlot | undefined;
+    indexOfTimeslotToUpdate : number | undefined;
     displayFaqForm : boolean = false;
     eventSubscription : Subscription | undefined;
     createEventSubscription : Subscription | undefined;
@@ -159,6 +164,8 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
 
     @Input() eventId : string | undefined;
     @ViewChild("agendaList") agendaList : AgendaListComponent | undefined;
+    @ViewChild("agendaForm") agendaForm !: AgendaCreateComponent;
+
 
     ref: DynamicDialogRef | undefined;
     
@@ -225,7 +232,6 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
     initEventIfIdIsPassed(){
         if(this.eventId){
             this.eventSubscription = this.eventService.findById(this.eventId).subscribe((event) => {
-                event.agenda = this.transformAgendaTimeSlotsIntoZonedDateTime(event.agenda as TimeSlot[], event.timeZone);
                 this.eventForm.patchValue(event);
                 // ce bout de code pourrait être amélioré en donnant a startTime et endTime le type "string | Date" au lieu 
                 // de string uniquement.
@@ -284,6 +290,9 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
     }
 
 
+
+
+
     /* *********************** */
     //   IMAGE COVER GALLERIA   //
     /* *********************** */
@@ -311,21 +320,56 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         this.selectedVenueType = event.value;
     }
 
-    handleTimeSlotAdded(event : any){
-        let tsTab : TimeSlot[] = this.agenda?.value || [];
-        tsTab.push(event);
-        this.agenda?.setValue(tsTab); 
-        if(this.agendaList){
-            this.agendaList.timeSlots = tsTab;
-        }
-        this.displayAgendaForm = false;
+    /**
+     * Close the agendaForm, Add emited timeslot in agenda array and make a partial update of the Event.
+     * @param addedTimeSlot 
+     */
+    handleTimeSlotAdded(addedTimeSlot : TimeSlot){
+        this.agenda?.value.push(addedTimeSlot); 
+        let event = this.eventForm.value as Event;
+        this.partialUpdateEvent(event, $localize `Agenda mis à jour.`);
+        this.displayAgendaCreateForm = false;
+        this.cdr.detectChanges();
     }
 
-    handleTimeSlotRemoved(event : any){
-        let tsTab : TimeSlot[] = this.agenda?.value || [];
-        let index = tsTab.indexOf(event);
-        tsTab.splice(index, 1);
-        this.agenda?.setValue(tsTab)
+    showAgendaUpdateForm(event : any){
+        this.timeslotToUpdate = event.timeSlot;
+        this.indexOfTimeslotToUpdate = event.index;
+        this.displayAgendaUpdateForm = true;
+        this.cdr.detectChanges();
+    }
+
+    showAgendaCreateForm(){
+        this.displayAgendaCreateForm = true;
+    }
+
+    dismissAgendaCreateForm(){
+        this.displayAgendaCreateForm = false;
+    }
+
+    dismissAgendaUpdateForm(){
+        this.displayAgendaUpdateForm = false;
+    }
+
+
+    handleTimeSlotUpdated(e : any){
+        let index : number = e.index;
+        let updatedTimeSlot : TimeSlot = e.timeSlot;
+        if(this.agenda)
+        this.agenda.value[index] = updatedTimeSlot;
+
+        let event = this.eventForm.value as Event;
+        this.partialUpdateEvent(event, $localize `Agenda mis à jour.`);
+        this.displayAgendaUpdateForm = false;
+        this.cdr.detectChanges();
+    }
+
+    handleTimeSlotRemoved(removedTimeSlot : TimeSlot){
+        let index = this.agenda?.value.indexOf(removedTimeSlot);
+        this.agenda?.value.splice(index, 1);
+        let event = this.eventForm.value as Event;
+        console.log(event);
+        this.partialUpdateEvent(event, $localize `Agenda mis à jour.`);
     }
 
 
@@ -379,7 +423,9 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
 
     preSubmit() : Event {
         let event : Event = this.eventForm.value as Event;
-        event.agenda = this.transformAgendaTimeSlotsIntoUtcDate(event);
+        event.agenda = this.agenda?.value;
+        event.faq = this.faq?.value;
+        event.imageCovers = this.imageCovers?.value;
         event.startTime = this.startTime?.value.toISOString();
         event.endTime = this.endTime?.value.toISOString();
         event.timeZone = (this.timeZone?.value) ? this.timeZone?.value : Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -388,35 +434,21 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         return event;
     }
 
-
-    transformAgendaTimeSlotsIntoUtcDate(event : Event) : TimeSlot[]{
-        return this.agenda?.value.map((timeSlot : TimeSlot) => {
-            if(timeSlot.startTime instanceof Date)
-                timeSlot.startTime = timeSlot.startTime.toISOString();
-            if(timeSlot.endTime instanceof Date)
-                timeSlot.endTime = timeSlot.endTime.toISOString();
-            return timeSlot;
-        });
-    }
-
-    transformAgendaTimeSlotsIntoZonedDateTime(agenda : TimeSlot[], timeZone : string | undefined) : TimeSlot[]{
-        if(!timeZone)
-            timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        return agenda.map((timeSlot : TimeSlot) => {
-            if(timeSlot.startTime)
-                timeSlot.startTime = this.utcDateToZonedDateTime(timeSlot.startTime as string, timeZone);
-            if(timeSlot.endTime)
-                timeSlot.endTime = this.utcDateToZonedDateTime(timeSlot.endTime as string, timeZone);
-            return timeSlot;
-        });
-    }
-
-    partialUpdateEvent(event : Event){
+    partialUpdateEvent(event : Event, successMessage ?: string){
         if(this.eventId){
             event.id = this.eventId;
         }
-        this.updateEventSubscription = this.eventService.update(event).subscribe(()=>{
-            console.log("Event partialy updated");
+        
+        this.updateEventSubscription = this.eventService.update(event).subscribe({
+            next : (event) => {
+                if(successMessage)
+                    this.messageService.add({ severity: 'success', summary: $localize`Succès`, detail: successMessage });
+            },
+            error : (error) => {
+                this.messageService.add({ severity: 'error', summary: $localize`Erreur`, detail: $localize`Un problème est survenu lors de la mise a jour de l'événement.` });
+                console.log(error);
+            }
+            
         });
     }
 

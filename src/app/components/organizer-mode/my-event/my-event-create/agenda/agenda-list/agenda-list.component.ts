@@ -5,7 +5,7 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { AvatarModule } from 'primeng/avatar';
 import { AvatarGroupModule } from 'primeng/avatargroup';
-import { TimeSlot } from '../../../../../../models/time-slot';
+import { TimeSlot } from '@models/time-slot';
 
 @Component({
   selector: 'app-agenda-list',
@@ -26,10 +26,13 @@ export class AgendaListComponent implements OnChanges {
 
     @Input() timeSlots : TimeSlot[] = [];
     @Output() timeSlotRemoved = new EventEmitter<number>();
+    @Output() timeSlotUpdated = new EventEmitter<any>();
+
 
 
     ngOnChanges(changes : SimpleChanges){
-        this.timeSlots = Object.assign(this.timeSlots, changes['timeSlots'].currentValue);
+        this.timeSlots = changes['timeSlots'].currentValue;
+        this.timeSlots = this.timeSlots.sort((a, b) => a.startTime! - b.startTime!);
     }
 
     removeTimeSlot(timeSlot : TimeSlot){
@@ -37,9 +40,18 @@ export class AgendaListComponent implements OnChanges {
         this.timeSlotRemoved.emit(index);
     }
 
-    displayTimeslotInterval(timeSlot : TimeSlot){
-        let startTime = new Date(timeSlot.startTime as string);
-        let endTime = new Date(timeSlot.endTime as string);
+    updateTimeSlot(timeSlot : TimeSlot){
+        console.log('update time slot');
+        this.timeSlotUpdated.emit({timeSlot : timeSlot, index : this.timeSlots.indexOf(timeSlot)});
+    }
+
+
+    displayTimeslotDates(timeSlot : TimeSlot) : string{
+        if(timeSlot.startTime === undefined || timeSlot.endTime === undefined){
+            return '';
+        }
+        let startTime = new Date(timeSlot.startTime);
+        let endTime = new Date(timeSlot.endTime);
         return startTime?.getHours() + ':' + startTime?.getUTCMinutes().toString().padStart(2, '0') + 
                 ' - ' + endTime?.getHours() + ':' + endTime?.getUTCMinutes().toString().padStart(2, '0');
     }
