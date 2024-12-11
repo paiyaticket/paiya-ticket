@@ -325,11 +325,12 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
     }
 
-    handleTimeSlotRemoved(event : any){
-        let tsTab : TimeSlot[] = this.agenda?.value || [];
-        let index = tsTab.indexOf(event);
-        tsTab.splice(index, 1);
-        this.agenda?.setValue(tsTab)
+    handleTimeSlotRemoved(removedTimeSlot : TimeSlot){
+        let index = this.agenda?.value.indexOf(removedTimeSlot);
+        this.agenda?.value.splice(index, 1);
+        let event = this.eventForm.value as Event;
+        console.log(event);
+        this.partialUpdateEvent(event, $localize `Agenda mis à jour.`);
     }
 
 

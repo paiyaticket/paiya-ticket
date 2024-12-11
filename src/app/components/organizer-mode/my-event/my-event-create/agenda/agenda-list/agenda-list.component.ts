@@ -38,9 +38,12 @@ export class AgendaListComponent implements OnChanges {
         this.timeSlotRemoved.emit(index);
     }
 
-    displayTimeslotDates(timeSlot : TimeSlot){
-        let startTime = new Date(Number(timeSlot.startTime!) * 1000);
-        let endTime = new Date(Number(timeSlot.endTime!) * 1000);
+    displayTimeslotDates(timeSlot : TimeSlot) : string{
+        if(timeSlot.startTime === undefined || timeSlot.endTime === undefined){
+            return '';
+        }
+        let startTime = new Date(timeSlot.startTime);
+        let endTime = new Date(timeSlot.endTime);
         return startTime?.getHours() + ':' + startTime?.getUTCMinutes().toString().padStart(2, '0') + 
                 ' - ' + endTime?.getHours() + ':' + endTime?.getUTCMinutes().toString().padStart(2, '0');
     }

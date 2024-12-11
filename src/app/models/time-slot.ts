@@ -1,6 +1,6 @@
 export interface TimeSlot{
-    startTime : string | undefined;
-    endTime : string | undefined;
+    startTime : number | undefined;
+    endTime : number | undefined;
     title : string | undefined;
     description : string | undefined;
     speakers : Speaker[] | undefined;

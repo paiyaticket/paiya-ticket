@@ -146,9 +146,11 @@ export class AgendaCreateComponent {
 
     removeSpeaker(index : number){
         let speaker : Speaker = this.speakers[index];
-        this.fileStorageService.removeFile(speaker.photo as string).then(()=>{
-            this.speakers?.splice(index, 1);
-        });
+        if(speaker){
+            this.fileStorageService.removeFile(speaker.photo as string).then(()=>{
+                this.speakers?.splice(index, 1);
+            });
+        }
     }
 
     onRemoveSpeaker(speaker : Speaker){
@@ -194,11 +196,11 @@ export class AgendaCreateComponent {
         if(isSameDay(start, end)){
             let startTime = this.mergeOneDateWithAnotherDateTime(this.eventStartTime, start);
             let endTime = this.mergeOneDateWithAnotherDateTime(this.eventStartTime, end);
-            timeSlot.startTime = startTime.toISOString();
-            timeSlot.endTime = endTime.toISOString();
+            timeSlot.startTime = startTime.getTime();
+            timeSlot.endTime = endTime.getTime();
         } else {
-            timeSlot.startTime = start.toISOString();
-            timeSlot.endTime = end.toISOString();
+            timeSlot.startTime = start.getTime();
+            timeSlot.endTime = end.getTime();
         }
     }
 
