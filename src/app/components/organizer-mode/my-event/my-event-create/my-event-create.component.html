@@ -263,19 +263,34 @@
         <p-fieldset legend="Agenda" i18n-legend="Agenda" styleClass="mt-4 hover:border-blue-400 border-3">
 
             <div class="flex justify-content-between mb-2">
-                <p-button label="Ajouter un créneau" [text]="true" i18n-label="Ajouter un créneau" (onClick)="(!displayAgendaForm) ? displayAgendaForm = true : displayAgendaForm = false" 
+                <p-button label="Ajouter un créneau" [text]="true" i18n-label="Ajouter un créneau" 
+                    (onClick)="(!displayAgendaCreateForm) ? displayAgendaCreateForm = true : displayAgendaCreateForm = false" 
                     severity="info" icon="pi pi-plus"/>
                 <p-button label="Supprimer la section Agenda" [text]="true" severity="danger" icon="pi pi-trash" 
                     (onClick)="removeAgendaSection()" class="font-bold align-items-end"></p-button>
             </div>
 
-            <app-agenda-list [timeSlots]="this.agenda?.value" (timeSlotRemoved)="removeTimeSlot($event)"></app-agenda-list>
+            <app-agenda-list [timeSlots]="this.agenda?.value" 
+                (timeSlotRemoved)="removeTimeSlot($event)" (timeSlotUpdated)="showAgendaUpdateForm($event)"></app-agenda-list>
         </p-fieldset>
     }
-    <p-sidebar [(visible)]="displayAgendaForm" [style]="{'width': '50%'}" class="p-2" position="right">
+
+    <p-sidebar [(visible)]="displayAgendaCreateForm" [style]="{'width': '50%'}" class="p-2" position="right">
         <h3 i18n>AJOUTER UN CRÉNEAU A L'AGENDA</h3>
-        <app-agenda-create (timeSlotAdded)="handleTimeSlotAdded($event)" [eventStartTime]="startTime?.value" [eventEndTime]="endTime?.value"></app-agenda-create>
+        <app-agenda-create (timeSlotAdded)="handleTimeSlotAdded($event)" (canceled)="dismissAgendaCreateForm()"
+            [eventStartTime]="startTime?.value" [eventEndTime]="endTime?.value" >
+        </app-agenda-create>
     </p-sidebar>
+
+    <p-sidebar [(visible)]="displayAgendaUpdateForm" [style]="{'width': '50%'}" class="p-2" position="right">
+        <h3 i18n>MISE À JOUR UN CRÉNEAU DANS L'AGENDA</h3>
+        
+        <app-agenda-update (timeSlotUpdated)="handleTimeSlotUpdated($event)" (canceled)="dismissAgendaUpdateForm()"
+            [eventStartTime]="startTime?.value" [eventEndTime]="endTime?.value" 
+            [timeSlot]="timeslotToUpdate" [index]="indexOfTimeslotToUpdate" >
+        </app-agenda-update>
+    </p-sidebar>
+
 
 
     <!-- FAQ SECTION -->
@@ -312,7 +327,7 @@
                             <p i18n>
                                 Présenter le programme de votre événement, les activités et les intervenants afin de donner plus d'informations sur le déroulement.
                             </p>
-                            <p-button label="Ajouter" (onClick)="(!displayAgendaForm) ? displayAgendaForm = true : displayAgendaForm = false" 
+                            <p-button label="Ajouter" (onClick)="(!displayAgendaCreateForm) ? displayAgendaCreateForm = true : displayAgendaCreateForm = false" 
                                 [disabled]="startTime?.value === undefined || endTime?.value === undefined || startTime?.value === null || endTime?.value === null"
                                 size="small" severity="info" icon="pi pi-plus"/>
                             <p-button label="Voir un exemple" size="small" severity="info" outlined="true" icon="pi pi-eye" class="ml-2"/>

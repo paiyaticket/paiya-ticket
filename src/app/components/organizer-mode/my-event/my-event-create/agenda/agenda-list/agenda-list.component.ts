@@ -26,17 +26,25 @@ export class AgendaListComponent implements OnChanges {
 
     @Input() timeSlots : TimeSlot[] = [];
     @Output() timeSlotRemoved = new EventEmitter<number>();
+    @Output() timeSlotUpdated = new EventEmitter<any>();
 
 
 
     ngOnChanges(changes : SimpleChanges){
-        this.timeSlots = Object.assign(this.timeSlots, changes['timeSlots'].currentValue);
+        this.timeSlots = changes['timeSlots'].currentValue;
+        this.timeSlots = this.timeSlots.sort((a, b) => a.startTime! - b.startTime!);
     }
 
     removeTimeSlot(timeSlot : TimeSlot){
         let index = this.timeSlots.indexOf(timeSlot);
         this.timeSlotRemoved.emit(index);
     }
+
+    updateTimeSlot(timeSlot : TimeSlot){
+        console.log('update time slot');
+        this.timeSlotUpdated.emit({timeSlot : timeSlot, index : this.timeSlots.indexOf(timeSlot)});
+    }
+
 
     displayTimeslotDates(timeSlot : TimeSlot) : string{
         if(timeSlot.startTime === undefined || timeSlot.endTime === undefined){

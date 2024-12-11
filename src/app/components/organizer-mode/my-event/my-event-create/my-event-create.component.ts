@@ -49,6 +49,7 @@ import { Country } from '@models/country';
 import { Event } from '@models/event';
 import { ImageCoverComponent } from './image-cover/image-cover.component';
 import * as _ from 'lodash-es';
+import { AgendaUpdateComponent } from './agenda/agenda-update/agenda-update.component';
 
 
 
@@ -81,8 +82,9 @@ import * as _ from 'lodash-es';
         FilePondModule,
         DialogModule,
         SidebarModule,
-        AgendaCreateComponent,
         AgendaListComponent,
+        AgendaCreateComponent,
+        AgendaUpdateComponent,
         FaqCreateComponent,
         FaqListComponent,
         AvatarModule,
@@ -100,7 +102,10 @@ import * as _ from 'lodash-es';
 export class MyEventCreateComponent implements OnInit, OnDestroy {
 
     visible: boolean = false;
-    displayAgendaForm : boolean = false;
+    displayAgendaCreateForm : boolean = false;
+    displayAgendaUpdateForm : boolean = false;
+    timeslotToUpdate : TimeSlot | undefined;
+    indexOfTimeslotToUpdate : number | undefined;
     displayFaqForm : boolean = false;
     eventSubscription : Subscription | undefined;
     createEventSubscription : Subscription | undefined;
@@ -159,6 +164,8 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
 
     @Input() eventId : string | undefined;
     @ViewChild("agendaList") agendaList : AgendaListComponent | undefined;
+    @ViewChild("agendaForm") agendaForm !: AgendaCreateComponent;
+
 
     ref: DynamicDialogRef | undefined;
     
@@ -321,7 +328,39 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         this.agenda?.value.push(addedTimeSlot); 
         let event = this.eventForm.value as Event;
         this.partialUpdateEvent(event, $localize `Agenda mis à jour.`);
-        this.displayAgendaForm = false;
+        this.displayAgendaCreateForm = false;
+        this.cdr.detectChanges();
+    }
+
+    showAgendaUpdateForm(event : any){
+        this.timeslotToUpdate = event.timeSlot;
+        this.indexOfTimeslotToUpdate = event.index;
+        this.displayAgendaUpdateForm = true;
+        this.cdr.detectChanges();
+    }
+
+    showAgendaCreateForm(){
+        this.displayAgendaCreateForm = true;
+    }
+
+    dismissAgendaCreateForm(){
+        this.displayAgendaCreateForm = false;
+    }
+
+    dismissAgendaUpdateForm(){
+        this.displayAgendaUpdateForm = false;
+    }
+
+
+    handleTimeSlotUpdated(e : any){
+        let index : number = e.index;
+        let updatedTimeSlot : TimeSlot = e.timeSlot;
+        if(this.agenda)
+        this.agenda.value[index] = updatedTimeSlot;
+
+        let event = this.eventForm.value as Event;
+        this.partialUpdateEvent(event, $localize `Agenda mis à jour.`);
+        this.displayAgendaUpdateForm = false;
         this.cdr.detectChanges();
     }
 
