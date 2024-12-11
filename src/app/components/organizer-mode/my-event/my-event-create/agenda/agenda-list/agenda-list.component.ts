@@ -5,7 +5,7 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { AvatarModule } from 'primeng/avatar';
 import { AvatarGroupModule } from 'primeng/avatargroup';
-import { TimeSlot } from '../../../../../../models/time-slot';
+import { TimeSlot } from '@models/time-slot';
 
 @Component({
   selector: 'app-agenda-list',
