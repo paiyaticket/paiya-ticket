@@ -24,8 +24,8 @@ export class Event {
     published : boolean = false;
     eventStatut : EventStatut = EventStatut.DRAFT;
 
-    startTime : string | undefined;
-    endTime : string | undefined;
+    startTime : number | undefined;
+    endTime : number | undefined;
     scheduling : Scheduling | undefined;
     timeZone : string | undefined;
     timeZoneOffset : number | undefined;

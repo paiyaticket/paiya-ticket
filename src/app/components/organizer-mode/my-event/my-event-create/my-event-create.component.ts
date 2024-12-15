@@ -237,8 +237,8 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
                 // de string uniquement.
                 if(event.startTime && event.endTime && event.timeZone){
                     this.eventForm.patchValue({
-                        startTime : this.utcDateToZonedDateTime(event.startTime, event.timeZone),
-                        endTime : this.utcDateToZonedDateTime(event.endTime, event.timeZone)
+                        startTime : new Date(event.startTime),
+                        endTime : new Date(event.endTime)
                     });
                 }
             });
