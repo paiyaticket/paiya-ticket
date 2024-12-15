@@ -12,6 +12,7 @@
       "@datas/*": ["app/datas/*"],
       "@models/*": ["app/models/*"],
       "@enumerations/*": ["app/enumerations/*"],
+      "@environments/*": ["environments/*"],
       "@utils/*": ["app/utils/*"],
       "@validators/*": ["app/validators/*"]
     },

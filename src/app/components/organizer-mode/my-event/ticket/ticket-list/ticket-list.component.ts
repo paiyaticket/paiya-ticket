@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
 // @ts-ignore
-import { Ticket } from '../../../../../models/ticket';
-import { TicketService } from '../../../../../services/ticket.service';
+import { Ticket } from '@models/ticket';
+import { TicketService } from '@services/ticket.service';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
+import { ButtonGroupModule } from 'primeng/buttongroup';
 import { TableModule } from 'primeng/table';
 import { CardModule } from 'primeng/card';
-import { environment } from '../../../../../../environments/environment';
+import { environment } from '@environments/environment';
 
 @Component({
   selector: 'app-ticket-list',
@@ -14,6 +15,7 @@ import { environment } from '../../../../../../environments/environment';
   imports: [
     CommonModule,
     ButtonModule,
+    ButtonGroupModule,
     TableModule,
     CardModule
   ],
