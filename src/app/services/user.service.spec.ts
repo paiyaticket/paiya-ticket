@@ -13,33 +13,30 @@ describe('UserService', () => {
     const FIRSTNAME = "John";
     const LASTTNAME = "Doe";
 
-    let userService: UserService;
+    let service: UserService;
     let httpClientSpy : jasmine.SpyObj<HttpClient>;
 
-    beforeEach(() => {
-        TestBed.configureTestingModule({});
-        userService = TestBed.inject(UserService);
+    beforeAll(() => {
+        httpClientSpy = jasmine.createSpyObj("HttpClient", ["get", "post", "patch", "delete"]);
+
+        TestBed.configureTestingModule({
+            providers : [UserService, {provide : HttpClient, useValue : httpClientSpy}]
+        });
+
+        service = TestBed.inject(UserService);
+        httpClientSpy = TestBed.inject(HttpClient) as jasmine.SpyObj<HttpClient>;
     });
 
     it('should be created', () => {
-        expect(userService).toBeTruthy();
+        expect(service).toBeTruthy();
     });
-
-    beforeEach(() => {
-        const httpSpy = jasmine.createSpyObj("HttpClient", ["get", "post", "patch", "delete"]);
-        TestBed.configureTestingModule({
-            providers : [UserService, {provide : HttpClient, useValue : httpSpy}]
-        })
-        userService = TestBed.inject(UserService);
-        httpClientSpy = TestBed.inject(HttpClient) as jasmine.SpyObj<HttpClient>;
-    })
 
     it("#getUserProfile should return expected userProfile by email", (done : DoneFn) => {
         const expectedUser = buildUserProfile();
 
         httpClientSpy.get.and.returnValue(asyncData(expectedUser));
 
-        userService.getUserProfile(EMAIL).subscribe((data) => {
+        service.getUserProfile(EMAIL).subscribe((data) => {
             expect(data).withContext("user with matching email").toBe(expectedUser);
             done();
         });
@@ -54,7 +51,7 @@ describe('UserService', () => {
 
         httpClientSpy.get.and.returnValue(asyncError(expectedError));
 
-        userService.getUserProfile(EMAIL).subscribe({
+        service.getUserProfile(EMAIL).subscribe({
             next: (user) => {
                 done.fail()
             },
@@ -71,7 +68,7 @@ describe('UserService', () => {
     it("#isUserProfileAlreadyExist should return true", (done : DoneFn) => {
         httpClientSpy.get.and.returnValue(asyncData(true));
 
-        userService.isUserProfileAlreadyExist(EMAIL).subscribe( data => {
+        service.isUserProfileAlreadyExist(EMAIL).subscribe( data => {
             expect(data).toBe(true);
             done();
         });
@@ -80,7 +77,7 @@ describe('UserService', () => {
     it("#isUserProfileAlreadyExist should return false", (done : DoneFn) => {
         httpClientSpy.get.and.returnValue(asyncData(false));
 
-        userService.isUserProfileAlreadyExist(EMAIL).subscribe( data => {
+        service.isUserProfileAlreadyExist(EMAIL).subscribe( data => {
             expect(data).toBe(false);
             done();
         });
@@ -89,15 +86,16 @@ describe('UserService', () => {
     
 
     
-    xit("#saveUserProfileIfNotExist should save (isUserProfileAlreadyExist = false)", (done : DoneFn) => {
+    it("#saveUserProfileIfNotExist should save (isUserProfileAlreadyExist = false)", (done : DoneFn) => {
         const user = buildUserProfile();
         httpClientSpy.get.and.returnValue(of(false));
-        httpClientSpy.post;
+        httpClientSpy.post.and.returnValue(of(user));
 
-        userService.saveUserProfileIfNotExist(user);
+        service.saveUserProfileIfNotExist(user);
         done();
 
         expect(httpClientSpy.get).toHaveBeenCalled();
+        expect(httpClientSpy.post).toHaveBeenCalled();
 
     });
     
