@@ -8,8 +8,8 @@ import { EventOrganisationListComponent } from './event-organisation-list/event-
 import { Auth, User } from '@angular/fire/auth';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService, MessageService, Message } from 'primeng/api';
-import { EventOrganizer } from '../../../models/event-organizer';
-import { EventOrganizerService } from '../../../services/event-organizer.service';
+import { EventOrganizer } from '@models/event-organizer';
+import { EventOrganizerService } from '@services/event-organizer.service';
 import { Observable } from 'rxjs';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
