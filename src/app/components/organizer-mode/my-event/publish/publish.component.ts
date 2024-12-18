@@ -121,10 +121,11 @@ export class PublishComponent {
         }
 
 
-        let publishSetting : PublishSettings = new PublishSettings();
-        publishSetting.eventVisibility = this.eventVisibility?.value;
-        publishSetting.whenToPublish = this.whenToPublish?.value;
-        publishSetting.publicationScheduledDate = this.publicationScheduledDate?.value?.toISOString();
+        let publishSetting : PublishSettings = {
+            eventVisibility : this.eventVisibility?.value,
+            whenToPublish : this.whenToPublish?.value,
+            publicationScheduledDate : this.publicationScheduledDate?.value?.toISOString()
+        };
         this.event.publishSettings = publishSetting;
 
         this.eventService.update(this.event).subscribe(()=>{
