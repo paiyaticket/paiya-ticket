@@ -1,4 +1,4 @@
-export class PublishSettings {
+export interface PublishSettings {
     eventVisibility : EventVisibility | undefined;
     whenToPublish : PublishMoment | undefined;
     publicationScheduledDate : string | undefined;

@@ -14,6 +14,7 @@ export class UserService {
     constructor() { }
     
     apiBaseUrl : string = environment.backendApi.accountManager.baseUrl;
+    resourcePath : string = `${this.apiBaseUrl}/v1/users`;
     apiKey: string = environment.backendApi.accountManager.apiKey;
 
 
@@ -27,24 +28,24 @@ export class UserService {
     }
 
     saveUserProfile(user : UserData){
-        this.httpClient.post<UserData>(`${this.apiBaseUrl}/v1/users`, user).subscribe();
+        this.httpClient.post<UserData>(`${this.resourcePath}`, user).subscribe();
     }
 
     isUserProfileAlreadyExist(email : string) : Observable<Boolean> {
-        return this.httpClient.get<Boolean>(`${this.apiBaseUrl}/v1/users/isexist`, {
+        return this.httpClient.get<Boolean>(`${this.resourcePath}`, {
             params : {email : email}
         });
     }
 
     getUserProfile(email : string) : Observable<UserData> {
-        return this.httpClient.get<UserData>(`${this.apiBaseUrl}/v1/users/${email}`);
+        return this.httpClient.get<UserData>(`${this.resourcePath}/${email}`);
     }
 
     updateUserProfile(user : UserData) : Observable<UserData> {
-        return this.httpClient.patch<UserData>(`${this.apiBaseUrl}/v1/users/${user.email}`, user);
+        return this.httpClient.patch<UserData>(`${this.resourcePath}/${user.email}`, user);
     }
 
     closeUserProfile(email : string, close : {'status' : 'close'}){
-        return this.httpClient.put(`${this.apiBaseUrl}/v1/${email}/status`, close);
+        return this.httpClient.put(`${this.resourcePath}/${email}/status`, close);
     }
 }

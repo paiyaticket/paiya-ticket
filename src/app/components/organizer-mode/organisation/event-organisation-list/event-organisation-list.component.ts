@@ -5,7 +5,7 @@ import { CardModule } from 'primeng/card';
 import { ChipModule } from 'primeng/chip';
 import { TableModule } from 'primeng/table';
 import { PanelModule } from 'primeng/panel';
-import { EventOrganizer } from '../../../../models/event-organizer';
+import { EventOrganizer } from '@models/event-organizer';
 import { User } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
 import { SidebarModule } from 'primeng/sidebar';

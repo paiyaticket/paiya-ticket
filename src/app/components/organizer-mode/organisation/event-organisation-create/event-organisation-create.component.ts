@@ -11,9 +11,9 @@ import { TableModule } from 'primeng/table';
 import { ChipsModule } from 'primeng/chips';
 import { Auth } from '@angular/fire/auth';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SOCIALMEDIA } from '../../../../datas/socialmedia.data';
-import { SocialMedia, EventOrganizer } from '../../../../models/event-organizer';
-import { EventOrganizerService } from '../../../../services/event-organizer.service';
+import { SOCIALMEDIA } from '@datas/socialmedia.data';
+import { SocialMedia, EventOrganizer } from '@models/event-organizer';
+import { EventOrganizerService } from '@services/event-organizer.service';
 import { MessageService } from 'primeng/api';
 
 @Component({
@@ -40,7 +40,7 @@ export class EventOrganisationCreateComponent implements OnInit {
 
     @Input({required : false})
     eventOrganizerId : string | undefined;
-    eventOrganizer : EventOrganizer = new EventOrganizer();
+    eventOrganizer : EventOrganizer | undefined;
 
     onSave = output<void>();
 
@@ -121,13 +121,15 @@ export class EventOrganisationCreateComponent implements OnInit {
     }
 
     submit(){
-        this.eventOrganizer.name = this.eventOrganizerForm.value.name;
-        this.eventOrganizer.email = this.eventOrganizerForm.value.email;
-        this.eventOrganizer.details = this.eventOrganizerForm.value.details;
-        this.eventOrganizer.staffMembers = this.eventOrganizerForm.value.staffMembers;
-        this.eventOrganizer.phoneNumbers = this.eventOrganizerForm.value.phoneNumbers;
-        this.eventOrganizer.socialMedia = this.socialMediaList;
-        this.eventOrganizer.createdBy = this.user?.email;
+        this.eventOrganizer = {
+            name : this.eventOrganizerForm.value.name,
+            details : this.eventOrganizerForm.value.details,
+            email : this.eventOrganizerForm.value.email,
+            phoneNumbers : this.eventOrganizerForm.value.phoneNumbers,
+            staffMembers : this.eventOrganizerForm.value.staffMembers,
+            socialMedia : this.socialMediaList,
+            createdBy : this.user?.email
+        };
         this.organizationService.save(this.eventOrganizer).subscribe(() => {
             this.eventOrganizerForm.reset();
             this.messageService.add({severity: 'success', icon: 'pi pi-check', summary: $localize `Succès`, detail: $localize `Organisation créee avec succès.`});

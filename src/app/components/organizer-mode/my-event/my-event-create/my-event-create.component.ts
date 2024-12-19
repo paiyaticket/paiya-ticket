@@ -233,8 +233,6 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         if(this.eventId){
             this.eventSubscription = this.eventService.findById(this.eventId).subscribe((event) => {
                 this.eventForm.patchValue(event);
-                // ce bout de code pourrait être amélioré en donnant a startTime et endTime le type "string | Date" au lieu 
-                // de string uniquement.
                 if(event.startTime && event.endTime && event.timeZone){
                     this.eventForm.patchValue({
                         startTime : new Date(event.startTime),
