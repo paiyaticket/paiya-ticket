@@ -9,11 +9,17 @@ import { OrganizerModeLayoutComponent } from '@layouts/organizer-mode-layout/org
 import { participantModeRoutes } from '@components/participant-mode/participant.mode.routes';
 
 
-// const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['auth/login']);
+const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['auth/login']);
 
 export const routes: Routes = [
     {path: "", component: ParticipantModeLayoutComponent, children: participantModeRoutes },
-    {path: "organizer-mode", component: OrganizerModeLayoutComponent, canActivate: [AuthGuard], children: organizerModeRoutes },
+    {
+        path: "organizer-mode", component: OrganizerModeLayoutComponent, 
+        canActivate: [AuthGuard], 
+        canActivateChild: [AuthGuard], 
+        children: organizerModeRoutes,
+        data:{ authGuardPipe : redirectUnauthorizedToLogin } 
+    },
     {path: 'auth/login', component: LoginComponent, title: 'Login'},
     {path: "auth/register", component: RegisterComponent},
     {path: "**", component: NotFoundComponent},

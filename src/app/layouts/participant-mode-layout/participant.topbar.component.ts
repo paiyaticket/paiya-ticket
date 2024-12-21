@@ -7,9 +7,10 @@ import { ButtonModule } from 'primeng/button';
 import { StyleClassModule } from 'primeng/styleclass';
 import { AvatarModule } from 'primeng/avatar';
 import { InputTextModule } from 'primeng/inputtext';
-import { getAuth, onAuthStateChanged } from '@angular/fire/auth';
+import { getAuth, onAuthStateChanged, User } from '@angular/fire/auth';
 import { AutenticationService } from '../../services/autentication.service';
 import { UserData } from '../../models/user-data';
+import { ButtonGroupModule } from 'primeng/buttongroup';
 
 @Component({
     selector: 'participant-topbar',
@@ -18,6 +19,7 @@ import { UserData } from '../../models/user-data';
     imports: [
         CommonModule,
         ButtonModule,
+        ButtonGroupModule,
         RouterLink,
         RouterLinkActive,
         StyleClassModule,
@@ -29,7 +31,7 @@ export class ParticipantTopBarComponent implements OnInit {
 
     menu: MenuItem[] = [];
 
-    user : UserData | undefined;
+    user : any;
 
     @ViewChild('searchinput') searchInput!: ElementRef;
 
@@ -47,11 +49,8 @@ export class ParticipantTopBarComponent implements OnInit {
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 this.user = this.authService.getAuthenticatedUserData(user);
-            } else {
-                this.logout();
             }
         });
-        
     }
 
     logout(){
