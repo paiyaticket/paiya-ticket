@@ -7,10 +7,13 @@ import { ButtonModule } from 'primeng/button';
 import { StyleClassModule } from 'primeng/styleclass';
 import { AvatarModule } from 'primeng/avatar';
 import { InputTextModule } from 'primeng/inputtext';
-import { getAuth, onAuthStateChanged, User } from '@angular/fire/auth';
-import { AutenticationService } from '../../services/autentication.service';
-import { UserData } from '../../models/user-data';
+import { getAuth, onAuthStateChanged } from '@angular/fire/auth';
+import { AutenticationService } from '@services/autentication.service';
 import { ButtonGroupModule } from 'primeng/buttongroup';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
 
 @Component({
     selector: 'participant-topbar',
@@ -24,7 +27,11 @@ import { ButtonGroupModule } from 'primeng/buttongroup';
         RouterLinkActive,
         StyleClassModule,
         AvatarModule,
-        InputTextModule
+        InputTextModule,
+        InputGroupModule,
+        InputGroupAddonModule,
+        IconFieldModule,
+        InputIconModule
     ]
 })
 export class ParticipantTopBarComponent implements OnInit {
