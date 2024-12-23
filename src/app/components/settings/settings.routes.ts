@@ -10,7 +10,7 @@ export const settingsRoutes : Routes = [
     {path: "settings", 
         title: $localize `Paramètres`, component: SettingsComponent, 
         data: { breadcrumb: $localize `Paramètres`}, 
-        canActivate: [AuthGuard],
+        canActivateChild: [AuthGuard],
         children: [
             {path: "", redirectTo: "user-data", pathMatch: "full"},
             {path: "user-data", title: $localize `Compte Utilisateur`, component: UserDataComponent, data: { breadcrumb: $localize `Compte Utilisateur`}, canActivate: [AuthGuard]},

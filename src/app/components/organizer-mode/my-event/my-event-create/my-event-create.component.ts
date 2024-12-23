@@ -191,8 +191,8 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
             tags : new FormControl<string[]>([]),
             imageCovers : new FormControl<ImageCover[]>([]),
             videoLink : new FormControl<string | undefined>(undefined),
-            summary : new FormControl<string | undefined>('', [Validators.maxLength(150)]),
-            description : new FormControl<string | undefined>(undefined),
+            summary : new FormControl<string | undefined>('', [Validators.maxLength(1000)]),
+            description : new FormControl<string | undefined>(undefined, Validators.maxLength(10000)),
             publicationDate : new FormControl<string | undefined>(undefined),
             visibility : new FormControl<boolean>(false),
             eventPageLanguage : new FormControl<string | undefined>(undefined),
@@ -493,8 +493,8 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
     reloadPageWithEventId(eventId : string | undefined){
         
         if(this.route.snapshot.paramMap.get('eventId') === null){
-            this.router.navigate(['my-events']).then(() => {
-                this.router.navigate(['my-events','my-event-configuration',eventId,'details'], {relativeTo: this.route});
+            this.router.navigate(['organizer-mode']).then(() => {
+                this.router.navigate(['my-events','my-event-configuration',eventId,'details']);
             });
         } else{
             this.router.navigate(['my-events','my-event-configuration',eventId,'details'], {relativeTo: this.route});
