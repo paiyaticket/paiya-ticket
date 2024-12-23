@@ -1,0 +1,27 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card">
+            <p-galleria 
+                [value]="images" 
+                [circular]="true" 
+                [showThumbnails]="false"
+                [activeIndex]="0"
+                [containerStyle]="{ 'max-width': '1920px' }" 
+                >
+                    <ng-template pTemplate="item" let-item>
+                        <img [src]="item.itemImageSrc" style="width: 100%;" />
+                    </ng-template>
+            </p-galleria>
+        </div>
+    </div>
+
+    <div class="col-8 col-offset-2">
+        <div class="card">
+            <h1>TOP EVENTS</h1>
+        </div>
+
+        <div class="card mt-2">
+            <h1>EVENT LIST</h1>
+        </div>
+    </div>
+</div>

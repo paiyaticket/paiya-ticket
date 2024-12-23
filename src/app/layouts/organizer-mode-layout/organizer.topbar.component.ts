@@ -47,8 +47,6 @@ export class OrganizerTopBarComponent implements OnInit {
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 this.user = this.authService.getAuthenticatedUserData(user);
-            } else {
-                this.logout();
             }
         });
         
