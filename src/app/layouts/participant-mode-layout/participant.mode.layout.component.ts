@@ -18,10 +18,7 @@ import { TabCloseEvent } from './api/tabcloseevent';
         CommonModule,
         RouterOutlet,
         ParticipantTopBarComponent,
-        ParticipantSidebarComponent,
-        ParticipantBreadcrumbComponent,
         ParticipantFooterComponent,
-        ParticipantConfigComponent
     ],
     templateUrl: './participant.mode.layout.component.html',
     styleUrl: './participant.mode.layout.component.scss'
