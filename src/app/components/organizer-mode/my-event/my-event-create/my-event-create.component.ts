@@ -50,6 +50,8 @@ import { Event } from '@models/event';
 import { ImageCoverComponent } from './image-cover/image-cover.component';
 import * as _ from 'lodash-es';
 import { AgendaUpdateComponent } from './agenda/agenda-update/agenda-update.component';
+import { OnlinePlatform } from '@enumerations/online-platform';
+import { PhysicalAddress } from '@models/physical-address';
 
 
 
@@ -135,20 +137,6 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
             title: 'Title 3'
         }
     ];
-    responsiveOptions: any[] = [
-        {
-            breakpoint: '1024px',
-            numVisible: 5
-        },
-        {
-            breakpoint: '768px',
-            numVisible: 3
-        },
-        {
-            breakpoint: '560px',
-            numVisible: 1
-        }
-    ];
     messages!: Message[];
     countries : Country[] = COUNTRIES;
     currentUser : User | null = null;
@@ -160,6 +148,15 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
     venueTypeOptions : any[] = [
         {'label' : $localize `Lieu`, 'value' : VenueType.FACE_TO_FACE},
         {'label' : $localize `Évènement en ligne`, 'value' : VenueType.VIRTUAL}
+    ];
+    onlinePlatformOptions : any[] = [
+        {'label' : $localize `Discord`, 'value' : OnlinePlatform.DISCORD},
+        {'label' : $localize `Google Meet`, 'value' : OnlinePlatform.GOOGLE_MEET},
+        {'label' : $localize `Teams`, 'value' : OnlinePlatform.MICROSOFT_TEEMS},
+        {'label' : $localize `Slack`, 'value' : OnlinePlatform.SLACK},
+        {'label' : $localize `Télégram`, 'value' : OnlinePlatform.TELEGRAM},
+        {'label' : $localize `Tiktok`, 'value' : OnlinePlatform.TIKTOK},
+        {'label' : $localize `Zoom`, 'value' : OnlinePlatform.ZOOM},
     ];
 
     @Input() eventId : string | undefined;
@@ -200,7 +197,7 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
             endTime : new FormControl<Date | undefined>(undefined, [Validators.required]),
             timeZone : new FormControl<Intl.DateTimeFormatOptions['timeZone'] | undefined>(undefined),
             physicalAddress : new FormGroup({
-                location : new FormControl<string | undefined>(undefined, [Validators.required] ),
+                location : new FormControl<string | undefined>(undefined),
                 locationIndication : new FormControl<string | undefined>(undefined, [Validators.maxLength(300)]),
                 street : new FormControl<string | undefined>(undefined),
                 streetNumber : new FormControl<string | undefined>(undefined),
@@ -211,8 +208,8 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
                 longitude : new FormControl<string | undefined>(undefined),
                 latitude : new FormControl<string | undefined>(undefined),
             }),
-            onlineAdresse : new FormGroup({
-                onlinePlatform : new FormControl<string | undefined>(undefined),
+            onlineAddress : new FormGroup({
+                onlinePlatform : new FormControl<OnlinePlatform | undefined>(undefined),
                 link : new FormControl<string | undefined>(undefined),
             }),
             eventOrganizer : new FormControl<EventOrganizer | undefined>(undefined),
@@ -316,6 +313,11 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
 
     onVenueTypeChange(event: any){
         this.selectedVenueType = event.value;
+        if(this.selectedVenueType === VenueType.VIRTUAL){
+            this.physicalAddress?.reset();
+        } else {
+            this.onlineAddress?.reset();
+        }
     }
 
     /**
@@ -421,6 +423,9 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
 
     preSubmit() : Event {
         let event : Event = this.eventForm.value as Event;
+        event.onlineAddress = this.onlineAddress?.value;
+        event.physicalAddress = this.physicalAddress?.value;
+        event.eventOrganizer = this.eventOrganizer?.value;
         event.agenda = this.agenda?.value;
         event.faq = this.faq?.value;
         event.imageCovers = this.imageCovers?.value;
@@ -429,6 +434,8 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         event.timeZone = (this.timeZone?.value) ? this.timeZone?.value : Intl.DateTimeFormat().resolvedOptions().timeZone;
         event.timeZoneOffset = this.startTime?.value.getTimezoneOffset();
         event.owner = (this.currentUser?.email) ? this.currentUser?.email : undefined;
+
+        console.log(event);
         return event;
     }
 
@@ -494,7 +501,7 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         
         if(this.route.snapshot.paramMap.get('eventId') === null){
             this.router.navigate(['organizer-mode']).then(() => {
-                this.router.navigate(['my-events','my-event-configuration',eventId,'details']);
+                this.router.navigate(['organizer-mode','my-events','my-event-configuration',eventId,'details']);
             });
         } else{
             this.router.navigate(['my-events','my-event-configuration',eventId,'details'], {relativeTo: this.route});
@@ -605,8 +612,8 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         return this.eventForm.get('location');
     }
 
-    get onlineAdresse(){
-        return this.eventForm.get('onlineAdresse');
+    get onlineAddress(){
+        return this.eventForm.get('onlineAddress');
     }
 
     get eventOrganizer(){

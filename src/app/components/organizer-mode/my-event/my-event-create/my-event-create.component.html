@@ -7,7 +7,7 @@
             [value]="initGalleria()"
             [showIndicators]="true" 
             [showThumbnails]="false" 
-            [responsiveOptions]="responsiveOptions">
+            >
             <ng-template pTemplate="item" let-item>
                 <img [src]="item.source" style="width: 100%; display: block; height: 400px; max-height: 4200px; object-fit: contain;" />
             </ng-template>
@@ -79,99 +79,77 @@
     <!-- TIME AND HOUR -->
     <p-fieldset legend="Date et lieu" i18n-legend="Vue d'ensemble" styleClass="mt-4 hover:border-blue-400 border-3">
         <div class="formgrid grid" >
-            <div class="field xl:col-12 lg:col-12 col-12">
+  
+            <!-- START TIME -->
+            <div class="field xl:col-6 lg:col-6 col-12 mt-2">
+                <label for="startTime" class="font-bold" i18n>Date et Heure de début</label>
+
+                <p-calendar id="startTime" formControlName="startTime" [showTime]="true" dateFormat="dd/mm/yy" hourFormat="24" class="w-full" styleClass="w-full"/>
+    
+                <div *ngIf="startTime?.invalid && (startTime?.touched || startTime?.dirty)">
+                    @if (startTime?.hasError('required')) {
+                        <small id="startTime-required-help" [hidden]="startTime?.pristine || startTime?.valid" class="p-error font-bold" i18n="Une heure est requise.">
+                            Une heure est requise.
+                        </small>
+                    }
+                </div>
+                @if (eventForm.hasError('laterDate')) {
+                    <small id="startTime-required-help" class="p-error font-bold" i18n="La date de début doit être inférieure à la date de fin.">
+                        La date de début doit être inférieure à la date de fin.
+                    </small>
+                }
+            </div>
+
+            <!-- END TIME -->
+            <div class="field xl:col-6 lg:col-6 col-12 mt-2">
+                <label for="endTime" class="font-bold" i18n>Date et Heure de fin</label>
+
+                <p-calendar id="endTime" formControlName="endTime"  [showTime]="true" dateFormat="dd/mm/yy" hourFormat="24" class="w-full" styleClass="w-full"/>
+    
+                <div *ngIf="endTime?.invalid && (endTime?.touched || endTime?.dirty)">
+                    @if (endTime?.hasError('required')) {
+                        <small id="endTime-required-help" [hidden]="endTime?.pristine || endTime?.valid" class="p-error font-bold" i18n="Une heure est requise.">
+                            Une heure est requise.
+                        </small>
+                    }
+                </div>
+                @if (eventForm.hasError('laterDate')) {
+                    <small id="endTime-required-help" class="p-error font-bold" i18n="La date de fin doit être supérieure à la date de début.">
+                        La date de fin doit être supérieure à la date de début.
+                    </small>
+                }
+            </div>
+
+            <div class="field xl:col-12 lg:col-12 col-12" styleClass="w-full">
+                <p-panel header="Plus de détails sur la date" [toggleable]="true" [collapsed]="true" [iconPos]="'start'" styleClass="details w-full">
+                    <!-- TIME ZONE -->
+                    <div class="field xl:col-4 lg:col-4 col-12">
+                        <label for="country" class="font-bold" i18n>Fuseau Horaire</label><br>
+                        <p-dropdown id="country" [options]="countries" formControlName="timeZone" optionValue="timezone" optionLabel="timezone" [filter]="true"
+                            filterBy="name" styleClass="w-full" placeholder="Choisir un pays" i18n-placeholder="Choisir un pays" 
+                            i18n-placeholder="Select a country"/>
+                    </div>
+                </p-panel>
+            </div>
+
+            <!-- LOCATION -->
+            <div class="field xl:col-12 lg:col-12 col-12 mt-2">
                 <p-selectButton 
-                    [options]="eventTypeOptions" 
-                    formControlName="eventType" 
+                    [options]="venueTypeOptions" 
+                    formControlName="venueType" 
                     optionValue="value" 
                     optionLabel="label"
-                    (onChange)="onEventTypeChange($event)"
+                    (onChange)="onVenueTypeChange($event)"
                     styleClass="w-full">
                         <ng-template let-item pTemplate>
                             <div>
-                                <div class="font-bold text-2xl" i18n>{{ item.label }}</div> 
-                                
-                                <span class="text-800" i18n>{{ item.description }}</span>
+                                <div class="font-bold" i18n>{{ item.label }}</div> 
                             </div>
                         </ng-template>
                 </p-selectButton>
             </div>
 
-            @if (selectedEventType?.valueOf() === 'SINGLE_EVENT') {    
-                <!-- START TIME -->
-                <div class="field xl:col-6 lg:col-6 col-12 mt-2">
-                    <label for="startTime" class="font-bold" i18n>Date et Heure de début</label>
-
-                    <p-calendar id="startTime" formControlName="startTime" [showTime]="true" dateFormat="dd/mm/yy" hourFormat="24" class="w-full" styleClass="w-full"/>
-        
-                    <div *ngIf="startTime?.invalid && (startTime?.touched || startTime?.dirty)">
-                        @if (startTime?.hasError('required')) {
-                            <small id="startTime-required-help" [hidden]="startTime?.pristine || startTime?.valid" class="p-error font-bold" i18n="Une heure est requise.">
-                                Une heure est requise.
-                            </small>
-                        }
-                    </div>
-                    @if (eventForm.hasError('laterDate')) {
-                        <small id="startTime-required-help" class="p-error font-bold" i18n="La date de début doit être inférieure à la date de fin.">
-                            La date de début doit être inférieure à la date de fin.
-                        </small>
-                    }
-                </div>
-
-                <!-- END TIME -->
-                <div class="field xl:col-6 lg:col-6 col-12 mt-2">
-                    <label for="endTime" class="font-bold" i18n>Date et Heure de fin</label>
-
-                    <p-calendar id="endTime" formControlName="endTime"  [showTime]="true" dateFormat="dd/mm/yy" hourFormat="24" class="w-full" styleClass="w-full"/>
-        
-                    <div *ngIf="endTime?.invalid && (endTime?.touched || endTime?.dirty)">
-                        @if (endTime?.hasError('required')) {
-                            <small id="endTime-required-help" [hidden]="endTime?.pristine || endTime?.valid" class="p-error font-bold" i18n="Une heure est requise.">
-                                Une heure est requise.
-                            </small>
-                        }
-                    </div>
-                    @if (eventForm.hasError('laterDate')) {
-                        <small id="endTime-required-help" class="p-error font-bold" i18n="La date de fin doit être supérieure à la date de début.">
-                            La date de fin doit être supérieure à la date de début.
-                        </small>
-                    }
-                </div>
-
-                <div class="field xl:col-12 lg:col-12 col-12" styleClass="w-full">
-                    <p-panel header="Plus de détails sur la date" [toggleable]="true" [collapsed]="true" [iconPos]="'start'" styleClass="details w-full">
-                        <!-- TIME ZONE -->
-                        <div class="field xl:col-4 lg:col-4 col-12">
-                            <label for="country" class="font-bold" i18n>Fuseau Horaire</label><br>
-                            <p-dropdown id="country" [options]="countries" formControlName="timeZone" optionValue="timezone" optionLabel="timezone" [filter]="true"
-                                filterBy="name" styleClass="w-full" placeholder="Choisir un pays" i18n-placeholder="Choisir un pays" 
-                                i18n-placeholder="Select a country"/>
-                        </div>
-                    </p-panel>
-                </div>
-
-                
-
-                
-
-                <!-- LOCATION -->
-                <div class="field xl:col-12 lg:col-12 col-12 mt-2">
-                    <p-selectButton 
-                        [options]="venueTypeOptions" 
-                        formControlName="venueType" 
-                        optionValue="value" 
-                        optionLabel="label"
-                        (onChange)="onVenueTypeChange($event)"
-                        styleClass="w-full">
-                            <ng-template let-item pTemplate>
-                                <div>
-                                    <div class="font-bold" i18n>{{ item.label }}</div> 
-                                </div>
-                            </ng-template>
-                    </p-selectButton>
-                </div>
-
-                @if (selectedVenueType?.valueOf() === 'FACE_TO_FACE') {
+            @if (selectedVenueType?.valueOf() === 'FACE_TO_FACE') {
 
                     <div class="field xl:col-12 lg:col-12 col-12 mt-2" formGroupName="physicalAddress">
                         <label for="location" class="font-bold" i18n>Lieu</label>
@@ -216,8 +194,7 @@
                                 <div class="field xl:col-4 lg:col-4 col-12 mt-2">
                                     <label for="country" class="font-bold" i18n>Pays</label><br>
                                     <p-dropdown id="country" [options]="countries" formControlName="country" optionValue="name" optionLabel="name" [filter]="true"
-                                        filterBy="name" styleClass="w-full" placeholder="Choisir un pays" i18n-placeholder="Choisir un pays" 
-                                        i18n-placeholder="Select a country"/>
+                                        filterBy="name" styleClass="w-full" placeholder="Choisir un pays" i18n-placeholder="Choisir un pays"/>
                                 </div>
 
                             </div>
@@ -225,17 +202,20 @@
                         </p-panel>
                     </div>
 
-                } @else {
-                    <div class="field xl:col-12 lg:col-12 col-12 mt-2 p-fluid" formGroupName="onlineAdresse">
-                        <label for="link" class="font-bold" i18n>Lien</label>
-                        <input id="link" type="text" pInputText formControlName="link">
-                    </div>
-                }
-
+                
                 
             } @else {
-                <div class="field xl:col-12 lg:col-12 col-12">
-                    <p-messages [(value)]="messages" [enableService]="false" [closable]="false" />
+                <div class="flex w-full" formGroupName="onlineAddress">
+                    <div class="field xl:col-4 lg:col-4 col-12">
+                        <label for="onlinePlatform" class="font-bold" i18n>Plateforme</label>
+                        <p-dropdown id="onlinePlatform" [options]="onlinePlatformOptions" formControlName="onlinePlatform" 
+                            optionValue="value" optionLabel="label" [filter]="true" filterBy="name" 
+                            styleClass="w-full" placeholder="Choisir une plateforme" i18n-placeholder="Choisir une plateforme"/>
+                    </div>
+                    <div class="field xl:col-8 lg:col-8 col-12">
+                        <label for="link" class="font-bold" i18n>Lien de connexion</label>
+                        <input id="link" type="text" pInputText class="w-full" formControlName="link">
+                    </div>
                 </div>
             }
         </div>

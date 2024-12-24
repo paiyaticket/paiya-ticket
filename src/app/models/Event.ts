@@ -32,7 +32,7 @@ export interface Event {
 
     eventPageLanguage ?: string | undefined,
     physicalAddress ?: PhysicalAddress | undefined,
-    onlineAdresse ?: OnlineAddress | undefined,
+    onlineAddress ?: OnlineAddress | undefined,
     eventOrganizer ?: EventOrganizer | undefined,
     cashAccounts ?: CashAccount[],
 
