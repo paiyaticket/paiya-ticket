@@ -9,11 +9,12 @@
             [showThumbnails]="false" 
             >
             <ng-template pTemplate="item" let-item>
-                <img [src]="item.source" style="width: 100%; display: block; height: 400px; max-height: 4200px; object-fit: contain;" />
+                <img [src]="item.source" style="width: 100%; display: block; height: 400px; max-height: 420px; object-fit: cover;" />
             </ng-template>
         </p-galleria>
         <p-button label="Slectionner l'Image de couverture" i18n-label="Slectionner l'Image de couverture"
-            icon="pi pi-images" severity="info"  (onClick)="showDialog()"/>
+        icon="pi pi-images" severity="info"  (onClick)="showDialog()"/>
+        
     </p-fieldset>
 
 

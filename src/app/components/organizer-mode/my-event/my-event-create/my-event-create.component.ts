@@ -51,7 +51,6 @@ import { ImageCoverComponent } from './image-cover/image-cover.component';
 import * as _ from 'lodash-es';
 import { AgendaUpdateComponent } from './agenda/agenda-update/agenda-update.component';
 import { OnlinePlatform } from '@enumerations/online-platform';
-import { PhysicalAddress } from '@models/physical-address';
 import { EVENT_CATEGORY_OPTIONS } from '@datas/event-category.data';
 
 
@@ -94,7 +93,7 @@ import { EVENT_CATEGORY_OPTIONS } from '@datas/event-category.data';
         AvatarGroupModule,
         InputGroupModule,
         InputGroupAddonModule,
-        GalleriaModule
+        GalleriaModule,
     ],
     templateUrl: './my-event-create.component.html',
     styleUrl: './my-event-create.component.scss',
