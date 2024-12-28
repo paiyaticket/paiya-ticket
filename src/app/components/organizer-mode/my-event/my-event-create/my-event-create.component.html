@@ -62,12 +62,20 @@
                 }
             </div>
 
+            <div class="field xl:col-4 lg:col-4 col-12 p-fluid">
+                <label for="eventCategory"class="font-bold" i18n>Catégorie d'évènement</label>
+                <p-dropdown id="eventCategory" formControlName="eventCategory" [options]="eventCategoryOptions" 
+                    optionLabel="label" optionValue="value" placeholder="Selectionner une catégorie d'évènement" 
+                    i18n-placeholder="Selectionner une catégorie d'évènement"/>
+            </div>
+
             <div class="field xl:col-12 lg:col-12 col-12  p-fluid">
                 <label for="tags"class="font-bold" i18n>Mots clés</label>
                 <p class="text-800" i18n>
                     Quelques mots clés pour faciliter la recherche de votre événement.
                 </p>
-                <p-chips formControlName="tags"/>
+                <p-chips formControlName="tags" placeholder='Taper la touche "Entrer" après chaque mot clé.' 
+                        i18n-placeholder='Taper la touche "Entrer" après chaque mot clé.'/>
             </div>
 
         </div>
