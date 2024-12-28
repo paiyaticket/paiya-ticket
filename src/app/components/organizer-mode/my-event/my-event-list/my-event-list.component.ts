@@ -53,7 +53,7 @@ export class MyEventListComponent implements OnInit {
     owner !: User | null;
     eventList$ !: Observable<Event[]>;
     layout: string = 'list';
-    skeletonList : number[] = [1,2,3];
+    skeletonList : number[] = [1,2,3,4];
 
     organisationDialogVisible : boolean = false;
     createSidebarVisible : boolean = false;

@@ -14,15 +14,12 @@
 <section class="grid">
     @if (eventList$ | async; as eventList) {
         @if (eventList.length != 0) {
-            <p-dataView #dv [value]="eventList" [layout]="'list'" [rows]="4" [paginator]="true" class="w-full">
-                <ng-template pTemplate="list" let-eventList>
-                    <div class="grid grid-nogutter">
-                        @for (eventItem of eventList; track $index) {
-                            <app-my-event-item [event]="eventItem" class="col-12"></app-my-event-item>
-                        }
-                    </div>
-                </ng-template>
-            </p-dataView>
+            
+            @for (event of eventList; track $index) {
+                <div class="col-3">
+                    <app-my-event-item [event]="event"></app-my-event-item>
+                </div>
+            }
         }
         @else {
             <div class= "surface-200 col-12 border-round-md border-dashed ">
@@ -90,26 +87,26 @@
 <!-- LIST SKELETON TEMPLATE -->
 <ng-template #eventListSkeleton let-eventList>
     @for (n of skeletonList; track $index) {
-        <div class="flex flex-column sm:flex-row sm:align-items-center p-4 gap-3 w-full">
-            <div class="md:w-20rem relative">
-                <p-skeleton height="5rem" />
-            </div>
-            <div class="flex flex-column md:flex-row justify-content-between md:align-items-center flex-1 gap-4">
-                <div class="flex flex-row md:flex-column justify-content-between align-items-start gap-2">
-                    <div>
-                        <p-skeleton height="1rem" width="10rem" class="mb-2" />
-                    </div>
-                    <div>
-                        <p-skeleton height="2rem" width="30rem" class="mb-2" />
-                    </div>
-                    <div>
-                        <p-skeleton height="2rem" width="30rem" class="mb-2" />
+        <div class="col-3">
+            <div class="p-4 border-1 surface-border surface-card border-round flex flex-column">
+                <div class="surface-50 flex justify-content-center border-round p-3">
+                    <div class="relative mx-auto">
+                        <p-skeleton height="6rem" />
                     </div>
                 </div>
-                <div class="flex flex-column md:align-items-end gap-2">
-                    <p-skeleton width="10rem" class="mb-2" />
-                    <div class="flex flex-row-reverse md:flex-row">
-                        <p-skeleton width="5rem" height="2rem" />
+                <div class="pt-4">
+                    <div class="flex flex-column gap-1">
+                        <p-skeleton height="1rem" width="5rem"/>
+                        <p-skeleton height="2rem"/>
+                    </div>
+                    <div class="flex flex-column mt-4 gap-1">
+                        <p-skeleton height="1rem"/>
+                        <p-skeleton height="1rem"/>
+                    </div>
+                    <div class="flex flex-row justify-content-end align-items-center gap-2 mt-4">    
+                        <div class="flex gap-2">
+                            <p-skeleton width="6rem" height="2rem" />
+                        </div>
                     </div>
                 </div>
             </div>

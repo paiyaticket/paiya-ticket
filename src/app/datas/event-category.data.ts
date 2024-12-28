@@ -1,12 +1,12 @@
 export const EVENT_CATEGORY_OPTIONS: any[] = [
-    { label: $localize `Concert`, value: 'concert' },
-    { label: $localize `Festival`, value: 'festival' },
-    { label: $localize `Théâtre`, value: 'theater' },
-    { label: $localize `Cinema`, value: 'cinema' },
-    { label: $localize `Exposition/Salon`, value: 'exhibition' },
-    { label: $localize `Conférence`, value: 'conference' },
-    { label: $localize `Sport`, value: 'sport' },
-    { label: $localize `Sortie de groupe`, value: 'Sortie' },
-    { label: $localize `Pélérinage`, value: 'Pilgrimage' },
-    { label: $localize `Autre`, value: 'autre' }
+    { label: $localize `Concert`, value: 'Concert' },
+    { label: $localize `Festival`, value: 'Festival' },
+    { label: $localize `Théâtre`, value: 'Théâtre' },
+    { label: $localize `Cinema`, value: 'Cinema' },
+    { label: $localize `Exposition/Salon`, value: 'Exposition/Salon' },
+    { label: $localize `Conférence`, value: 'Conférence' },
+    { label: $localize `Sport`, value: 'Sport' },
+    { label: $localize `Sortie de groupe`, value: 'Sortie de groupe' },
+    { label: $localize `Pélérinage`, value: 'Pélérinage' },
+    { label: $localize `Autre`, value: 'Autre' }
 ];
