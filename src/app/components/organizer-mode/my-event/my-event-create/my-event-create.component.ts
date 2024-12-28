@@ -51,7 +51,7 @@ import { ImageCoverComponent } from './image-cover/image-cover.component';
 import * as _ from 'lodash-es';
 import { AgendaUpdateComponent } from './agenda/agenda-update/agenda-update.component';
 import { OnlinePlatform } from '@enumerations/online-platform';
-import { PhysicalAddress } from '@models/physical-address';
+import { EVENT_CATEGORY_OPTIONS } from '@datas/event-category.data';
 
 
 
@@ -93,7 +93,7 @@ import { PhysicalAddress } from '@models/physical-address';
         AvatarGroupModule,
         InputGroupModule,
         InputGroupAddonModule,
-        GalleriaModule
+        GalleriaModule,
     ],
     templateUrl: './my-event-create.component.html',
     styleUrl: './my-event-create.component.scss',
@@ -158,6 +158,7 @@ export class MyEventCreateComponent implements OnInit, OnDestroy {
         {'label' : $localize `Tiktok`, 'value' : OnlinePlatform.TIKTOK},
         {'label' : $localize `Zoom`, 'value' : OnlinePlatform.ZOOM},
     ];
+    eventCategoryOptions : any[] = EVENT_CATEGORY_OPTIONS;
 
     @Input() eventId : string | undefined;
     @ViewChild("agendaList") agendaList : AgendaListComponent | undefined;
