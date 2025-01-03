@@ -1,7 +1,9 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, ChangeDetectionStrategy, Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { GalleriaModule } from 'primeng/galleria';
 import { ButtonModule } from 'primeng/button';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
+import Splide from '@splidejs/splide';
+import { After } from 'v8';
 
 
 @Component({
@@ -16,20 +18,23 @@ import { CommonModule } from '@angular/common';
     styleUrl: './home.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit, AfterViewInit {
     images: any[] | undefined;
-    responsiveOptions: any[] = [
-        {
-            breakpoint: '1920px',
-            numVisible: 2,
-            numScroll: 1
-        },
-        {
-            breakpoint: '1024px',
-            numVisible: 1,
-            numScroll: 1
+    splideOptions: any = {
+        type    : 'loop',
+        autoplay: 'true',
+        perPage : 1,
+    };
+
+    constructor(@Inject(PLATFORM_ID) private platformId: any) {
+    }
+
+    ngAfterViewInit(): void {
+        if (!isPlatformBrowser(this.platformId)) {
+            return;
         }
-    ];
+        new Splide('.splide', this.splideOptions).mount();
+    }
 
     ngOnInit() {
         this.images = [

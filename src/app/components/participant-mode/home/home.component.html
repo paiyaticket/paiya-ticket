@@ -1,18 +1,21 @@
 <div class="grid">
     <div class="col-12">
-        <div class="card">
-            <p-galleria 
-                [value]="images" 
-                [circular]="true" 
-                [showThumbnails]="false"
-                [activeIndex]="0"
-                [containerStyle]="{ 'max-width': '1920px' }" 
-                >
-                    <ng-template pTemplate="item" let-item>
-                        <img [src]="item.itemImageSrc" style="width: 100%;" />
-                    </ng-template>
-            </p-galleria>
-        </div>
+        <section class="splide card" aria-labelledby="carousel-heading">
+            <div class="splide__track">
+                  <ul class="splide__list">
+                        @for (item of images; track $index) {
+                            <li class="splide__slide">
+                                <img src="{{ item.itemImageSrc }}" alt="{{ item.itemImageAlt }}" />
+                            </li>
+                        }
+                  </ul>
+            </div>
+
+            <div class="splide__progress">
+                <div class="splide__progress__bar">
+                </div>
+            </div>
+        </section>
     </div>
 
     <div class="col-8 col-offset-2">
