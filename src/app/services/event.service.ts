@@ -31,6 +31,22 @@ export class EventService {
         });
     }
 
+    findAll() : Observable<Event[]> {
+        return this.httpClient.get<Event[]>(this.resourcePath);
+    }
+
+    findAllPublished() : Observable<Event[]> {
+        return this.httpClient.get<Event[]>(`${this.resourcePath}/published`);
+    }
+
+    findMostPopular() : Observable<Event[]> {
+        return this.httpClient.get<Event[]>(`${this.resourcePath}/popular`);
+    }
+
+    findTop10MostPopular() : Observable<Event[]> {
+        return this.httpClient.get<Event[]>(`${this.resourcePath}/popular`);
+    }
+
     update(event : Event) : Observable<Event> {
         return this.httpClient.patch<Event>(`${this.resourcePath}/${event.id}`, event);
     }

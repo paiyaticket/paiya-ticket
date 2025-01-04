@@ -41,6 +41,8 @@ export interface Event {
     agenda ?: TimeSlot[],
     faq ?: Question[],
 
+    popularity ?: number | undefined,
+
     owner ?: string | undefined,
     createdDate ?: string | undefined,
     lastModifiedDate ?: string | undefined,
